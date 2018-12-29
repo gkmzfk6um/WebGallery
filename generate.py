@@ -3,6 +3,7 @@ import glob
 import re
 import os
 import json
+import numpy as np
 from jinja2 import Template
 import datetime
 from PIL import Image
@@ -10,6 +11,14 @@ from PIL import ExifTags
 
 viewerPath = "view/{}.html"
 pathTemplate = "img/thumbnails/{}_{}.jpg"
+
+pictureNames = {}
+try: 
+    with open('img/names.json','r') as f:
+        pictureNames = json.load(f)
+except FileNotFoundError:
+    pass
+
 
 TAGS_NR  = {}
 for k,v in ExifTags.TAGS.items():
@@ -34,7 +43,11 @@ def processImages(files=files()):
         try:
             with open(meta,'r') as f:
                 print("({}/{}) Skipping {}.".format(i,numFiles,name))
-                yield json.loads(f.read())
+                obj= json.loads(f.read())
+                if obj['name'] in  pictureNames:
+                    obj['name'] = pictureNames[obj['name']]
+                yield obj
+
         except FileNotFoundError:
             with Image.open(f) as img:
                 print("({}/{}) Processing {}.".format(i,numFiles,name))
@@ -55,13 +68,17 @@ def processImages(files=files()):
                 #for k,v in exif.items():
                 #    if k in ExifTags.TAGS:
                 #        print("{}: {}".format(ExifTags.TAGS[k],v))
-
+                if name in  pictureNames:
+                    name = pictureNames[name]
+                avg=np.round(np.mean(np.array(img),axis=(0,1)))
+                avghex= ('#%02x%02x%02x' % tuple(avg.astype(int)))
                 obj= {
                     'name': name,
                     'date': tag('DateTimeOriginal'),
                     'rating': tag('Rating'),
                     'view': viewerPath.format(name),
                     'Copyright': tag('Copyright'),
+                    'colour': avghex,
                     'original': {
                         'path' : f,
                         'width': img.width,

@@ -6,8 +6,9 @@ function gallery() {
 		children=$(this).children().toArray();
 		pratio = window.devicePixelRatio;	
 		//Calculate extra width
-		child = $(children[0]).children('img');
-		excess = $(children[0]).outerWidth(true)-child.outerWidth(true);
+		//child = $(children[0]).children('img');
+		//excess = $(children[0]).outerWidth(true)-child.outerWidth(true);
+		excess = $(children[0]).outerWidth(true)-$(children[0]).innerWidth();
 		
 		$('children').each(function() { $(this).css( {'width':'','height':''});});
 		row = function(elems,lastRow){
@@ -62,4 +63,20 @@ $(window).resize(function() {
 	clearTimeout(timer);
 	timer = setTimeout(gallery,100)
 });
+
+function loadImages(){
+	$('.image').each( function() {
+		src= $(this).attr('data-src');
+		var img = $('<img>')
+		img.one('load',function() {
+			$(this).css('visibility','visible');
+			$(this).css('opacity', '1.0');
+		})
+		img.attr('src',src);
+		img.appendTo(this);
+
+	});
+	console.log('Image loading started');
+}
 gallery();
+loadImages();

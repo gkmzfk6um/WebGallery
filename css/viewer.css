@@ -23,7 +23,8 @@ body {
 }
 header > span {
 	padding-left:2em;
-	color: #707070;
+	text-align:center;
+	color: #808080;
 	display:table-cell;
 	vertical-align:middle;
 }

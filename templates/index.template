@@ -27,8 +27,7 @@
   </header>
   <div class="body">
 	  <div class="gallery" >{% for pic in inventory %}
-		  <a href="{{pic.view}}" id="/{{pic.name}}" class="image" data-width="{{pic.thumbS.width}}" data-height="{{pic.thumbS.height}}">
-			  <img src="/{{pic.thumbS.path}}">
+		  <a href="{{pic.view}}" id="/{{pic.name}}" class="image" style="background-color:{{pic.colour}};"   data-width="{{pic.thumbS.width}}" data-height="{{pic.thumbS.height}}" data-src="/{{pic.thumbS.path}}">
 			  <span>{{pic.name}} </span>
 		  </a>
 		{% endfor %}
