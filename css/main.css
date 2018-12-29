@@ -98,27 +98,78 @@ textarea {
    ========================================================================== */
 
 header {
+	 border-bottom: 2px solid  rgb(60,60,60);
+	 background: rgb(15,15,15);
+	 background: linear-gradient(180deg, rgba(15,15,15,1) 0%, rgba(28,28,28,1) 100%); 
+	 background-color:rgb(30,30,30);
+	 color:#F5F5F5  ;
+}
+body {
+	background: #F5F5F5 ;
+	font-family:verdana;
+
 }
 
 header  h2 {
 	margin-bottom:0.2em;
 	margin-top:0em;
 	padding-bottom:0em;
+	padding:0.3em 2em 2em 2em;
 }
 .body {
-
+	padding:1em;
 }
+footer {
+	text-align:center;
+	color: rgb(220,220,220);
+	padding:1em;
+}
+
 .gallery {
 	overflow:hidden;
+	margin-left: auto;
+	margin-right: auto;
+	max-width:1200px;
 }
+
+@media screen and (min-width:2000px ){
+	.gallery{
+		max-width:1500px;
+	}
+}
+
+
+
+
+
 .image {
 	padding:2px;
 	float:left;
+	position: relative;
+	display:block;
 }
 .image img{
-	object-fit: cover;
 	height:100%;
+	width:100%;
 }
+
+.image > span {
+	position: absolute;
+	left: 0em;
+	bottom: 0.1em;
+	padding:1em 1em 1em 1em;
+	display: inline-block;
+	color: white;
+	visibility: hidden;
+	opacity:0;
+	transition:visibility 0.1s linear,opacity 0.1s linear;
+}
+
+.image:hover > span {
+	visibility:visible;
+	opacity:1;
+}
+
 
 
 

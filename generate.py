@@ -8,6 +8,9 @@ import datetime
 from PIL import Image
 from PIL import ExifTags
 
+viewerPath = "view/{}.html"
+pathTemplate = "img/thumbnails/{}_{}.jpg"
+
 TAGS_NR  = {}
 for k,v in ExifTags.TAGS.items():
     TAGS_NR[v] = k
@@ -24,7 +27,6 @@ def files():
 def processImages(files=files()):
     numFiles = len(files)
     i = 1
-    pathTemplate = "img/thumbnails/{}_{}.jpg"
     for f in files:
         filename = os.path.basename(f)
         name = os.path.splitext(filename)[0]
@@ -42,7 +44,7 @@ def processImages(files=files()):
                 thumbS.thumbnail( (512,512))
                 thumbL.thumbnail( (3000,3000))
                 spath =   pathTemplate.format(name,'small',progressive=True,quality=75)
-                lpath =   pathTemplate.format(name,'large',progressive=True,quality=75)
+                lpath =   pathTemplate.format(name,'large',progressive=True,quality=85)
 
 
 
@@ -58,6 +60,7 @@ def processImages(files=files()):
                     'name': name,
                     'date': tag('DateTimeOriginal'),
                     'rating': tag('Rating'),
+                    'view': viewerPath.format(name),
                     'Copyright': tag('Copyright'),
                     'original': {
                         'path' : f,
@@ -99,8 +102,16 @@ def genHTML():
         with open(t,'r') as tm:
             template= Template(tm.read())
             hname = "{}.html".format(name)
-            with open(hname,'w') as f :
-                print("Generating " + hname + "...")
-                f.write(template.render(inventory=inventory))
+            if name == "viewer":
+                for (i,img) in zip(range(0,len(inventory)),inventory):
+                    with open(img['view'],'w') as vf:
+                        print("Generating " + img['view'] + "...")
+                        prev = inventory[i-1]['view'] if i > 0 else None
+                        next = inventory[i+1]['view'] if i+1 < len(inventory) else None
+                        vf.write(template.render(pic=inventory[i],inventory=inventory,index=i,prev=prev,next=next))
+            else:
+                with open(hname,'w') as f :
+                    print("Generating " + hname + "...")
+                    f.write(template.render(inventory=inventory))
         
 genHTML()

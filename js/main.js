@@ -4,47 +4,54 @@ function gallery() {
 	$('.gallery').each( function(index,elem){
 		width= $(this).innerWidth();
 		children=$(this).children().toArray();
+		pratio = window.devicePixelRatio;	
+		//Calculate extra width
+		child = $(children[0]).children('img');
+		excess = $(children[0]).outerWidth(true)-child.outerWidth(true);
+		
 		$('children').each(function() { $(this).css( {'width':'','height':''});});
-		row = function(elems){
-			heights = $.map(elems ,function(e) {return $(e).attr('data-height')});
+		row = function(elems,lastRow){
+			heights = $.map(elems ,e=> $(e).attr('data-height')/pratio);
 			min = Math.min(...heights);
-			scales = $.map(heights, e => e/min );
-			$(elems).each(function(i){
-				newWidth = $(this).attr('data-width') / scales[i];
-				$(this).width(newWidth); 
-			});
-			$(elems).height(min)
-			outerwidths = $.map(elems, function(e) { return $(e).outerWidth(true);})
-			innerwidths = $.map(elems, function(e) { return $(e).innerWidth();})
-			sumowidth = sum(outerwidths);
-			sumiwidth = sum(innerwidths);
-			excess = sumowidth-sumiwidth;
-			scale = sumiwidth/(width-excess)*1.0001 ;
+			widths =  $.map(elems, e=> $(e).attr('data-width') * min/ $(e).attr('data-height') );
+			
+			if(!lastRow){
+				scale =  1.0001*sum(widths)/(width-elems.length*excess);
+			}
+			else{
+				scale=1.0;
+			}
+			widths = $.map(widths,e=>e/scale);
+			height = min/scale;
+
 
 			if (scale < 1.0) {
 				return false;
 			}
 			else {
-				$(elems).each( function(){
-					newWidth = $(this).innerWidth() / scale;
-					newHeight =$(this).innerHeight()  / scale;
-					$(this).width(newWidth);
-					$(this).height(newHeight);
+				$(elems).each( function(i){
+					$(this).width(widths[i]);
+					$(this).height(height);
 				})
-				console.log(elems.length)
 				return true;
 			}
-
 		}
 		
 		start=0;
 		end =1;
-		while(end <= children.length){
-			while(end <= children.length && !row(children.slice(start,end))){
+		while(end <= children.length+1){
+			while(end <= children.length+1 && !row(children.slice(start,end),false)){
 				end++;
 			}
-			start=end;
-			end++;
+			if (end > children.length+1)
+			{
+				row(children.slice(start,end),true);
+				break;
+			}
+			else{
+				start=end;
+				end++;
+			}
 		}
 	})
 	
