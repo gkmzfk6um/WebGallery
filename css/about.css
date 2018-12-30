@@ -18,11 +18,15 @@
 html,body {
 	min-height:100%;
 }
-body {
-	background-image: url('/img/Shadow.png');
-	background-repeat: no-repeat;
-	background-position: bottom right;
-	background-size: auto 60%;
+
+
+@media only screen and (min-width: 750px) {
+	body {
+		background-image: url('/img/Shadow.png');
+		background-repeat: no-repeat;
+		background-position: bottom right;
+		background-size: auto 60%;
+	}
 }
 
 

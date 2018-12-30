@@ -1,6 +1,6 @@
 {
     "icons": [{
-        "src": "/img/icons8-camera-filled-100.png",
+        "src": "/icon.png",
         "sizes": "100x100",
         "type": "image/png"
     }],
