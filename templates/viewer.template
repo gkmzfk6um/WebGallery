@@ -9,7 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <link rel="manifest" href="site.webmanifest">
-  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="apple-touch-icon" href="/img/icons8-camera-filled-100.png">
   <!-- Place favicon.ico in the root directory -->
 
   <link rel="stylesheet" href="/css/normalize.css">
@@ -24,7 +24,7 @@
   </header>
   <div class="body">
 	  <div class="viewer" >
-		  <a id="back" href="/">
+		  <a id="back" href="/#{{pic.name}}">
 		 	<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
 			       width="50" height="50"
 		       viewBox="0 0 224 224"

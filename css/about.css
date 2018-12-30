@@ -1,0 +1,29 @@
+#left {
+	background:white;
+	padding:1em;
+	border:2px solid rgb(200,200,200);
+	margin:auto;
+	margin-bottom: 3em;
+	max-width:600px;
+
+}
+
+#left > h3 {
+	 background-color:rgb(30,30,30);
+	 color:white;
+	 display:inline-block;
+	 padding: 0.4em 1em 0.4em 2em;
+	 margin-left:-1em;
+}
+html,body {
+	min-height:100%;
+}
+body {
+	background-image: url('/img/Shadow.png');
+	background-repeat: no-repeat;
+	background-position: bottom right;
+	background-size: auto 60%;
+}
+
+
+

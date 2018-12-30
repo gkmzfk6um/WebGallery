@@ -54,9 +54,12 @@ def processImages(files=files()):
                 exif = img._getexif()
                 thumbL = img.copy()
                 thumbS = img.copy()
+                thumbM = img.copy()
                 thumbS.thumbnail( (512,512))
+                thumbM.thumbnail( (1024,1024))
                 thumbL.thumbnail( (3000,3000))
                 spath =   pathTemplate.format(name,'small',progressive=True,quality=75)
+                mpath =   pathTemplate.format(name,'medium',progressive=True,quality=85)
                 lpath =   pathTemplate.format(name,'large',progressive=True,quality=85)
 
 
@@ -88,6 +91,11 @@ def processImages(files=files()):
                         'path' : lpath,
                         'width': thumbL.width,
                         'height': thumbL.height
+                    },
+                    'thumbM': {
+                        'path' : mpath,
+                        'width': thumbM.width,
+                        'height': thumbM.height
                     },
                     'thumbS': {
                         'path' : spath,

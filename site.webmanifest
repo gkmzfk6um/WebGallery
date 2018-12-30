@@ -1,8 +1,9 @@
 {
     "icons": [{
-        "src": "icon.png",
-        "sizes": "192x192",
+        "src": "/img/icons8-camera-filled-100.png",
+        "sizes": "100x100",
         "type": "image/png"
     }],
+    "name": "Lukas' Gallery",
     "start_url": "/"
 }

@@ -14,6 +14,7 @@
 
   <link rel="stylesheet" href="/css/normalize.css">
   <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/about.css">
 </head>
 
 <body>
@@ -23,30 +24,55 @@
 
   <!-- Add your site or application content here -->
   <header>
-	<h2>Gallery - Lukas Rahmn </h2>	  
+	<a href="/">
+		<h2>Gallery - Lukas Rahmn </h2>
+	</a>
 	<div id="menu">
-		<a href="about.html">About</a>
+		<a href="/">Back</a>
 	</div>
   </header>
   <div class="body">
-	  <div class="gallery" >{% for pic in inventory %}
-		  <a href="{{pic.view}}" id="{{pic.name}}" class="image" style="background-color:{{pic.colour}};"   data-width="{{pic.thumbS.width}}" data-height="{{pic.thumbS.height}}" data-src="/{{pic.thumbS.path}}">
-			  <span>{{pic.name}} </span>
-		  </a>
-		{% endfor %}
-	</div>
+	  <div id="left">
+	  	<h3> About </h3>
+	  	<p id="about">
+	  	      Welcome to my corner of the web where I display the results of my photography interest. 
+	  	      The collection contains many different kinds of photos, of which almost all originates from the 
+	  	      neighbourhood of Gothenburg. Which is a fairly large city (by local standards) in Sweden. 
+	  	      With this site I hope to be able to share my work, so that it might bring joy to others. 
+	  	      If you would like to use any of the images for other than private purposes and/or secure 
+		      a physical print I ask that you email me.<br><br>
+		      Once again, welcome!<br>
+
+	  	      Lukas Rahmn
+	  	</p>
+
+	  	<h3>Contact</h3>
+	  	<p id="contact">
+	  		Feel free to contact me by email for any questions you might have. 
+	  	      To avoid spamming I leave it as an exercises to the reader to 
+	  	      replace "firstname" and "surname" with my actual name in the email below.
+	  	      <span id="email">firstname@surname.net</span>
+	  	</p>
+
+	  	<h3>The website itself</h3>
+	  	<p id="tech">
+	  	      The technical inclined readers might be interested to know that this
+	  	      website is selfmade and available as open source (MIT license) at 
+	  	      <a href="https://github.com/VirtualRaven/WebGallery">Github</a>.	
+		      All icons on the website is kindly provided by <a href="">Icons8</a> 
+
+	  	</p>
+	  </div>
   </div>
 
   <footer>
 	  Copyright 2018 Lukas Rahmn. All Rights Reserved.
-	   
   </footer>
 
   <script src="/js/vendor/modernizr-3.6.0.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
   <script>window.jQuery || document.write('<script src="js/vendor/jquery-3.3.1.min.js"><\/script>')</script>
   <script src="/js/plugins.js"></script>
-  <script src="/js/main.js"></script>
 
   <!-- Google Analytics: change UA-XXXXX-Y to be your site's ID. 
   <script>

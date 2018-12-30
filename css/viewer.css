@@ -24,7 +24,7 @@ body {
 header > span {
 	padding-left:2em;
 	text-align:center;
-	color: #808080;
+	color: #cccccc;
 	display:table-cell;
 	vertical-align:middle;
 }
@@ -36,6 +36,8 @@ header {
 	display:table;
 	height:2em;
 	width:100%;
+	padding: 0;
+	border-color:#303030;
 }
 .viewer > a {
 	position:absolute;
