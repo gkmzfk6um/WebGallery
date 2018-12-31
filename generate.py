@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 import glob
+import hashlib
 import re
 import os
 import json
 import numpy as np
+import base64
 from jinja2 import Template
 import datetime
 from PIL import Image
@@ -58,14 +60,16 @@ def processImages(files=files()):
                 thumbS.thumbnail( (512,512))
                 thumbM.thumbnail( (1024,1024))
                 thumbL.thumbnail( (3000,3000))
-                spath =   pathTemplate.format(name,'small',progressive=True,quality=75)
-                mpath =   pathTemplate.format(name,'medium',progressive=True,quality=85)
-                lpath =   pathTemplate.format(name,'large',progressive=True,quality=85)
+                id = base64.urlsafe_b64encode(hashlib.sha1(name.encode('utf-8')).digest()).decode('utf-8')
+                spath =   pathTemplate.format(id,'small',progressive=True,quality=75)
+                mpath =   pathTemplate.format(id,'medium',progressive=True,quality=85)
+                lpath =   pathTemplate.format(id,'large',progressive=True,quality=85)
 
 
 
                 tag = lambda x : exif[TAGS_NR[x]] if TAGS_NR[x] in exif else None
                 thumbS.save(spath)
+                thumbM.save(mpath)
                 thumbL.save(lpath)
 
                 #for k,v in exif.items():
@@ -77,9 +81,10 @@ def processImages(files=files()):
                 avghex= ('#%02x%02x%02x' % tuple(avg.astype(int)))
                 obj= {
                     'name': name,
+                    'id': id,
                     'date': tag('DateTimeOriginal'),
                     'rating': tag('Rating'),
-                    'view': viewerPath.format(name),
+                    'view': viewerPath.format(id),
                     'Copyright': tag('Copyright'),
                     'colour': avghex,
                     'original': {

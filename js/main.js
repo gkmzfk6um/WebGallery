@@ -4,7 +4,6 @@ function gallery() {
 	$('.gallery').each( function(index,elem){
 		width= $(this).innerWidth();
 		children=$(this).children().toArray();
-		pratio = window.devicePixelRatio;	
 		//Calculate extra width
 		//child = $(children[0]).children('img');
 		//excess = $(children[0]).outerWidth(true)-child.outerWidth(true);
@@ -12,7 +11,7 @@ function gallery() {
 		
 		$('children').each(function() { $(this).css( {'width':'','height':''});});
 		row = function(elems,lastRow){
-			heights = $.map(elems ,e=> $(e).attr('data-height')/pratio);
+			heights = $.map(elems ,e=> $(e).attr('data-height'));
 			min = Math.min(...heights);
 			widths =  $.map(elems, e=> $(e).attr('data-width') * min/ $(e).attr('data-height') );
 			
@@ -66,7 +65,12 @@ $(window).resize(function() {
 
 function loadImages(){
 	$('.image').each( function() {
-		src= $(this).attr('data-src');
+		if (1 == window.devicePixelRatio){	
+			src= $(this).attr('data-src');
+		}
+		else{
+			src= $(this).attr('data-src2');
+		}
 		var img = $('<img>')
 		img.one('load',function() {
 			$(this).css('visibility','visible');
