@@ -12,13 +12,12 @@
 	</script>
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title></title>
+  <title>{{pic.name}}</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <link rel="manifest" href="site.webmanifest">
-  <link rel="apple-touch-icon" href="icon.png">
-  <!-- Place favicon.ico in the root directory -->
+  <link rel="apple-touch-icon" href="icon_square.png">
 
   <link rel="stylesheet" href="/css/normalize.css">
   <link rel="stylesheet" href="/css/main.css">
@@ -36,19 +35,19 @@
 		 	<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
 			       width="50" height="50"
 		       viewBox="0 0 224 224"
-		       style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,224v-224h224v224z" fill="none"></path><g fill="#cccccc"><g id="surface1"><path d="M49.28,0c-2.2925,0 -4.55,0.91 -6.3,2.66l-40.32,40.32c-3.5,3.5 -3.5,9.1 0,12.6l40.32,40.32c1.75,1.75 4.0075,2.66 6.3,2.66c2.2925,0 4.55,-0.91 6.3,-2.66c3.5,-3.5 3.5,-9.1 0,-12.6l-24.92,-25.06h112.7c34.5975,0 62.72,28.14 62.72,62.72c0,34.5975 -28.1225,62.72 -62.72,62.72h-71.68v17.92h76.16v-0.28c42.385,-2.345 76.16,-37.3975 76.16,-80.36c0,-42.105 -32.445,-76.6675 -73.64,-80.22c-0.805,-0.245 -1.645,-0.42 -2.52,-0.42h-117.18l24.92,-25.06c3.5,-3.5 3.5,-9.1 0,-12.6c-1.75,-1.75 -4.0075,-2.66 -6.3,-2.66zM0,183.68v17.92h8.96v-17.92zM17.92,183.68v17.92h8.96v-17.92zM35.84,183.68v17.92h8.96v-17.92zM53.76,183.68v17.92h8.96v-17.92z"></path></g></g></g></svg>	       
+	 style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,224v-224h224v224z" fill="none"></path><g fill="#cccccc"><g id="surface1"><path d="M49.28,0c-2.2925,0 -4.55,0.91 -6.3,2.66l-40.32,40.32c-3.5,3.5 -3.5,9.1 0,12.6l40.32,40.32c1.75,1.75 4.0075,2.66 6.3,2.66c2.2925,0 4.55,-0.91 6.3,-2.66c3.5,-3.5 3.5,-9.1 0,-12.6l-24.92,-25.06h112.7c34.5975,0 62.72,28.14 62.72,62.72c0,34.5975 -28.1225,62.72 -62.72,62.72h-71.68v17.92h76.16v-0.28c42.385,-2.345 76.16,-37.3975 76.16,-80.36c0,-42.105 -32.445,-76.6675 -73.64,-80.22c-0.805,-0.245 -1.645,-0.42 -2.52,-0.42h-117.18l24.92,-25.06c3.5,-3.5 3.5,-9.1 0,-12.6c-1.75,-1.75 -4.0075,-2.66 -6.3,-2.66zM0,183.68v17.92h8.96v-17.92zM17.92,183.68v17.92h8.96v-17.92zM35.84,183.68v17.92h8.96v-17.92zM53.76,183.68v17.92h8.96v-17.92z"></path></g></g></g></svg>
 		  </a>
 		  {% if prev %}
-		  	<a id="prev" href="/{{prev}}">
+		  	<a id="prev" href="{{prev| tolink}}">
 				<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
 					width="50" height="50"
 					viewBox="0 0 224 224"
 					style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,224v-224h224v224z" fill="none"></path><g fill="#cccccc"><g id="surface1"><path d="M143.9725,13.72c-1.1725,0 -2.275,0.4725 -3.115,1.295l-94.4475,93.695c-1.7675,1.75 -1.785,4.585 -0.035,6.335l93.695,94.465c1.75,1.75 4.585,1.7675 6.335,0.0175l26.985,-26.7575c1.7675,-1.75 1.785,-4.585 0.035,-6.3525l-63.77,-64.2775l64.295,-63.77c1.75,-1.75 1.7675,-4.585 0.0175,-6.335l-26.7575,-26.985c-0.8575,-0.875 -2.03,-1.3475 -3.2375,-1.33zM143.99,24.535l20.4575,20.615l-64.2775,63.77c-1.7675,1.75 -1.785,4.585 -0.035,6.3525l63.77,64.2775l-20.6325,20.4575l-87.3775,-88.095z"></path></g></g></g></svg>
 			</a>
 		  {% endif %}
-			  <img src="/{{pic.thumbL.path}}">
+			  <img style="background-color:{{pic.colour}};" src="/{{pic.thumbL.path}}">
 	          {% if next %}
-		  	<a id="next" href="/{{next}}">
+		  	<a id="next" href="{{next| tolink}}">
 				<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
 					width="50" height="50"
 					viewBox="0 0 224 224"
@@ -59,17 +58,11 @@
   </div>
 
   <footer>
-	  Copyright 2018 Lukas Rahmn. All Rights Reserved.
-	   
+	  Copyright {{year}} Lukas Rahmn. All Rights Reserved.
   </footer>
 
-	</div>
+ </div>
   <script src="/js/vendor/modernizr-3.6.0.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-  <script>window.jQuery || document.write('<script src="js/vendor/jquery-3.3.1.min.js"><\/script>')</script>
-  <script src="/js/plugins.js"></script>
-  <script src="/js/main.js"></script>
-
 </body>
 
 </html>

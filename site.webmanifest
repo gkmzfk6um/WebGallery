@@ -1,7 +1,7 @@
 {
     "icons": [{
-        "src": "/icon.png",
-        "sizes": "100x100",
+        "src": "/icon_circle.png",
+        "sizes": "512x512",
         "type": "image/png"
     }],
     "name": "Lukas' Gallery",

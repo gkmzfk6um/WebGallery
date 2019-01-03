@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import glob
+import datetime
 import hashlib
 import re
 import os
@@ -7,12 +8,30 @@ import json
 import numpy as np
 import base64
 from jinja2 import Template
+import jinja2.filters as filters
 import datetime
+import re
 from PIL import Image
 from PIL import ExifTags
 
 viewerPath = "view/{}.html"
 pathTemplate = "img/thumbnails/{}_{}.jpg"
+
+def StripHTMLExt(link):
+    m=re.match('^(.*)\.html$',link)
+    if m:
+        return m.group(1)
+    else:
+        return link
+
+def addSlash(link):
+    if link[0] == '/':
+        return link
+    else:
+        return '/' + link
+
+filters.FILTERS['tolink'] = lambda x: addSlash(StripHTMLExt(x))
+
 
 pictureNames = {}
 try: 
@@ -61,7 +80,7 @@ def processImages(files=files()):
                 thumbM.thumbnail( (1024,1024))
                 thumbL.thumbnail( (3000,3000))
                 id = base64.urlsafe_b64encode(hashlib.sha1(name.encode('utf-8')).digest()).decode('utf-8')
-                spath =   pathTemplate.format(id,'small',progressive=True,quality=75)
+                spath =   pathTemplate.format(id,'small',progressive=True,quality=85)
                 mpath =   pathTemplate.format(id,'medium',progressive=True,quality=85)
                 lpath =   pathTemplate.format(id,'large',progressive=True,quality=85)
 
@@ -123,6 +142,7 @@ def genInventory():
     return inventory
 
 def genHTML():
+    year =datetime.datetime.now().year
     inventory = genInventory()
     templates = glob.glob('templates/*.template')
     print('Generating html...')
@@ -138,10 +158,10 @@ def genHTML():
                         print("Generating " + img['view'] + "...")
                         prev = inventory[i-1]['view'] if i > 0 else None
                         next = inventory[i+1]['view'] if i+1 < len(inventory) else None
-                        vf.write(template.render(pic=inventory[i],inventory=inventory,index=i,prev=prev,next=next))
+                        vf.write(template.render(pic=img,inventory=inventory,index=i,prev=prev,next=next,year=year))
             else:
                 with open(hname,'w') as f :
                     print("Generating " + hname + "...")
-                    f.write(template.render(inventory=inventory))
+                    f.write(template.render(inventory=inventory,year=year))
         
 genHTML()

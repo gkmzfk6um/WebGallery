@@ -13,13 +13,12 @@
 
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title></title>
+  <title>Gallery</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <link rel="manifest" href="site.webmanifest">
-  <link rel="apple-touch-icon" href="icon.png">
-  <!-- Place favicon.ico in the root directory -->
+  <link rel="apple-touch-icon" href="icon_square.png">
 
   <link rel="stylesheet" href="/css/normalize.css">
   <link rel="stylesheet" href="/css/main.css">
@@ -34,16 +33,16 @@
   <header>
 	<h2>Gallery - Lukas Rahmn </h2>	  
 	<div id="menu">
-		<a href="about.html">About</a>
+		<a href="/about">About</a>
 	</div>
   </header>
   <div class="body">
 	  <div class="gallery" >{% for pic in inventory %}
-		  <a href="{{pic.view}}" id="{{pic.name}}" class="image" style="background-color:{{pic.colour}};"   
+		  <a href="{{pic.view | tolink }}" id="{{pic.name}}" class="image" style="background-color:{{pic.colour}};"   
 			  data-width="{{pic.thumbS.width}}" 
 			  data-height="{{pic.thumbS.height}}" 
-			  data-src="/{{pic.thumbS.path}}"
-			  data-src2="/{{pic.thumbM.path}}"
+     			  data-src= "{{pic.thumbS.path | tolink }}"
+	  		  data-src2="{{pic.thumbM.path | tolink}}"
 		  >
 			  <span>{{pic.name}} </span>
 		  </a>
@@ -52,8 +51,7 @@
   </div>
 
   <footer>
-	  Copyright 2018 Lukas Rahmn. All Rights Reserved.
-	   
+	  Copyright {{year}} Lukas Rahmn. All Rights Reserved.
   </footer>
 
   <script src="/js/vendor/modernizr-3.6.0.min.js"></script>
