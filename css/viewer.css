@@ -71,6 +71,7 @@ header {
 .viewer> img {
 	max-height:100%;
 	max-width:100%;
+	transition:visibility 0.1s linear,opacity 0.1s linear;
 }
 a:active, a:focus {
 	  outline: 0;

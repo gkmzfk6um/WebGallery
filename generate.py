@@ -18,6 +18,9 @@ viewerPath = "view/{}.html"
 pathTemplate = "img/thumbnails/{}_{}.jpg"
 
 def StripHTMLExt(link):
+    if link is None :
+        return link
+
     m=re.match('^(.*)\.html$',link)
     if m:
         return m.group(1)
@@ -25,12 +28,21 @@ def StripHTMLExt(link):
         return link
 
 def addSlash(link):
-    if link[0] == '/':
+    if link is None:
+        return link
+    elif link[0] == '/':
         return link
     else:
         return '/' + link
+def toJsonPath(link):
+    if link is None:
+        return link
+    else:
+        return StripHTMLExt(link)+'.json'
 
-filters.FILTERS['tolink'] = lambda x: addSlash(StripHTMLExt(x))
+toLink =  lambda x: addSlash(StripHTMLExt(x))
+filters.FILTERS['tolink'] = toLink
+
 
 
 pictureNames = {}
@@ -158,7 +170,21 @@ def genHTML():
                         print("Generating " + img['view'] + "...")
                         prev = inventory[i-1]['view'] if i > 0 else None
                         next = inventory[i+1]['view'] if i+1 < len(inventory) else None
-                        vf.write(template.render(pic=img,inventory=inventory,index=i,prev=prev,next=next,year=year))
+                        jsonPath= toJsonPath(img['view'])
+                        vf.write(template.render(pic=img,inventory=inventory,index=i,prev=prev,next=next,year=year,json=toLink(jsonPath)))
+                        with open(jsonPath ,'w') as jv:
+                            obj = {
+                                'name': img['name'],
+                                'id' : name,
+                                'colour': img['colour'],
+                                'path': toLink(img['thumbL']['path']),
+                                'url':  toLink(img['view']),
+                                'next': toLink(toJsonPath(next)),
+                                'prev': toLink(toJsonPath(prev))
+                            }
+                            json.dump(obj,jv)
+
+                            
             else:
                 with open(hname,'w') as f :
                     print("Generating " + hname + "...")
