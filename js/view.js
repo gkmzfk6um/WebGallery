@@ -1,4 +1,4 @@
-function fetchMeta(link,success=()=>{}) {
+function fetchMeta(link,success=()=>history.replaceState(window.viewerMeta,"",window.location.href)) {
 	$.ajax({dataType: "json",url: link, success: function(data) {
 		window.viewerMeta = data;
 		success();
@@ -6,10 +6,12 @@ function fetchMeta(link,success=()=>{}) {
 	});
 }
 
-function updatePage(){
+function updatePage(isBack = false){
 	document.title = window.viewerMeta['name'];
 	$('#picname').text(document.title);
-	history.pushState({},"",window.viewerMeta['url']);
+	if( !isBack){
+		history.pushState(window.viewerMeta,"",window.viewerMeta['url']);
+	}
 	$('.viewer').children('img').css('opacity',0);
 	var img = $('<img />').attr('src', window.viewerMeta['path']).one('load',function(){
 		$('.viewer').children('img').remove();
@@ -38,3 +40,10 @@ $('body').keydown(function(e){
 		$('#next').click();
 	}
 });
+
+$(window).on('popstate', function(e) {
+		window.viewerMeta = e.originalEvent.state;
+		updatePage(true);
+});
+
+
