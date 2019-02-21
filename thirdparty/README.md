@@ -1,4 +1,10 @@
-Copyright (c) Lukas Rahmn
+# HTML 5 boiler plate
+This project is based upon the HTML 5 boilerplate. 
+Thanks for the nice boiler plate! :)
+
+# Original license
+
+Copyright (c) HTML5 Boilerplate
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
