@@ -1,4 +1,8 @@
-const sum = as => as.reduce( (a,b) => a+b,0)
+const sum = function(as){ return  as.reduce( function(a,b){return a+b; } ,0) }
+Array.min = function(array){
+	return Math.min.apply(Math,array)
+}
+
 function gallery() {
 	$('.gallery').each( function(index,elem){
 		var width = null;
@@ -14,9 +18,10 @@ function gallery() {
 			
 			$('children').each(function() { $(this).css( {'width':'','height':''});});
 			row = function(elems,lastRow){
-				heights = $.map(elems ,e=> $(e).attr('data-height'));
-				min = Math.min(...heights);
-				widths =  $.map(elems, e=> $(e).attr('data-width') * min/ $(e).attr('data-height') );
+				heights = $.map(elems ,function(e){return  $(e).attr('data-height'); });
+				min = Array.min(heights);
+				widths =  $.map(elems, function(e){ 
+					return $(e).attr('data-width') * min/ $(e).attr('data-height')} );
 				
 				if(!lastRow){
 					scale =  1.0002*sum(widths)/(width-elems.length*excess);
@@ -24,7 +29,7 @@ function gallery() {
 				else{
 					scale=1.0;
 				}
-				widths = $.map(widths,e=>e/scale);
+				widths = $.map(widths,function(e){return e/scale});
 				height = min/scale;
 
 

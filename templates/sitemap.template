@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+	xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+
+	<url>
+		<loc>{{websiteName}}/</loc>
+		<priority> 0.9 </priority>
+		<changefreq>Weekly</changefreq>
+		{% for pic in inventory %}
+		<image:image>
+			<image:loc>
+				{{websiteName}}{{pic.thumbL.path | tolink}}
+			</image:loc>
+			<image:title>
+				{{pic.name}}
+			</image:title>
+		</image:image>
+		{% endfor %}
+	</url>
+	<url>
+		<loc>https://photos.rahmn.net/about/</loc>
+		<priority> 0.4 </priority>
+	</url>
+	{% for pic in inventory %}
+	<url>
+		<loc>
+			{{websiteName}}{{pic.view | tolink}}
+		</loc>
+		<priority>0.5</priority>
+		<image:image>
+			<image:loc>
+				{{websiteName}}{{pic.thumbL.path | tolink}}
+			</image:loc>
+			<image:title>
+				{{pic.name}}
+			</image:title>
+		</image:image>
+	</url>
+	{% endfor %}
+
+</urlset>

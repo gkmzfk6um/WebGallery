@@ -13,13 +13,14 @@
 
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>Gallery</title>
-  <meta name="description" content="">
+  <title>Lukas Rahmn's gallery</title>
+  <meta name="description" content="Gallery for photographies by Lukas Rahmn">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link href="https://fonts.googleapis.com/css?family=Cinzel|Montserrat" rel="stylesheet"> 
   <link rel="manifest" href="site.webmanifest">
   <link rel="apple-touch-icon" href="icon_square.png">
-
   <link rel="stylesheet" href="/css/normalize.css">
   <link rel="stylesheet" href="/css/main.css">
 </head>

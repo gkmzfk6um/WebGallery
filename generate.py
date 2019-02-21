@@ -16,6 +16,7 @@ from PIL import ExifTags
 
 viewerPath = "view/{}.html"
 pathTemplate = "img/thumbnails/{}_{}.jpg"
+websiteName = "https://photos.rahmn.net"
 
 def StripHTMLExt(link):
     if link is None :
@@ -88,7 +89,10 @@ def processImages(files=files()):
                 thumbL = img.copy()
                 thumbS = img.copy()
                 thumbM = img.copy()
-                thumbS.thumbnail( (512,512))
+                w,h = img.size
+                size =  1024 if w/h > 2.4 else 512
+                print(size)
+                thumbS.thumbnail( (size,size))
                 thumbM.thumbnail( (1024,1024))
                 thumbL.thumbnail( (3000,3000))
                 id = base64.urlsafe_b64encode(hashlib.sha1(name.encode('utf-8')).digest()).decode('utf-8')
@@ -163,7 +167,11 @@ def genHTML():
         name = os.path.splitext(filename)[0]
         with open(t,'r') as tm:
             template= Template(tm.read())
-            hname = "{}.html".format(name)
+            if name != "sitemap":
+                hname = "{}.html".format(name)
+            else:
+                hname = "{}.xml".format(name)
+
             if name == "viewer":
                 for (i,img) in zip(range(0,len(inventory)),inventory):
                     with open(img['view'],'w') as vf:
@@ -188,6 +196,6 @@ def genHTML():
             else:
                 with open(hname,'w') as f :
                     print("Generating " + hname + "...")
-                    f.write(template.render(inventory=inventory,year=year))
+                    f.write(template.render(inventory=inventory,year=year,websiteName=websiteName))
         
 genHTML()
