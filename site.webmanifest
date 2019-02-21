@@ -5,5 +5,6 @@
         "type": "image/png"
     }],
     "name": "Lukas' Gallery",
+    "display": "standalone",
     "start_url": "/"
 }

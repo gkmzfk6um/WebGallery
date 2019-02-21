@@ -116,8 +116,12 @@ header  a:visited, header  a:hover, header  a:active, header  a:link, header  a 
 
 body {
 	background: #F5F5F5 ;
-	font-family:verdana;
+	font-family:'Montserrat', verdana;
 
+}
+
+h1,h2,h3,h4 {
+	font-family: 'Cinzel', verdana;
 }
 
 header  h2 {
