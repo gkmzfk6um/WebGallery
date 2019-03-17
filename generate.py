@@ -70,13 +70,14 @@ def files():
 def processImages(files=files()):
     numFiles = len(files)
     i = 1
+    print('Processing images...')
     for f in files:
         filename = os.path.basename(f)
         name = os.path.splitext(filename)[0]
         meta= "img/meta/{}.json".format(name)
         try:
             with open(meta,'r') as f:
-                print("({}/{}) Skipping {}.".format(i,numFiles,name))
+                print("({}/{}) [skip]\r".format(i,numFiles),end='')
                 obj= json.loads(f.read())
                 if obj['name'] in  pictureNames:
                     obj['name'] = pictureNames[obj['name']]
@@ -84,14 +85,12 @@ def processImages(files=files()):
 
         except FileNotFoundError:
             with Image.open(f) as img:
-                print("({}/{}) Processing {}.".format(i,numFiles,name))
                 exif = img._getexif()
                 thumbL = img.copy()
                 thumbS = img.copy()
                 thumbM = img.copy()
                 w,h = img.size
                 size =  1024 if w/h > 2.4 else 512
-                print(size)
                 thumbS.thumbnail( (size,size))
                 thumbM.thumbnail( (1024,1024))
                 thumbL.thumbnail( (3000,3000))
@@ -148,7 +147,9 @@ def processImages(files=files()):
                 with open(meta,'w') as f:
                     json.dump(obj,f)
                 yield obj
+                print("({}/{}) [ ok ]\r".format(i,numFiles),end='')
         i=i+1
+    print('')
 
 def genInventory():
     dateKey = lambda x : datetime.datetime.strptime(x['date'], "%Y:%m:%d %H:%M:%S")
@@ -161,7 +162,6 @@ def genHTML():
     year =datetime.datetime.now().year
     inventory = genInventory()
     templates = glob.glob('templates/*.template')
-    print('Generating html...')
     for t in templates:
         filename = os.path.basename(t)
         name = os.path.splitext(filename)[0]
@@ -175,7 +175,7 @@ def genHTML():
             if name == "viewer":
                 for (i,img) in zip(range(0,len(inventory)),inventory):
                     with open(img['view'],'w') as vf:
-                        print("Generating " + img['view'] + "...")
+                        print("Generating view  ({}/{})\r".format(i+1,len(inventory)),end='')
                         prev = inventory[i-1]['view'] if i > 0 else None
                         next = inventory[i+1]['view'] if i+1 < len(inventory) else None
                         jsonPath= toJsonPath(img['view'])
@@ -191,6 +191,7 @@ def genHTML():
                                 'prev': toLink(toJsonPath(prev))
                             }
                             json.dump(obj,jv)
+                print('')
 
                             
             else:
