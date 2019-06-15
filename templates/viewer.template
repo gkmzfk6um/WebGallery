@@ -51,7 +51,13 @@
 					viewBox="0 0 224 224"
 					style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,224v-224h224v224z" fill="none"></path><g fill="#cccccc"><g id="surface1"><path d="M143.9725,13.72c-1.1725,0 -2.275,0.4725 -3.115,1.295l-94.4475,93.695c-1.7675,1.75 -1.785,4.585 -0.035,6.335l93.695,94.465c1.75,1.75 4.585,1.7675 6.335,0.0175l26.985,-26.7575c1.7675,-1.75 1.785,-4.585 0.035,-6.3525l-63.77,-64.2775l64.295,-63.77c1.75,-1.75 1.7675,-4.585 0.0175,-6.335l-26.7575,-26.985c-0.8575,-0.875 -2.03,-1.3475 -3.2375,-1.33zM143.99,24.535l20.4575,20.615l-64.2775,63.77c-1.7675,1.75 -1.785,4.585 -0.035,6.3525l63.77,64.2775l-20.6325,20.4575l-87.3775,-88.095z"></path></g></g></g></svg>
 			</a>
-			<img style="background-color:{{pic.colour}};" src="/{{pic.thumbL.path}}"i alt="{{pic.name}}">
+			<img style="background-color:{{pic.colour}};" 
+			     alt="{{pic.name}}"
+			     srcset="/{{pic.huge.path}} {{pic.huge.width}}w,
+			             /{{pic.large.path}} {{pic.large.width}}w,
+			             /{{pic.medium.path}} {{pic.medium.width}}w" 
+			     src="/{{pic.large.path}}" 
+			/>
 
 		  	<a id="next" href="{{next| tolink}}"
 		  		{% if not next %} 

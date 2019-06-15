@@ -22,7 +22,9 @@ function updatePage(isBack){
 		history.pushState(window.viewerMeta,"",window.viewerMeta['url']);
 	}
 	$('.viewer').children('img').css('opacity',0);
-	var img = $('<img />').attr('src', window.viewerMeta['path']).one('load',function(){
+	var img = $('<img />').attr('srcset', window.viewerMeta['srcset'])
+	img.attr('src', window.viewerMeta['path'])
+	img.one('load',function(){
 		$('.viewer').children('img').remove();
 		$('.viewer').append(this);
 	});

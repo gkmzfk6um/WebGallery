@@ -9,7 +9,7 @@
 		{% for pic in inventory %}
 		<image:image>
 			<image:loc>
-				{{websiteName}}{{pic.thumbL.path | tolink}}
+				{{websiteName}}{{pic.large.path | tolink}}
 			</image:loc>
 			<image:title>
 				{{pic.name}}
@@ -29,7 +29,7 @@
 		<priority>0.5</priority>
 		<image:image>
 			<image:loc>
-				{{websiteName}}{{pic.thumbL.path | tolink}}
+				{{websiteName}}{{pic.large.path | tolink}}
 			</image:loc>
 			<image:title>
 				{{pic.name}}

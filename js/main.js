@@ -76,17 +76,15 @@ $(window).resize(function() {
 
 function loadImages(){
 	$('.image').each( function() {
-		if (1 == window.devicePixelRatio){	
-			src= $(this).attr('data-src');
-		}
-		else{
-			src= $(this).attr('data-src2');
-		}
+		src= $(this).attr('data-src');
+		srcset= $(this).attr('data-srcset');
+		
 		var img = $('<img>')
 		img.one('load',function() {
 			$(this).css('visibility','visible');
 			$(this).css('opacity', '1.0');
 		})
+		img.attr('srcset',srcset);
 		img.attr('src',src);
 		img.appendTo(this);
 

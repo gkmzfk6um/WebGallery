@@ -43,10 +43,13 @@
   <div class="body">
 	  <div class="gallery" >{% for pic in inventory %}
 		  <a href="{{pic.view | tolink }}" id="{{pic.name}}" class="image" style="background-color:{{pic.colour}};"   
-			  data-width="{{pic.thumbS.width}}" 
-			  data-height="{{pic.thumbS.height}}" 
-     			  data-src= "{{pic.thumbS.path | tolink }}"
-	  		  data-src2="{{pic.thumbM.path | tolink}}"
+			  data-width="{{pic.medium.width}}" 
+			  data-height="{{pic.medium.height}}" 
+	  		  data-srcset="
+			  	{{pic.medium.path | tolink}} {{pic.medium.width}}w,
+			  	{{pic.small.path | tolink}} {{pic.small.width}}w,
+			  	{{pic.tiny.path | tolink}} {{pic.tiny.width}}w"
+     			  data-src= "{{pic.medium.path | tolink }}"
 		  >
 			  <span>{{pic.name}} </span>
 		  </a>

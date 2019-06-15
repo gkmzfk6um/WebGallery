@@ -13,10 +13,12 @@ import datetime
 import re
 from PIL import Image
 from PIL import ExifTags
+from libxmp.utils import file_to_dict
 
 viewerPath = "view/{}.html"
 pathTemplate = "img/thumbnails/{}_{}.jpg"
 websiteName = "https://photos.rahmn.net"
+
 
 def StripHTMLExt(link):
     if link is None :
@@ -66,6 +68,20 @@ def files():
     else:
         return ls
 
+def genThumbnails(id,img):
+    sizes = [150,300,512,1024,3000]
+    names = ['tiny', 'small','medium','large','huge']
+    for (s,name) in zip(sizes,names):
+        thumb = img.copy()
+        thumb.thumbnail( (s,s) )
+        path = pathTemplate.format(id,name)
+        thumb.save(path,quality=85)
+        yield (name, {
+                        'path' : path,
+                        'width': thumb.width,
+                        'height': thumb.height
+        })
+
 
 def processImages(files=files()):
     numFiles = len(files)
@@ -86,30 +102,38 @@ def processImages(files=files()):
         except FileNotFoundError:
             with Image.open(f) as img:
                 exif = img._getexif()
-                thumbL = img.copy()
-                thumbS = img.copy()
-                thumbM = img.copy()
+                xmp = file_to_dict(f) 
+                #print(xmp)
+                #for k,v in xmp.items():
+                #    print(k)
+                #    for item in v:
+                #        print("\t{}: {}".format(item[0],item[1] ))
+                xmpUrl = "http://purl.org/dc/elements/1.1/"
+                
+                if xmpUrl in xmp: 
+                    xmp=xmp["http://purl.org/dc/elements/1.1/"]
+                    purlOrg={}
+                    for k,v,_ in xmp:
+                        purlOrg[k] = v
+                    purlTitleKey =  "dc:title[1]"
+                    purlTitle=None
+                    if purlTitleKey in purlOrg:
+                        purlTitle = purlOrg[purlTitleKey]
+                        if purlTitle.strip() == "":
+                            purlTitle=None
+                else:
+                    purlOrg=None
+                
                 w,h = img.size
-                size =  1024 if w/h > 2.4 else 512
-                thumbS.thumbnail( (size,size))
-                thumbM.thumbnail( (1024,1024))
-                thumbL.thumbnail( (3000,3000))
                 id = base64.urlsafe_b64encode(hashlib.sha1(name.encode('utf-8')).digest()).decode('utf-8')
-                spath =   pathTemplate.format(id,'small',progressive=True,quality=85)
-                mpath =   pathTemplate.format(id,'medium',progressive=True,quality=85)
-                lpath =   pathTemplate.format(id,'large',progressive=True,quality=85)
 
 
 
                 tag = lambda x : exif[TAGS_NR[x]] if TAGS_NR[x] in exif else None
-                thumbS.save(spath)
-                thumbM.save(mpath)
-                thumbL.save(lpath)
-
-                #for k,v in exif.items():
-                #    if k in ExifTags.TAGS:
-                #        print("{}: {}".format(ExifTags.TAGS[k],v))
-                if name in  pictureNames:
+                if purlTitle:
+                    name=purlTitle
+                    print("Using XMP title {}".format(name))
+                elif name in  pictureNames:
                     name = pictureNames[name]
                 avg=np.round(np.mean(np.array(img),axis=(0,1)))
                 avghex= ('#%02x%02x%02x' % tuple(avg.astype(int)))
@@ -125,25 +149,11 @@ def processImages(files=files()):
                         'path' : f,
                         'width': img.width,
                         'height': img.height
-                    },
-                    'thumbL': {
-                        'path' : lpath,
-                        'width': thumbL.width,
-                        'height': thumbL.height
-                    },
-                    'thumbM': {
-                        'path' : mpath,
-                        'width': thumbM.width,
-                        'height': thumbM.height
-                    },
-                    'thumbS': {
-                        'path' : spath,
-                        'width': thumbS.width,
-                        'height': thumbS.height
                     }
-
                 }
-
+                for (n,o) in genThumbnails(id,img):
+                    obj[n]=o
+               
                 with open(meta,'w') as f:
                     json.dump(obj,f)
                 yield obj
@@ -181,19 +191,20 @@ def genHTML():
                         jsonPath= toJsonPath(img['view'])
                         vf.write(template.render(pic=img,inventory=inventory,index=i,prev=prev,next=next,year=year,json=toLink(jsonPath)))
                         with open(jsonPath ,'w') as jv:
+                            toSrc = lambda img : "{} {}w".format(toLink(img['path']),img['width'])
                             obj = {
                                 'name': img['name'],
                                 'id' : name,
                                 'colour': img['colour'],
-                                'path': toLink(img['thumbL']['path']),
+                                'path': toLink(img['large']['path']),
                                 'url':  toLink(img['view']),
+                                'srcset' : "{},{},{}".format(*list(map(lambda size : toSrc(img[size]),['medium','large','huge']))),
                                 'next': toLink(toJsonPath(next)),
                                 'prev': toLink(toJsonPath(prev))
                             }
                             json.dump(obj,jv)
                 print('')
 
-                            
             else:
                 with open(hname,'w') as f :
                     print("Generating " + hname + "...")
