@@ -15,7 +15,6 @@ function gallery() {
 			//child = $(children[0]).children('img');
 			//excess = $(children[0]).outerWidth(true)-child.outerWidth(true);
 			excess = $(children[0]).outerWidth(true)-$(children[0]).innerWidth();
-			
 			$('children').each(function() { $(this).css( {'width':'','height':''});});
 			row = function(elems,lastRow){
 				heights = $.map(elems ,function(e){return  $(e).attr('data-height'); });

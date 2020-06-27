@@ -97,6 +97,14 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
+.scrollbar-measure {
+	width: 100px;
+	height: 100px;
+	overflow: scroll;
+	position: absolute;
+	top: -9999px;
+}
+
 header {
 	padding:0.3em 2em 2em 2em;
 	 border-bottom: 2px solid  rgb(60,60,60);
