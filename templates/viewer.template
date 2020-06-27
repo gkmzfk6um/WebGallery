@@ -78,7 +78,7 @@
   </div>
 
   <footer>
-	  Copyright {{year}} Lukas Rahmn. All Rights Reserved.
+	  Copyright {{year}} Lukas Rahmn. All Rights Reserved.<br> <a href="https://www.instagram.com/lukasrahmn/">lukasrahmn @ Instagram <img src="icons8-instagram-dark.svg" style="height: 1em;"/></a>
   </footer>
 
  </div>

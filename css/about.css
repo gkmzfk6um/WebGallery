@@ -30,4 +30,6 @@ html,body {
 }
 
 
-
+a.normal  , a.normal:active, a.normal:focus, a.normal:hover {
+	color: inherit;
+}
