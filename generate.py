@@ -198,7 +198,7 @@ def genHTML():
                                 'colour': img['colour'],
                                 'path': toLink(img['large']['path']),
                                 'url':  toLink(img['view']),
-                                'srcset' : "{},{},{}".format(*list(map(lambda size : toSrc(img[size]),['medium','large','huge']))),
+                                'srcset' : "{},{}".format(*list(map(lambda size : toSrc(img[size]),['large','huge']))),
                                 'next': toLink(toJsonPath(next)),
                                 'prev': toLink(toJsonPath(prev))
                             }

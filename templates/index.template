@@ -46,9 +46,9 @@
 			  data-width="{{pic.medium.width}}" 
 			  data-height="{{pic.medium.height}}" 
 	  		  data-srcset="
-			  	{{pic.medium.path | tolink}} {{pic.medium.width}}w,
-			  	{{pic.small.path | tolink}} {{pic.small.width}}w,
-			  	{{pic.tiny.path | tolink}} {{pic.tiny.width}}w"
+			  	{{pic.huge.path | tolink}} {{pic.huge.width}}w,
+			  	{{pic.large.path | tolink}} {{pic.large.width}}w,
+			  	{{pic.medium.path | tolink}} {{pic.medium.width}}w
      			  data-src= "{{pic.medium.path | tolink }}"
 		  >
 			  <span>{{pic.name}} </span>
