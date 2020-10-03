@@ -25,11 +25,12 @@ spec:
               emptyDir: {}
             - name: images-raw
               emptyDir: {}
+            - name: images-view
+              emptyDir: {}
 
       initContainers:
         - name: fetch-dropbox
-          image: raven/webgallery:latest
-          imagePullPolicy: Never
+          image: virtualraven/webgallery:latest
           command: ["sh"]
           args: ["/docker-entrypoint.d/10-fetch-images.sh"]
           env:
@@ -41,6 +42,8 @@ spec:
           volumeMounts:
             - name: images-meta
               mountPath: /var/www/gallery/img/meta
+            - name: images-view
+              mountPath: /var/www/gallery/view/
             - name: images-thumbnails
               mountPath: /var/www/gallery/img/thumbnails
             - name: images-dropbox
@@ -50,8 +53,7 @@ spec:
 
       containers:
       - name: web-gallery-nginx
-        image: raven/webgallery:latest
-        imagePullPolicy: Never
+        image: virtualraven/webgallery:latest
         ports:
         - containerPort: 80
         env:
@@ -89,6 +91,8 @@ spec:
             mountPath: /var/www/gallery/img/thumbnails
           - name: images-dropbox
             mountPath: /var/www/gallery/img/dropbox
+          - name: images-view
+            mountPath: /var/www/gallery/view/
           - name: images-raw
             mountPath: /var/www/gallery/img/raw
 
@@ -124,8 +128,7 @@ spec:
     spec:
       containers:
       - name: web-gallery-nginx
-        image: raven/webgallery:latest
-        imagePullPolicy: Never
+        image: virtualraven/webgallery:latest
         ports:
         - containerPort: 80
         env:
