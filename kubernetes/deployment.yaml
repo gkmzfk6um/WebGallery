@@ -1,0 +1,192 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-gallery-master
+  labels:
+    app: web-gallery
+    role: web-gallery-master
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: web-gallery-master
+  template:
+    metadata:
+      labels:
+        app: web-gallery-nginx
+        role: web-gallery-master
+    spec:
+      volumes:
+            - name: images-meta
+              emptyDir: {}
+            - name: images-thumbnails
+              emptyDir: {}
+            - name: images-dropbox
+              emptyDir: {}
+            - name: images-raw
+              emptyDir: {}
+
+      initContainers:
+        - name: fetch-dropbox
+          image: raven/webgallery:latest
+          imagePullPolicy: Never
+          command: ["sh"]
+          args: ["/docker-entrypoint.d/10-fetch-images.sh"]
+          env:
+            - name: 'DROPBOX_API_TOKEN'
+              valueFrom:
+                 secretKeyRef:
+                  name: dropbox-credentials
+                  key: api-token
+          volumeMounts:
+            - name: images-meta
+              mountPath: /var/www/gallery/img/meta
+            - name: images-thumbnails
+              mountPath: /var/www/gallery/img/thumbnails
+            - name: images-dropbox
+              mountPath: /var/www/gallery/img/dropbox
+            - name: images-raw
+              mountPath: /var/www/gallery/img/raw
+
+      containers:
+      - name: web-gallery-nginx
+        image: raven/webgallery:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 80
+        env:
+          - name: 'DROPBOX_API_TOKEN'
+            valueFrom:
+               secretKeyRef:
+                name: dropbox-credentials
+                key: api-token
+          - name: 'WEBSITE_URL'
+            valueFrom:
+               secretKeyRef:
+                name: website-data
+                key: url
+          - name: 'G_ANALYTICS_ID'
+            valueFrom:
+               secretKeyRef:
+                name: website-data
+                key: g-id
+        readinessProbe:
+          httpGet:
+            path: /api/manifest.json
+            port: 80
+          periodSeconds: 3
+          failureThreshold: 10
+        startupProbe:
+          httpGet:
+            path: /api/manifest.json
+            port: 80
+          failureThreshold: 60
+          periodSeconds: 10
+        volumeMounts:
+          - name: images-meta
+            mountPath: /var/www/gallery/img/meta
+          - name: images-thumbnails
+            mountPath: /var/www/gallery/img/thumbnails
+          - name: images-dropbox
+            mountPath: /var/www/gallery/img/dropbox
+          - name: images-raw
+            mountPath: /var/www/gallery/img/raw
+
+      - name: web-gallery-prometheus
+        image: nginx/nginx-prometheus-exporter:latest
+        ports:
+        - containerPort: 9113
+        args: 
+          - "-nginx.scrape-uri"
+          - "http://localhost:9114/nginx_status"
+          - "-nginx.retries"
+          - "20"
+          - "-nginx.retry-interval"
+          - "10s"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-gallery-slave
+  labels:
+    app: web-gallery
+    role: web-gallery-slave
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: web-gallery-slave
+  template:
+    metadata:
+      labels:
+        app: web-gallery-nginx
+        role: web-gallery-slave
+    spec:
+      containers:
+      - name: web-gallery-nginx
+        image: raven/webgallery:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 80
+        env:
+          - name: 'MASTER_NODE_URL'
+            value: 'webgallery-master-service'
+          - name: 'WEBSITE_URL'
+            valueFrom:
+               secretKeyRef:
+                name: website-data
+                key: url
+          - name: 'G_ANALYTICS_ID'
+            valueFrom:
+               secretKeyRef:
+                name: website-data
+                key: g-id
+        readinessProbe:
+          httpGet:
+            path: /api/manifest.json
+            port: 80
+          periodSeconds: 3
+          failureThreshold: 10
+        startupProbe:
+          httpGet:
+            path: /api/manifest.json
+            port: 80
+          failureThreshold: 60
+          periodSeconds: 10
+      - name: web-gallery-prometheus
+        image: nginx/nginx-prometheus-exporter:latest
+        ports:
+        - containerPort: 9113
+        args: 
+          - "-nginx.scrape-uri"
+          - "http://localhost:9114/nginx_status"
+          - "-nginx.retries"
+          - "20"
+          - "-nginx.retry-interval"
+          - "10s"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webgallery-service
+spec:
+  type: LoadBalancer
+  ports:
+  - name: http
+    targetPort: 80
+    port: 80
+  selector:
+    app: web-gallery-nginx
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webgallery-master-service
+spec:
+  ports:
+  - name: http
+    targetPort: 80
+    port: 80
+  selector:
+    role: web-gallery-master

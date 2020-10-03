@@ -14,57 +14,54 @@ import re
 from PIL import Image
 from PIL import ExifTags
 from libxmp.utils import file_to_dict
+import dropbox as db
+import clone
+from util import *
 
 viewerPath = "view/{}.html"
 pathTemplate = "img/thumbnails/{}_{}.jpg"
-websiteName = "https://photos.rahmn.net"
 
 
-def StripHTMLExt(link):
-    if link is None :
-        return link
-
-    m=re.match('^(.*)\.html$',link)
-    if m:
-        return m.group(1)
-    else:
-        return link
-
-def addSlash(link):
-    if link is None:
-        return link
-    elif link[0] == '/':
-        return link
-    else:
-        return '/' + link
-def toJsonPath(link):
-    if link is None:
-        return link
-    else:
-        return StripHTMLExt(link)+'.json'
 
 toLink =  lambda x: addSlash(StripHTMLExt(x))
 filters.FILTERS['tolink'] = toLink
 
 
 
-pictureNames = {}
-try: 
-    with open('img/names.json','r') as f:
-        pictureNames = json.load(f)
-except FileNotFoundError:
-    pass
 
 
 TAGS_NR  = {}
 for k,v in ExifTags.TAGS.items():
     TAGS_NR[v] = k
 
+def addMeta(dropbox,token):
+    need_download = False
+    metadata = {}
+    name = os.path.splitext(dropbox['name'])[0]
+    filename = "img/dropbox/{}.json".format(dropbox['id_stripped'])
+    try:
+        with open(filename,'r') as f:
+            metadata=json.loads(f.read())
+            if metadata['dropbox']['content_hash'] != dropbox['content_hash']:
+                need_download=True
+                os.remove("img/meta/{}.json".format(name))
+    except FileNotFoundError:
+        need_download=True
+    
+    if need_download:
+        removePathNoFail('img/meta/{}.json'.format(name))
+        db.downloadFile(dropbox,token)
+        metadata['dropbox']=dropbox
+        with open(filename,'w') as f:
+            json.dump(metadata,f)
+    return  (name,need_download)
 
-def files():
-    ls = glob.glob('img/raw/*.jpg')
+
+
+def globFiles():
+    ls = glob.glob('img/dropbox/*.json')
     if not ls:
-        raise Exception("No pictures found")
+        raise Exception('No image files found')
     else:
         return ls
 
@@ -83,31 +80,31 @@ def genThumbnails(id,img):
         })
 
 
-def processImages(files=files()):
+def processImages():
+    files = globFiles()
     numFiles = len(files)
     i = 1
     print('Processing images...')
-    for f in files:
-        filename = os.path.basename(f)
+    for dropbox in files:
+        with open(dropbox,'r') as f:
+            dropbox=json.load(f)
+            dropbox=dropbox['dropbox']
+        f = 'img/raw/{}'.format(dropbox['name'])
+        filename = dropbox['name']
         name = os.path.splitext(filename)[0]
         meta= "img/meta/{}.json".format(name)
+
+
         try:
             with open(meta,'r') as f:
                 print("({}/{}) [skip]\r".format(i,numFiles),end='')
                 obj= json.loads(f.read())
-                if obj['name'] in  pictureNames:
-                    obj['name'] = pictureNames[obj['name']]
                 yield obj
 
-        except FileNotFoundError:
+        except (FileNotFoundError,IOError):
             with Image.open(f) as img:
                 exif = img._getexif()
                 xmp = file_to_dict(f) 
-                #print(xmp)
-                #for k,v in xmp.items():
-                #    print(k)
-                #    for item in v:
-                #        print("\t{}: {}".format(item[0],item[1] ))
                 xmpUrl = "http://purl.org/dc/elements/1.1/"
                 
                 if xmpUrl in xmp: 
@@ -133,13 +130,15 @@ def processImages(files=files()):
                 if purlTitle:
                     name=purlTitle
                     print("Using XMP title {}".format(name))
-                elif name in  pictureNames:
-                    name = pictureNames[name]
                 avg=np.round(np.mean(np.array(img),axis=(0,1)))
                 avghex= ('#%02x%02x%02x' % tuple(avg.astype(int)))
                 obj= {
                     'name': name,
                     'id': id,
+                    'dropbox': {
+                        'id': dropbox['id'],
+                        'rev': dropbox['content_hash']
+                    },
                     'date': tag('DateTimeOriginal'),
                     'rating': tag('Rating'),
                     'view': viewerPath.format(id),
@@ -164,13 +163,17 @@ def processImages(files=files()):
 def genInventory():
     dateKey = lambda x : datetime.datetime.strptime(x['date'], "%Y:%m:%d %H:%M:%S")
     inventory = sorted(list(processImages()),key=dateKey,reverse=True)
-    with open('img/inventory.json','w') as f:
-        json.dump(inventory,f)
     return inventory
 
 def genHTML():
     year =datetime.datetime.now().year
     inventory = genInventory()
+    websiteName =os.getenv('WEBSITE_URL')
+    if not websiteName:
+        websiteName = "/"
+    gAdId = os.getenv('G_ANALYTICS_ID')
+
+
     templates = glob.glob('templates/*.template')
     for t in templates:
         filename = os.path.basename(t)
@@ -208,6 +211,59 @@ def genHTML():
             else:
                 with open(hname,'w') as f :
                     print("Generating " + hname + "...")
-                    f.write(template.render(inventory=inventory,year=year,websiteName=websiteName))
-        
-genHTML()
+                    if gAdId:
+                        f.write(template.render(inventory=inventory,year=year,websiteName=websiteName,gAdId=gAdId))
+                    else:
+                        f.write(template.render(inventory=inventory,year=year,websiteName=websiteName))
+
+    return inventory
+
+
+
+
+def generateWebsite():
+    clone.removePathNoFail('api/manifest.json')
+    token =  os.getenv('DROPBOX_API_TOKEN')
+    foundImgs = []
+    newImgs=[]
+    removedImgs = []
+    for i  in db.getFileMeta(token):
+       img,isNew= addMeta(i,token)
+       foundImgs.append(img)
+       if isNew:
+           newImgs.append(img)
+
+    for f in glob.glob('img/meta/*.json'):
+        filename = os.path.basename(f)
+        name = os.path.splitext(filename)[0]
+        if name not in foundImgs:
+            print('Purge metadata ' + name)
+            meta ={}
+            with open(f,'r') as f:
+                meta = json.load(f)
+                removedImgs.append(meta) 
+            removeMeta(meta)
+
+    for f in glob.glob('img/raw/*.jpg'):
+        filename = os.path.basename(f)
+        name = os.path.splitext(filename)[0]
+        if  name not in foundImgs:
+            print('Purge image ' + name)
+            removePathNoFail(f)
+
+    print('Generating website...')
+    inventory=genHTML()
+    with open('api/manifest.json','w') as f:
+        json.dump({
+            'last_update': datetime.datetime.now().isoformat(),
+            'img': {
+                'inventory': inventory,
+                'new': newImgs,
+                'removed': removedImgs
+            }
+        },f)
+
+if not os.getenv('MASTER_NODE_URL'):
+    generateWebsite()
+else:
+    clone.fetchWebsite(os.getenv('MASTER_NODE_URL'))

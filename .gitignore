@@ -7,3 +7,5 @@ view/
 *.swo
 *.swp
 *.xml
+kubernetes/secret.yaml
+docker-compose-dev.yml

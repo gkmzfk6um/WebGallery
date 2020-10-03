@@ -1,0 +1,1 @@
+cd /var/www/gallery && python3 -u ./generate.py 

@@ -18,7 +18,7 @@
 		{% endfor %}
 	</url>
 	<url>
-		<loc>https://photos.rahmn.net/about</loc>
+		<loc>{{websiteName}}/about</loc>
 		<priority> 0.4 </priority>
 	</url>
 	{% for pic in inventory %}

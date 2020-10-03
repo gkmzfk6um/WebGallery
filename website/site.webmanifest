@@ -1,6 +1,6 @@
 {
     "icons": [{
-        "src": "/icon_circle.png",
+        "src": "/icons/icon_circle.png",
         "sizes": "512x512",
         "type": "image/png"
     }],
