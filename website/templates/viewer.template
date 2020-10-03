@@ -24,7 +24,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <link href="https://fonts.googleapis.com/css?family=Cinzel|Montserrat" rel="stylesheet"> 
   <link rel="manifest" href="site.webmanifest">
-  <link rel="apple-touch-icon" href="/icon_square.png">
+  <link rel="apple-touch-icon" href="/icons/icon_square.png">
 
   <link rel="stylesheet" href="/css/normalize.css">
   <link rel="stylesheet" href="/css/main.css">
@@ -80,7 +80,7 @@
   </div>
 
   <footer>
-	  Copyright {{year}} Lukas Rahmn. All Rights Reserved.<br> <a href="https://www.instagram.com/lukasrahmn/">lukasrahmn @ Instagram <img src="icons8-instagram-dark.svg" style="height: 1em;"/></a>
+	  Copyright {{year}} Lukas Rahmn. All Rights Reserved.<br> <a href="https://www.instagram.com/lukasrahmn/">lukasrahmn @ Instagram <img src="/icons/icons8-instagram-dark.svg" style="height: 1em;"/></a>
   </footer>
 
  </div>

@@ -26,7 +26,7 @@
 
   <link href="https://fonts.googleapis.com/css?family=Cinzel|Montserrat" rel="stylesheet"> 
   <link rel="manifest" href="site.webmanifest">
-  <link rel="apple-touch-icon" href="/icon_square.png">
+  <link rel="apple-touch-icon" href="/icons/icon_square.png">
   <!-- Place favicon.ico in the root directory -->
 
   <link rel="stylesheet" href="/css/normalize.css">
