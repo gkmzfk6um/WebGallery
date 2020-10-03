@@ -21,15 +21,11 @@ from util import *
 viewerPath = "view/{}.html"
 pathTemplate = "img/thumbnails/{}_{}.jpg"
 
-
+def hashId(name,id):
+    return base64.urlsafe_b64encode(hashlib.sha1((name+id).encode('utf-8')).digest()).decode('utf-8')
 
 toLink =  lambda x: addSlash(StripHTMLExt(x))
 filters.FILTERS['tolink'] = toLink
-
-
-
-
-
 TAGS_NR  = {}
 for k,v in ExifTags.TAGS.items():
     TAGS_NR[v] = k
@@ -38,28 +34,32 @@ def addMeta(dropbox,token):
     need_download = False
     metadata = {}
     name = os.path.splitext(dropbox['name'])[0]
-    filename = "img/dropbox/{}.json".format(dropbox['id_stripped'])
+    hashedId = hashId(name,dropbox['id_stripped'])
+    filename = "img/meta/{}.json".format(hashedId)
     try:
         with open(filename,'r') as f:
             metadata=json.loads(f.read())
-            if metadata['dropbox']['content_hash'] != dropbox['content_hash']:
+            if metadata['dropbox']['rev'] != hashId(name,dropbox['content_hash']):
                 need_download=True
-                os.remove("img/meta/{}.json".format(name))
     except FileNotFoundError:
         need_download=True
     
     if need_download:
-        removePathNoFail('img/meta/{}.json'.format(name))
         db.downloadFile(dropbox,token)
-        metadata['dropbox']=dropbox
+        metadata['dropbox'] = {
+            'id': hashedId,
+            'rev': hashId(name,dropbox['content_hash']),
+            'outdated': True
+        }
+        metadata['name'] = name
         with open(filename,'w') as f:
             json.dump(metadata,f)
-    return  (name,need_download)
+    return  metadata
 
 
 
 def globFiles():
-    ls = glob.glob('img/dropbox/*.json')
+    ls = glob.glob('img/meta/*.json')
     if not ls:
         raise Exception('No image files found')
     else:
@@ -85,23 +85,19 @@ def processImages():
     numFiles = len(files)
     i = 1
     print('Processing images...')
-    for dropbox in files:
-        with open(dropbox,'r') as f:
-            dropbox=json.load(f)
-            dropbox=dropbox['dropbox']
-        f = 'img/raw/{}'.format(dropbox['name'])
-        filename = dropbox['name']
-        name = os.path.splitext(filename)[0]
-        meta= "img/meta/{}.json".format(name)
+    for meta in files:
+        metafile=meta
+        with open(meta,'r') as f:
+            meta=json.load(f)
 
 
-        try:
-            with open(meta,'r') as f:
-                print("({}/{}) [skip]\r".format(i,numFiles),end='')
-                obj= json.loads(f.read())
-                yield obj
+        if not meta['dropbox']['outdated']:
+                print("({}/{}) [up to data]\r".format(i,numFiles),end='')
+                yield meta
 
-        except (FileNotFoundError,IOError):
+        else:
+            meta['dropbox']['outdated']=False
+            f = 'img/raw/{}.jpg'.format(meta['name'])
             with Image.open(f) as img:
                 exif = img._getexif()
                 xmp = file_to_dict(f) 
@@ -121,24 +117,18 @@ def processImages():
                 else:
                     purlOrg=None
                 
-                w,h = img.size
-                id = base64.urlsafe_b64encode(hashlib.sha1(name.encode('utf-8')).digest()).decode('utf-8')
-
-
-
-                tag = lambda x : exif[TAGS_NR[x]] if TAGS_NR[x] in exif else None
                 if purlTitle:
                     name=purlTitle
                     print("Using XMP title {}".format(name))
+                
+                w,h = img.size
+                tag = lambda x : exif[TAGS_NR[x]] if TAGS_NR[x] in exif else None
                 avg=np.round(np.mean(np.array(img),axis=(0,1)))
+                id = meta['dropbox']['id']
                 avghex= ('#%02x%02x%02x' % tuple(avg.astype(int)))
                 obj= {
-                    'name': name,
-                    'id': id,
-                    'dropbox': {
-                        'id': dropbox['id'],
-                        'rev': dropbox['content_hash']
-                    },
+                    'name': meta['name'],
+                    'dropbox': meta['dropbox'],
                     'date': tag('DateTimeOriginal'),
                     'rating': tag('Rating'),
                     'view': viewerPath.format(id),
@@ -153,7 +143,7 @@ def processImages():
                 for (n,o) in genThumbnails(id,img):
                     obj[n]=o
                
-                with open(meta,'w') as f:
+                with open(metafile,'w') as f:
                     json.dump(obj,f)
                 yield obj
                 print("({}/{}) [ ok ]\r".format(i,numFiles),end='')
@@ -166,6 +156,7 @@ def genInventory():
     return inventory
 
 def genHTML():
+    print('Generating website...')
     year =datetime.datetime.now().year
     inventory = genInventory()
     websiteName =os.getenv('WEBSITE_URL')
@@ -221,49 +212,67 @@ def genHTML():
 
 
 
-def generateWebsite():
-    clone.removePathNoFail('api/manifest.json')
+
+def fetchDropbox():
     token =  os.getenv('DROPBOX_API_TOKEN')
-    foundImgs = []
-    newImgs=[]
-    removedImgs = []
+    foundMeta = []
+    newMeta=[]
+    removedMeta = []
+    removePathNoFail('api/manifest.json')
     for i  in db.getFileMeta(token):
-       img,isNew= addMeta(i,token)
-       foundImgs.append(img)
-       if isNew:
-           newImgs.append(img)
+       meta= addMeta(i,token)
+       foundMeta.append(meta)
+       if meta['dropbox']['outdated']:
+           newMeta.append(meta)
 
     for f in glob.glob('img/meta/*.json'):
         filename = os.path.basename(f)
-        name = os.path.splitext(filename)[0]
-        if name not in foundImgs:
-            print('Purge metadata ' + name)
+        id = os.path.splitext(filename)[0]
+        if id not in map(lambda x: x['dropbox']['id'],foundMeta):
+            print('Purge metadata ' + filename)
             meta ={}
             with open(f,'r') as f:
                 meta = json.load(f)
-                removedImgs.append(meta) 
             removeMeta(meta)
 
     for f in glob.glob('img/raw/*.jpg'):
         filename = os.path.basename(f)
         name = os.path.splitext(filename)[0]
-        if  name not in foundImgs:
+        if  name not in map(lambda x : x['name'],foundMeta) :
             print('Purge image ' + name)
             removePathNoFail(f)
 
-    print('Generating website...')
     inventory=genHTML()
     with open('api/manifest.json','w') as f:
         json.dump({
             'last_update': datetime.datetime.now().isoformat(),
+            'host': os.getenv('HOST_NAME'),
             'img': {
                 'inventory': inventory,
-                'new': newImgs,
-                'removed': removedImgs
+                'new': newMeta,
+                'removed': removedMeta
             }
         },f)
 
-if not os.getenv('MASTER_NODE_URL'):
-    generateWebsite()
-else:
-    clone.fetchWebsite(os.getenv('MASTER_NODE_URL'))
+
+
+def main():
+    try:    
+        if not os.getenv('MASTER_NODE_URL'):
+            fetchDropbox()
+        else:
+            try:
+                clone.fetchWebsite(os.getenv('MASTER_NODE_URL'))
+            except Exception as e:
+                if os.getenv('DROPBOX_API_TOKEN'):
+                    print('Tried to clone master website but failed, reverting to dropbox')
+                    fetchDropbox()
+                    return
+                else:
+                    raise e
+            genHTML()
+    except Exception as e:
+        clone.removePathNoFail('api/manifest.json')
+        raise e
+
+main()

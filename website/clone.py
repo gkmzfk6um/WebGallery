@@ -79,8 +79,6 @@ def downloadFile(url,file):
         raise Exception('Failed to download file')
 
 def cloneMeta(url,meta):
-    downloadFile(url,meta['view'])
-    downloadFile(url,toJsonPath(meta['view']))
     downloadFile(url,meta['tiny']['path'])
     downloadFile(url,meta['small']['path'])
     downloadFile(url,meta['medium']['path'])
@@ -94,6 +92,7 @@ def fetchWebsite(url):
     master_manifest = __get__manifest(url)
     client_manifest = {
         'last_update':'1970-01-01T00:00:01.000000',
+        'host': os.getenv('HOST_NAME'),
          'img': {
             'inventory':[],
             'all':[],
@@ -114,10 +113,7 @@ def fetchWebsite(url):
 
     for meta in new_manifest['img']['new']:
         cloneMeta(url,meta)
-    
-    downloadFile(url,'index.html')
-    downloadFile(url,'about.html')
-
-    with open('api/manifest.json','w') as f:
-        json.dump(new_manifest,f)
+        with open(metaFilename(meta),'w') as f:
+            json.dump(meta,f)
+    return new_manifest
     

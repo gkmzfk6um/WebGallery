@@ -32,9 +32,7 @@ def removePathNoFail(path):
         print('Failed to remove path ({})'.format(path))
 
 def metaFilename(meta):
-    filename = os.path.basename(meta['original']['path'])
-    name = os.path.splitext(filename)[0]
-    return  "img/meta/{}.json".format(name)
+    return  "img/meta/{}.json".format(meta['dropbox']['id'])
 
 def dropboxFilenameFromRawPath(path):
     filename = os.path.basename(path)
