@@ -18,9 +18,12 @@ http = requests.Session()
 http.mount("https://", adapter2)
 http.mount("http://", adapter2)
 
-def __get__manifest(url):
+def __get__manifest(url,fastTimeout):
     fetchUrl = '{}/api/manifest.json'.format(url)
-    r = httpInitial.get(fetchUrl)
+    if fastTimeout:
+        r = http.get(fetchUrl)
+    else:
+        r = httpInitial.get(fetchUrl)
     if r.ok:
         return r.json()
     else:
@@ -86,10 +89,10 @@ def cloneMeta(url,meta):
     downloadFile(url,meta['huge']['path'])
 
 
-def fetchWebsite(url):
+def fetchWebsite(url,shortTimeout):
     print('Cloning {}'.format(url))
     url = 'http://{}'.format(url)
-    master_manifest = __get__manifest(url)
+    master_manifest = __get__manifest(url,shortTimeout)
     client_manifest = {
         'last_update':'1970-01-01T00:00:01.000000',
         'host': os.getenv('HOST_NAME'),

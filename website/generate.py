@@ -262,9 +262,12 @@ def main():
             fetchDropbox()
         else:
             try:
-                clone.fetchWebsite(os.getenv('MASTER_NODE_URL'))
-            except Exception as e:
+                dropboxAvailable=False
                 if os.getenv('DROPBOX_API_TOKEN'):
+                    dropboxAvailable=True
+                clone.fetchWebsite(os.getenv('MASTER_NODE_URL'),dropboxAvailable)
+            except Exception as e:
+                if dropboxAvailable:
                     print('Tried to clone master website but failed, reverting to dropbox')
                     fetchDropbox()
                     return
