@@ -115,8 +115,8 @@ def fetchWebsite(url):
     for meta in new_manifest['img']['new']:
         cloneMeta(url,meta)
     
-    if len(new_manifest['img']['new']) > 0:
-        downloadFile(url,'index.html')
+    downloadFile(url,'index.html')
+    downloadFile(url,'about.html')
 
     with open('api/manifest.json','w') as f:
         json.dump(new_manifest,f)
