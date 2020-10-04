@@ -95,7 +95,7 @@ def fetchWebsite(url,shortTimeout):
     master_manifest = __get__manifest(url,shortTimeout)
     client_manifest = {
         'last_update':'1970-01-01T00:00:01.000000',
-        'host': os.getenv('HOST_NAME'),
+        'host': os.getenv('HOSTNAME'),
          'img': {
             'inventory':[],
             'all':[],

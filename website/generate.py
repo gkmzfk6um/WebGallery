@@ -246,7 +246,7 @@ def fetchDropbox():
     with open('api/manifest.json','w') as f:
         json.dump({
             'last_update': datetime.datetime.now().isoformat(),
-            'host': os.getenv('HOST_NAME'),
+            'host': os.getenv('HOSTNAME'),
             'img': {
                 'inventory': inventory,
                 'new': newMeta,
@@ -265,11 +265,11 @@ def main():
                 dropboxAvailable=False
                 if os.getenv('DROPBOX_API_TOKEN'):
                     dropboxAvailable=True
-                clone.fetchWebsite(os.getenv('MASTER_NODE_URL'),dropboxAvailable)
+                manifest=clone.fetchWebsite(os.getenv('MASTER_NODE_URL'),dropboxAvailable)
             except Exception as e:
                 if dropboxAvailable:
                     print('Tried to clone master website but failed, reverting to dropbox')
-                    manifest=fetchDropbox()
+                    fetchDropbox()
                     return
                 else:
                     raise e
