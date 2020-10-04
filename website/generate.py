@@ -269,13 +269,15 @@ def main():
             except Exception as e:
                 if dropboxAvailable:
                     print('Tried to clone master website but failed, reverting to dropbox')
-                    fetchDropbox()
+                    manifest=fetchDropbox()
                     return
                 else:
                     raise e
             genHTML()
+            with open('api/manifest.json','w') as f:
+                json.dump(manifest,f)
+
     except Exception as e:
         clone.removePathNoFail('api/manifest.json')
         raise e
-
 main()
