@@ -116,10 +116,10 @@ def processImages():
                             purlTitle=None
                 else:
                     purlOrg=None
-                
+                displayname = meta['name'] 
                 if purlTitle:
-                    name=purlTitle
-                    print("Using XMP title {}".format(name))
+                    displayname=purlTitle
+                    print("Using XMP title {}".format(displayname))
                 
                 w,h = img.size
                 tag = lambda x : exif[TAGS_NR[x]] if TAGS_NR[x] in exif else None
@@ -128,6 +128,7 @@ def processImages():
                 avghex= ('#%02x%02x%02x' % tuple(avg.astype(int)))
                 obj= {
                     'name': meta['name'],
+                    'displayname': displayname,
                     'dropbox': meta['dropbox'],
                     'date': tag('DateTimeOriginal'),
                     'rating': tag('Rating'),
@@ -187,7 +188,7 @@ def genHTML():
                         with open(jsonPath ,'w') as jv:
                             toSrc = lambda img : "{} {}w".format(toLink(img['path']),img['width'])
                             obj = {
-                                'name': img['name'],
+                                'name': img['displayname'],
                                 'id' : name,
                                 'colour': img['colour'],
                                 'path': toLink(img['large']['path']),
