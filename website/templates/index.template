@@ -24,7 +24,7 @@
   <meta name="theme-color" content="#0F0F0F">
   <meta name="msapplication-navbutton-color" content="#0F0F0F">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <link href="https://fonts.googleapis.com/css?family=Cinzel|Montserrat" rel="stylesheet"> 
+  <link href="https://fonts.googleapis.com/css2?family=Maven+Pro:wght@500;600&display=swap" rel="stylesheet"> 
   <link rel="manifest" href="site.webmanifest">
   <link rel="apple-touch-icon" href="/icons/icon_square.png">
   <link rel="stylesheet" href="/css/normalize.css">
@@ -38,9 +38,11 @@
 
   <!-- Add your site or application content here -->
   <header>
-	<h2>Gallery - Lukas Rahmn </h2>	  
-	<div id="menu">
-		<a href="/about">About</a>
+	<div id="site-logo">
+		<h2> <span>LUKAS</span> RAHMN </h2>	  
+		<div id="menu">
+			<a href="/about">About my gallery</a>
+		</div>
 	</div>
   </header>
   <div class="body">

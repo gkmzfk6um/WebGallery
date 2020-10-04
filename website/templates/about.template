@@ -24,7 +24,7 @@
   <meta name="msapplication-navbutton-color" content="#0F0F0F">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
-  <link href="https://fonts.googleapis.com/css?family=Cinzel|Montserrat" rel="stylesheet"> 
+  <link href="https://fonts.googleapis.com/css2?family=Maven+Pro:wght@500;600&display=swap" rel="stylesheet"> 
   <link rel="manifest" href="site.webmanifest">
   <link rel="apple-touch-icon" href="/icons/icon_square.png">
   <!-- Place favicon.ico in the root directory -->
@@ -41,16 +41,21 @@
 
   <!-- Add your site or application content here -->
   <header>
-	<a href="/">
-		<h2>Gallery - Lukas Rahmn </h2>
-	</a>
-	<div id="menu">
-		<a href="/">Back</a>
+	<div id="site-logo">
+		<h2> <span>LUKAS</span> RAHMN </h2>	  
+		<div id="menu">
+			<a href="/">Back to my gallery</a>
+		</div>
 	</div>
   </header>
+  
+  
   <div class="body">
+	 <div>
+
+
 	  <div id="left">
-	  	<h3> About </h3>
+	  	<h3> ABOUT </h3>
 	  	<p id="about">
 	  	      Welcome to my corner of the web where I display the results of my photography interest. 
 	  	      The collection contains many different kinds of photos, of which almost all originates from the 
@@ -63,7 +68,7 @@
 	  	      Lukas Rahmn
 	  	</p>
 
-	  	<h3>Contact</h3>
+	  	<h3>CONTACT</h3>
 	  	<p id="contact">
 	  		Feel free to contact me by email for any questions you might have. 
 	  	      To avoid spamming I leave it as an exercises to the reader to 
@@ -76,7 +81,7 @@
 		</p>
 
 
-	  	<h3>The website itself</h3>
+	  	<h3>CONCERNING THE WEBSITE</h3>
 	  	<p id="tech">
 	  	      The technical inclined readers might be interested to know that this
 	  	      website is selfmade and available as open source (MIT license) at 

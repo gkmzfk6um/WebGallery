@@ -11,9 +11,6 @@ function gallery() {
 		while(width != $(this).innerWidth() &&  i++ < 2){
 			width= $(this).innerWidth();
 			children=$(this).children().toArray();
-			//Calculate extra width
-			//child = $(children[0]).children('img');
-			//excess = $(children[0]).outerWidth(true)-child.outerWidth(true);
 			excess = $(children[0]).outerWidth(true)-$(children[0]).innerWidth();
 			$('children').each(function() { $(this).css( {'width':'','height':''});});
 			row = function(elems,lastRow){

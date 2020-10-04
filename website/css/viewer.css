@@ -6,21 +6,21 @@ html,body,#table-root {
 	height:100%;
 }
 body {
-	background:#242424;
+	background:#FAFAFA;
 }
 #table-root {
 	position:absolute;
 }
 
 header > span {
-	padding-left:2em;
 	text-align:center;
-	color: #cccccc;
+	color: #444;
+	font-weight: 600;
 	display:table-cell;
 	vertical-align:middle;
 }
 footer {
-	color: #404040;
+	color: #e0e0e0;
 	height:2em;
 }
 header {
@@ -34,7 +34,6 @@ header {
 .body{
 	height: calc(100% - 4em - 2px - 2em  - 6em);
 	padding:3em 0em 3em 0em;
-	background:;
 }
 
 @media screen and (min-width:700px ){
@@ -112,6 +111,7 @@ header {
 	left:50%;
 	transform: translate(-50%,-50%);
 	transition:visibility 0.1s linear,opacity 0.1s linear;
+	box-shadow: 0 0 100px 0 #e0e0e0;
 }
 
 a:active, a:focus {
@@ -126,5 +126,5 @@ footer > a > img {
 
 footer a  , footer a:active, footer a:focus, footer a:hover {
 	text-decoration: none !important;
-	color: #404040;
+	color: #e0e0e0;
 }
