@@ -57,12 +57,15 @@
 	  <div id="left">
 	  	<h3> ABOUT </h3>
 	  	<p id="about">
-	  	      Welcome to my corner of the web where I display the results of my photography interest. 
-	  	      The collection contains many different kinds of photos, of which almost all originates from the 
-	  	      neighbourhood of Gothenburg. Which is a fairly large city (by local standards) in Sweden. 
-	  	      With this site I hope to be able to share my work, so that it might bring joy to others. 
-	  	      If you would like to use any of the images for other than private purposes and/or secure 
-		      a physical print I ask that you email me.<br><br>
+	  	      Welcome to my corner of the web where I share my photography work. 
+              I'm a amature photographer living and working in Mölndal
+	  	      The collection contains many different styles of photos, portraits, landscapes and 
+              street photos, most from the neighbourhood. 
+
+			  The photos are available as prints upon requests in size ranging from A4 up to A2. Price depends on 
+			  size and the specific image, for details please contact me.
+	  	      
+			  Feel free to use the images as you want privately, but for commercial use I ask that you that you email me.<br><br>
 		      Once again, welcome!<br>
 
 	  	      Lukas Rahmn
@@ -85,7 +88,7 @@
 	  	<p id="tech">
 	  	      The technical inclined readers might be interested to know that this
 	  	      website is selfmade and available as open source (MIT license) at 
-	  	      <a href="https://github.com/VirtualRaven/WebGallery">Github</a>.	
+	  	      <a href="https://github.com/VirtualRaven/WebGallery">Github</a>.
 		      All icons on the website is kindly provided by <a href="https://icons8.com/">Icons8</a> 
 
 	  	</p>
