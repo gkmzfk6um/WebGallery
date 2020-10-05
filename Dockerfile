@@ -1,4 +1,6 @@
 FROM nginx:mainline
+ARG SOURCE_COMMIT                  
+ENV SOURCE_COMMIT $SOURCE_COMMIT 
 
 RUN apt update && apt install -y python3 python3-pip exempi libcap2-bin   && \
     pip3 install jinja2 && \
