@@ -32,5 +32,7 @@ COPY  docker/nginx.conf /etc/nginx/nginx.conf
 COPY --chown=gallery-owner:gallery-owner docker/10-fetch-images.sh /docker-entrypoint.d/
 
 USER gallery-owner
-RUN chmod u+x /docker-entrypoint.d/10-fetch-images.sh
+RUN chmod u+x /docker-entrypoint.d/10-fetch-images.sh && \
+    echo "{\"git\":\"$SOURCE_COMMIT\"}" > /var/www/gallery/version.json && \
+    chmod 400 /var/www/gallery/version.json 
 CMD ["nginx"]

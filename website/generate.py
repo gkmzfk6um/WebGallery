@@ -92,7 +92,7 @@ def processImages():
 
 
         if not meta['dropbox']['outdated']:
-                print("({}/{}) [up to data]\r".format(i,numFiles),end='')
+                print("({}/{}) [up to date]\r".format(i,numFiles),end='')
                 yield meta
 
         else:
@@ -163,50 +163,57 @@ def genHTML():
     websiteName =os.getenv('WEBSITE_URL')
     if not websiteName:
         websiteName = "/"
+    with open("version.json",'r') as f:
+        versionObj = json.load(f)
+        if versionObj['git']:
+            gitSha = versionObj['git']
+        else:
+            gitSha = 'DEV'
     gAdId = os.getenv('G_ANALYTICS_ID')
 
 
     templates = glob.glob('templates/*.template')
     for t in templates:
         filename = os.path.basename(t)
-        name = os.path.splitext(filename)[0]
+        hname = os.path.splitext(filename)[0]
+        name,suffix = os.path.splitext(hname)
         with open(t,'r') as tm:
             template= Template(tm.read())
-            if name != "sitemap":
-                hname = "{}.html".format(name)
-            else:
-                hname = "{}.xml".format(name)
-
-            if name == "viewer":
-                for (i,img) in zip(range(0,len(inventory)),inventory):
-                    with open(img['view'],'w') as vf:
-                        print("Generating view  ({}/{})\r".format(i+1,len(inventory)),end='')
-                        prev = inventory[i-1]['view'] if i > 0 else None
-                        next = inventory[i+1]['view'] if i+1 < len(inventory) else None
-                        jsonPath= toJsonPath(img['view'])
-                        vf.write(template.render(pic=img,inventory=inventory,index=i,prev=prev,next=next,year=year,json=toLink(jsonPath)))
-                        with open(jsonPath ,'w') as jv:
-                            toSrc = lambda img : "{} {}w".format(toLink(img['path']),img['width'])
-                            obj = {
-                                'name': img['displayname'],
-                                'id' : name,
-                                'colour': img['colour'],
-                                'path': toLink(img['large']['path']),
-                                'url':  toLink(img['view']),
-                                'srcset' : "{},{}".format(*list(map(lambda size : toSrc(img[size]),['large','huge']))),
-                                'next': toLink(toJsonPath(next)),
-                                'prev': toLink(toJsonPath(prev))
-                            }
-                            json.dump(obj,jv)
-                print('')
-
-            else:
-                with open(hname,'w') as f :
-                    print("Generating " + hname + "...")
-                    if gAdId:
-                        f.write(template.render(inventory=inventory,year=year,websiteName=websiteName,gAdId=gAdId))
-                    else:
-                        f.write(template.render(inventory=inventory,year=year,websiteName=websiteName))
+            if suffix == ".html":
+                if name == "viewer":
+                    for (i,img) in zip(range(0,len(inventory)),inventory):
+                        with open(img['view'],'w') as vf:
+                            print("Generating view  ({}/{})\r".format(i+1,len(inventory)),end='')
+                            prev = inventory[i-1]['view'] if i > 0 else None
+                            next = inventory[i+1]['view'] if i+1 < len(inventory) else None
+                            jsonPath= toJsonPath(img['view'])
+                            vf.write(template.render(pic=img,inventory=inventory,index=i,prev=prev,next=next,year=year,gitSha=gitSha,json=toLink(jsonPath)))
+                            with open(jsonPath ,'w') as jv:
+                                toSrc = lambda img : "{} {}w".format(toLink(img['path']),img['width'])
+                                obj = {
+                                    'name': img['displayname'],
+                                    'id' : name,
+                                    'colour': img['colour'],
+                                    'path': toLink(img['large']['path']),
+                                    'url':  toLink(img['view']),
+                                    'srcset' : "{},{}".format(*list(map(lambda size : toSrc(img[size]),['large','huge']))),
+                                    'next': toLink(toJsonPath(next)),
+                                    'prev': toLink(toJsonPath(prev))
+                                }
+                                json.dump(obj,jv)
+                    print('')
+                else:
+                    with open(hname,'w') as f :
+                        print("Generating " + hname + "...")
+                        if gAdId:
+                            f.write(template.render(inventory=inventory,year=year,websiteName=websiteName,gAdId=gAdId,gitSha=gitSha))
+                        else:
+                            f.write(template.render(inventory=inventory,year=year,websiteName=websiteName,gitSha=gitSha))
+            elif suffix == ".css":
+                filename = "css/{}-{}.css".format(name,gitSha)
+                with open(filename,'w') as f:
+                    print("Generating " + filename + "...")
+                    f.write(template.render(inventory=inventory,year=year,gitSha=gitSha))
 
     return inventory
 
