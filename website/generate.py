@@ -98,56 +98,61 @@ def processImages():
         else:
             meta['dropbox']['outdated']=False
             f = 'img/raw/{}.jpg'.format(meta['name'])
-            with Image.open(f) as img:
-                exif = img._getexif()
-                xmp = file_to_dict(f) 
-                xmpUrl = "http://purl.org/dc/elements/1.1/"
-                
-                if xmpUrl in xmp: 
-                    xmp=xmp["http://purl.org/dc/elements/1.1/"]
-                    purlOrg={}
-                    for k,v,_ in xmp:
-                        purlOrg[k] = v
-                    purlTitleKey =  "dc:title[1]"
-                    purlTitle=None
-                    if purlTitleKey in purlOrg:
-                        purlTitle = purlOrg[purlTitleKey]
-                        if purlTitle.strip() == "":
-                            purlTitle=None
-                else:
-                    purlOrg=None
-                displayname = meta['name'] 
-                if purlTitle:
-                    displayname=purlTitle
-                    print("Using XMP title {}".format(displayname))
-                
-                w,h = img.size
-                tag = lambda x : exif[TAGS_NR[x]] if TAGS_NR[x] in exif else None
-                avg=np.round(np.mean(np.array(img),axis=(0,1)))
-                id = meta['dropbox']['id']
-                avghex= ('#%02x%02x%02x' % tuple(avg.astype(int)))
-                obj= {
-                    'name': meta['name'],
-                    'displayname': displayname,
-                    'dropbox': meta['dropbox'],
-                    'date': tag('DateTimeOriginal'),
-                    'rating': tag('Rating'),
-                    'view': viewerPath.format(id),
-                    'Copyright': tag('Copyright'),
-                    'colour': avghex,
-                    'original': {
-                        'path' : f,
-                        'width': img.width,
-                        'height': img.height
+            try:
+                with Image.open(f) as img:
+                    exif = img._getexif()
+                    xmp = file_to_dict(f) 
+                    xmpUrl = "http://purl.org/dc/elements/1.1/"
+
+                    if xmpUrl in xmp: 
+                        xmp=xmp["http://purl.org/dc/elements/1.1/"]
+                        purlOrg={}
+                        for k,v,_ in xmp:
+                            purlOrg[k] = v
+                        purlTitleKey =  "dc:title[1]"
+                        purlTitle=None
+                        if purlTitleKey in purlOrg:
+                            purlTitle = purlOrg[purlTitleKey]
+                            if purlTitle.strip() == "":
+                                purlTitle=None
+                    else:
+                        purlOrg=None
+                    displayname = meta['name'] 
+                    if purlTitle:
+                        displayname=purlTitle
+                        print("Using XMP title {}".format(displayname))
+
+                    w,h = img.size
+                    tag = lambda x : exif[TAGS_NR[x]] if TAGS_NR[x] in exif else None
+                    avg=np.round(np.mean(np.array(img),axis=(0,1)))
+                    id = meta['dropbox']['id']
+                    avghex= ('#%02x%02x%02x' % tuple(avg.astype(int)))
+                    obj= {
+                        'name': meta['name'],
+                        'displayname': displayname,
+                        'dropbox': meta['dropbox'],
+                        'date': tag('DateTimeOriginal'),
+                        'rating': tag('Rating'),
+                        'view': viewerPath.format(id),
+                        'Copyright': tag('Copyright'),
+                        'colour': avghex,
+                        'original': {
+                            'path' : f,
+                            'width': img.width,
+                            'height': img.height
+                        }
                     }
-                }
-                for (n,o) in genThumbnails(id,img):
-                    obj[n]=o
-               
-                with open(metafile,'w') as f:
-                    json.dump(obj,f)
-                yield obj
-                print("({}/{}) [ ok ]\r".format(i,numFiles),end='')
+                    for (n,o) in genThumbnails(id,img):
+                        obj[n]=o
+
+                    with open(metafile,'w') as f:
+                        json.dump(obj,f)
+                    yield obj
+                    print("({}/{}) [ ok ]\r".format(i,numFiles),end='')
+            except FileNotFoundError as e:
+                removeMeta(meta) # The meta data failed for some reason, 
+                                 # Remove it to force reload
+                raise e
         i=i+1
     print('')
 

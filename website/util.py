@@ -44,12 +44,19 @@ def dropboxFilenameFromRawPath(path):
                     
 def removeMeta(meta):    
     print('Deleting all data of img ({})'.format(meta['name']))
-    removePathNoFail(meta['original']['path'])
-    removePathNoFail(meta['tiny']['path'])
-    removePathNoFail(meta['small']['path'])
-    removePathNoFail(meta['original']['path'])
-    removePathNoFail(meta['view'])
-    removePathNoFail(toJsonPath(meta['view']))
+    if 'tiny' in meta: 
+        removePathNoFail(meta['tiny']['path'])
+    if 'small' in meta: 
+        removePathNoFail(meta['small']['path'])
+    if 'medium' in meta: 
+        removePathNoFail(meta['medium']['path'])
+    if 'large' in meta: 
+        removePathNoFail(meta['large']['path'])
+    if 'huge' in meta: 
+        removePathNoFail(meta['huge']['path'])
+    if 'view' in meta: 
+        removePathNoFail(meta['view'])
+        removePathNoFail(toJsonPath(meta['view']))
     os.remove(metaFilename(meta))
 
 #https://stackoverflow.com/questions/1094841/reusable-library-to-get-human-readable-version-of-file-size
