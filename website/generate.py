@@ -127,11 +127,18 @@ def processImages():
                     avg=np.round(np.mean(np.array(img),axis=(0,1)))
                     id = meta['dropbox']['id']
                     avghex= ('#%02x%02x%02x' % tuple(avg.astype(int)))
+                    date = tag('DateTimeOriginal')
+                    if not date:
+                        date = tag('DateTimeDigitized')
+                        if not date:
+                            date = tag('DateTime')
+                            if not date:
+                                raise 'Image file contains no date information!'
                     obj= {
                         'name': meta['name'],
                         'displayname': displayname,
                         'dropbox': meta['dropbox'],
-                        'date': tag('DateTimeOriginal'),
+                        'date': date,
                         'rating': tag('Rating'),
                         'view': viewerPath.format(id),
                         'Copyright': tag('Copyright'),
