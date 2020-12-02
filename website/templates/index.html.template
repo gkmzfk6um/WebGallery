@@ -53,8 +53,8 @@
 	  		  data-srcset="
 			  	{{pic.huge.path | tolink}} {{pic.huge.width}}w,
 			  	{{pic.large.path | tolink}} {{pic.large.width}}w,
-			  	{{pic.medium.path | tolink}} {{pic.medium.width}}w
-     			  data-src= "{{pic.medium.path | tolink }}"
+			  	{{pic.medium.path | tolink}} {{pic.medium.width}}w"
+     		   data-src= "{{pic.medium.path | tolink }}"
 		  >
 			  <span>{{pic.displayname}} </span>
 		  </a>

@@ -2,9 +2,11 @@ const sum = function(as){ return  as.reduce( function(a,b){return a+b; } ,0) }
 Array.min = function(array){
 	return Math.min.apply(Math,array)
 }
+var initialLayoutAchived = false;
 
 function gallery() {
 	$('.gallery').each( function(index,elem){
+
 		var width = null;
 		var i = null;
 		//Loop to solve scrollbar appearing
@@ -58,8 +60,11 @@ function gallery() {
 				}
 			}
 	}
-	
 		console.log('Image layout achived after ' + i + ' attempt(s).' );
+		if (!initialLayoutAchived){
+			loadImagesWhenRdy();
+			initialLayoutAchived=true;
+		}
 	})
 	
 }
@@ -71,23 +76,62 @@ $(window).resize(function() {
 });
 
 function loadImages(){
-	$('.image').each( function() {
-		src= $(this).attr('data-src');
-		srcset= $(this).attr('data-srcset');
-		
-		var img = $('<img>')
+
+	let loadImageNow = function(e)
+	{
+		let src= $(e).attr('data-src');
+		let srcset= $(e).attr('data-srcset');
+
+		let img = $('<img>')
 		img.one('load',function() {
 			$(this).css('visibility','visible');
 			$(this).css('opacity', '1.0');
 		})
 		img.attr('srcset',srcset);
 		img.attr('src',src);
-		img.appendTo(this);
+		img.appendTo(e);
+	};
 
-	});
-	console.log('Image loading started');
+	if (!('IntersectionObserver' in window) ||
+    !('IntersectionObserverEntry' in window) ||
+    !('intersectionRatio' in window.IntersectionObserverEntry.prototype)) {
+		console.log('Loading all images (legacy)')
+		$('.image').each( function() {
+			loadImageNow(this);
+		});
+	}
+	else {
+		console.log('Loading intersection images');
+		
+		const config = {
+			rootMargin: '300px',
+			threshold: 0
+		}
+
+		let callback = function(entries,observer)
+		{
+			entries.forEach(function(entry)
+			{
+				if (entry.intersectionRatio > 0){
+					observer.unobserve(entry.target);
+					loadImageNow(entry.target);
+				}
+			});
+		}
+		let observer = new IntersectionObserver(callback,config);
+		$('.image').each( function() {
+			observer.observe(this);
+		});
+
+	}
+
 }
+
+function loadImagesWhenRdy(){
+	console.log('Arming image loading...')
+	$(document).ready(function(){
+		loadImages();
+	})
+}
+
 gallery();
-$(document).ready(function(){
-	loadImages();
-})
