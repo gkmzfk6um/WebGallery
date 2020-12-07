@@ -24,7 +24,7 @@ spec:
 
       initContainers:
         - name: fetch-dropbox
-          image: virtualraven/webgallery:version-1.5
+          image: virtualraven/webgallery:version-1.17
           imagePullPolicy: Always
           command: ["sh"]
           args: ["/docker-entrypoint.d/10-fetch-images.sh"]
@@ -44,7 +44,7 @@ spec:
 
       containers:
       - name: web-gallery-nginx
-        image: virtualraven/webgallery:version-1.5
+        image: virtualraven/webgallery:version-1.17
         imagePullPolicy: Always
         ports:
         - containerPort: 80
@@ -59,11 +59,11 @@ spec:
                secretKeyRef:
                 name: website-data
                 key: url
-          - name: 'G_ANALYTICS_ID'
-            valueFrom:
-               secretKeyRef:
-                name: website-data
-                key: g-id
+          #- name: 'G_ANALYTICS_ID'
+          #  valueFrom:
+          #     secretKeyRef:
+          #      name: website-data
+          #      key: g-id
         readinessProbe:
           httpGet:
             path: /api/manifest.json
@@ -114,7 +114,7 @@ spec:
     spec:
       containers:
       - name: web-gallery-nginx
-        image: virtualraven/webgallery:version-1.5
+        image: virtualraven/webgallery:version-1.17
         imagePullPolicy: Always
         ports:
         - containerPort: 80
@@ -126,11 +126,11 @@ spec:
                secretKeyRef:
                 name: website-data
                 key: url
-          - name: 'G_ANALYTICS_ID'
-            valueFrom:
-               secretKeyRef:
-                name: website-data
-                key: g-id
+          #- name: 'G_ANALYTICS_ID'
+          #  valueFrom:
+          #     secretKeyRef:
+          #      name: website-data
+          #      key: g-id
         readinessProbe:
           httpGet:
             path: /api/manifest.json
