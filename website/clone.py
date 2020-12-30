@@ -7,6 +7,9 @@ import datetime
 import shutil
 from util import *
 
+# 1 - Introduced embedded ICC profiles, needs cache rebuild
+supportedVersion = 1
+
 
 adapter = HTTPAdapter(max_retries=Retry(total=10, backoff_factor=1,status_forcelist=[404,403,429,500, 502, 503, 504] ) )
 httpInitial = requests.Session()
@@ -25,13 +28,19 @@ def __get__manifest(url,fastTimeout):
     else:
         r = httpInitial.get(fetchUrl)
     if r.ok:
-        return r.json()
+        obj = r.json()
+        #Combability patch with older clients
+        if not 'version' in obj:
+            obj['version']=None
+        return obj
     else:
         raise Exception('Failed to get master manifest ({})'.format(url))
 
 def diffManifest(client,master):
+    
     new = {
         'last_update': datetime.datetime.now().isoformat(),
+        'version': master['version'],
          'img': {
             'inventory':[],
             'all':[],
@@ -93,7 +102,11 @@ def fetchWebsite(url,shortTimeout):
     print('Cloning {}'.format(url))
     url = 'http://{}'.format(url)
     master_manifest = __get__manifest(url,shortTimeout)
-    client_manifest = {
+    if not master_manifest['version']:
+        raise Exception('Unknown master version, incompatible')
+    elif master_manifest['version'] < supportedVersion:
+        raise Exception("Master version {} is incompatible with this release {}".format(master_manifest['version'],supportedVersion))
+    empty_manifest = {
         'last_update':'1970-01-01T00:00:01.000000',
         'host': os.getenv('HOSTNAME'),
          'img': {
@@ -103,12 +116,19 @@ def fetchWebsite(url,shortTimeout):
             'removed': []
         } 
     } 
+
+    client_manifest = empty_manifest
     try:
         with open('api/manifest.json','r') as f:
             tmp=json.load(f)
             client_manifest=tmp
     except Exception:
         print('Slave node is clean, cloning everything')
+    else:
+        if client_manifest['version'] < supportedVersion:
+            client_manifest = empty_manifest
+            print('Stored client manifest is incompatible with current software version')
+            print('WARN: Manifest ignored! Extra files might exist on disk that will not be deleted correctly')
     
     new_manifest = diffManifest(client_manifest,master_manifest)
     for meta in new_manifest['img']['removed']:

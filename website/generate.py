@@ -269,6 +269,7 @@ def fetchDropbox():
         json.dump({
             'last_update': datetime.datetime.now().isoformat(),
             'host': os.getenv('HOSTNAME'),
+            'version': 1,
             'img': {
                 'inventory': inventory,
                 'new': newMeta,
