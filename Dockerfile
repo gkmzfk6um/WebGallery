@@ -1,3 +1,12 @@
+FROM node:current-buster-slim as website-build
+WORKDIR /build 
+RUN  npm install --save-dev @babel/cli @babel/core @babel/preset-env babel-preset-minify
+ENV BROWSERSLIST "> 0.5%, last 2 versions, Firefox ESR, not dead" 
+COPY website website
+RUN mv  website/js website/jssrc  \
+    && ./node_modules/.bin/babel website/jssrc --out-dir website/js --source-maps --presets=@babel/preset-env,minify
+
+
 FROM nginx:mainline
 ARG SOURCE_COMMIT                  
 ENV SOURCE_COMMIT $SOURCE_COMMIT 
@@ -29,7 +38,7 @@ RUN apt update && apt install -y python3 python3-pip exempi libcap2-bin   && \
     setcap 'cap_net_bind_service=+ep' /usr/sbin/nginx 
 
 
-COPY --chown=gallery-owner:gallery-owner website /var/www/gallery
+COPY --from=website-build --chown=gallery-owner:gallery-owner /build/website /var/www/gallery
 COPY  docker/nginx.conf /etc/nginx/nginx.conf
 COPY --chown=gallery-owner:gallery-owner docker/10-fetch-images.sh /docker-entrypoint.d/
 

@@ -18,6 +18,7 @@ from libxmp.utils import file_to_dict
 import dropbox as db
 import clone
 from util import *
+import datetime
 
 viewerPath = "view/{}.html"
 pathTemplate = "img/thumbnails/{}_{}.jpg"
@@ -26,7 +27,24 @@ def hashId(name,id):
     return base64.urlsafe_b64encode(hashlib.sha1((name+id).encode('utf-8')).digest()).decode('utf-8')
 
 toLink =  lambda x: addSlash(StripHTMLExt(x))
+
+
+date2year = lambda x: datetime.datetime.strptime(x, "%Y:%m:%d %H:%M:%S").year
+def sortByYears(inventory):
+    newinventory = {}
+    for pic in inventory:
+        print(pic)
+        year = date2year(pic['date'])
+        if not(year in newinventory):
+            newinventory[year] = []
+        newinventory[year].append(pic)
+    return newinventory
+
+
+filters.FILTERS['sortbyyears'] = sortByYears
 filters.FILTERS['tolink'] = toLink
+filters.FILTERS['date2year'] = date2year
+
 TAGS_NR  = {}
 for k,v in ExifTags.TAGS.items():
     TAGS_NR[v] = k

@@ -98,11 +98,11 @@ textarea {
    ========================================================================== */
 
 .scrollbar-measure {
-	width: 100px;
-	height: 100px;
-	overflow: scroll;
-	position: absolute;
-	top: -9999px;
+    width: 100px;
+    height: 100px;
+    overflow: scroll;
+    position: absolute;
+    top: -9999px;
 }
 
 #site-logo {
@@ -113,12 +113,12 @@ textarea {
     text-align: center;
 }
 header {
-	padding:0.3em 2em 2em 2em;
+    padding:0.3em 2em 2em 2em;
     text-align: center;
     display: inline-block;
 }
 header  a:visited, header  a:hover, header  a:active, header  a:link, header  a {
-	 text-decoration:none;
+     text-decoration:none;
     color: #AAA;
 }
 
@@ -126,8 +126,8 @@ header  h2 {
     color: #444;
     display: inline-block;
     font-size: 3rem;;
-	margin-bottom:0.2em;
-	margin-top:0em;
+    margin-bottom:0.2em;
+    margin-top:0em;
     padding-bottom:0em;
     border-bottom: 0.2rem solid #AAA ;
 }
@@ -139,7 +139,7 @@ header > div > h2 > span
 
 
 body {
-	background: #FAFAFA ;
+    background: #FAFAFA ;
     font-family: 'Maven Pro', sans-serif;
     font-weight: 500;
     text-align: center;
@@ -152,24 +152,33 @@ h1,h2,h3,h4 {
 }
 
 .body {
-	padding:1em;
+    padding:1em;
+    margin-left: auto;
+    margin-right: auto;
+    max-width:1200px;
+}
+.body > h2 {
+    color: #AAA;
+    font-size: 3rem;
+    padding-top: 3rem;
+
 }
 footer {
-	text-align:center;
-	color: rgb(220,220,220);
-	padding:1em;
+    text-align:center;
+    color: rgb(220,220,220);
+    padding:1em;
 }
 
-.gallery {
+.gallery{
     overflow:hidden;
-	margin-left: auto;
-	margin-right: auto;
-	max-width:1200px;
 }
+
+
+
 
 @media screen and (min-width:2000px ){
-	.gallery{
-		max-width:1500px;
+    .body {
+        max-width:1500px;
     }
     
     body {
@@ -183,34 +192,34 @@ footer {
 
 
 .image {
-	margin:2px;
-	float:left;
-	position: relative;
-	display:block;
+    margin:2px;
+    float:left;
+    position: relative;
+    display:block;
 }
 .image img{
-	height:100%;
-	width:100%;
-	visibility:hidden;
-	opacity:0;
-	transition:visibility 0.1s linear,opacity 0.1s linear;
+    height:100%;
+    width:100%;
+    visibility:hidden;
+    opacity:0;
+    transition:visibility 0.1s linear,opacity 0.1s linear;
 }
 
 .image > span {
-	position: absolute;
-	left: 0em;
-	bottom: 0.1em;
-	padding:1em 1em 1em 1em;
-	display: inline-block;
-	color: white;
-	visibility: hidden;
-	opacity:0;
-	transition:visibility 0.1s linear,opacity 0.1s linear;
+    position: absolute;
+    left: 0em;
+    bottom: 0.1em;
+    padding:1em 1em 1em 1em;
+    display: inline-block;
+    color: white;
+    visibility: hidden;
+    opacity:0;
+    transition:visibility 0.1s linear,opacity 0.1s linear;
 }
 
 .image:hover > span {
-	visibility:visible;
-	opacity:1;
+    visibility:visible;
+    opacity:1;
 }
 
 

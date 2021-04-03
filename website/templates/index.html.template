@@ -4,14 +4,14 @@
 <head>
 
   {% if gAdId is defined %}
-	<!-- Global site tag (gtag.js) - Google Analytics -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id={{gAdId}}"></script>
-	<script>
-  		window.dataLayer = window.dataLayer || [];
-    		function gtag(){dataLayer.push(arguments);}
-      		gtag('js', new Date());
-        	gtag('config', '{{gAdId}}');
-	</script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{gAdId}}"></script>
+    <script>
+          window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+            gtag('config', '{{gAdId}}');
+    </script>
   {% endif %}
 
   <meta charset="utf-8">
@@ -32,58 +32,62 @@
 </head>
 
 <body>
-  <!--[if lte IE 9]>
-    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
-  <![endif]-->
+    <!--[if lte IE 9]>
+      <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+    <![endif]-->
 
-  <!-- Add your site or application content here -->
-  <header>
-	<div id="site-logo">
-		<h2> <span>LUKAS</span> RAHMN </h2>	  
-		<div id="menu">
-			<a href="/about">About my gallery</a>
-		</div>
-	</div>
-  </header>
-  <div class="body">
-	  <div class="gallery" >{% for pic in inventory %}
-		  <a href="{{pic.view | tolink }}" id="{{pic.displayname}}" class="image" style="background-color:{{pic.colour}};"   
-			  data-width="{{pic.medium.width}}" 
-			  data-height="{{pic.medium.height}}" 
-	  		  data-srcset="
-			  	{{pic.huge.path | tolink}} {{pic.huge.width}}w,
-			  	{{pic.large.path | tolink}} {{pic.large.width}}w,
-			  	{{pic.medium.path | tolink}} {{pic.medium.width}}w"
-     		   data-src= "{{pic.medium.path | tolink }}"
-		  >
-			  <span>{{pic.displayname}} </span>
-		  </a>
-		  {% endfor %}
-	</div>
-  </div>
+    <!-- Add your site or application content here -->
+    <header>
+      <div id="site-logo">
+          <h2> <span>LUKAS</span> RAHMN </h2>	  
+          <div id="menu">
+              <a href="/about">About my gallery</a>
+          </div>
+      </div>
+    </header>
+    <div class="body">
+        {%for key_year, pics in (inventory | sortbyyears).items() %}
+        {%if key_year != year %}
+        <h2 id="{{key_year}}">{{key_year}}</h2>
+        {%else%}
+        <h2>Latest creations</h2>
+        {% endif %}
+        <div class="gallery" >{% for pic in pics %}
+            <a href="{{pic.view | tolink }}" id="{{pic.displayname}}" class="image" style="background-color:{{pic.colour}};"   
+                data-width="{{pic.medium.width}}" 
+                data-height="{{pic.medium.height}}" 
+                  data-srcset="
+                    {{pic.huge.path | tolink}} {{pic.huge.width}}w,
+                    {{pic.large.path | tolink}} {{pic.large.width}}w,
+                    {{pic.medium.path | tolink}} {{pic.medium.width}}w"
+                  data-src= "{{pic.medium.path | tolink }}"
+            >
+                <span>{{pic.displayname}} </span>
+            </a>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+    <footer>
+        Copyright {{year}} Lukas Rahmn. All Rights Reserved.
+    </footer>
 
-  <footer>
-	  Copyright {{year}} Lukas Rahmn. All Rights Reserved.
-  </footer>
-
-  <template id="imgTmp">
-	  <a class="image" >
-		<span></span>
-		<img></img>
-	 </a>
-  </template>
-
- 	<script>
-		if(false && typeof WebAssembly === "object" && typeof WebAssembly.instantiate === "function"){
-  			document.write('<script src="/js/WebASM.js"><\/script>')
-		}
-		else {
-  			document.write('<script src="/js/vendor/modernizr-3.6.0.min.js"><\/script>');
-   			document.write('<script src="/js/vendor/jquery-3.3.1.min.js"><\/script>');
-  			document.write('<script src="/js/plugins.js"><\/script>');
-  			document.write('<script src="/js/main.js"><\/script>');
-		}
-  	</script>
+    <template id="imgTmp">
+        <a class="image" >
+          <span></span>
+          <img></img>
+       </a>
+    </template>
+    <script>
+       if(false && typeof WebAssembly === "object" && typeof WebAssembly.instantiate === "function"){
+             document.write('<script src="/js/WebASM.js"><\/script>')
+       }
+       else {
+             document.write('<script src="/js/vendor/modernizr-3.6.0.min.js"><\/script>');
+              document.write('<script src="/js/vendor/jquery-3.3.1.min.js"><\/script>');
+             document.write('<script src="/js/plugins.js"><\/script>');
+             document.write('<script src="/js/main.js"><\/script>');
+       }
+    </script>
 </body>
-
 </html>

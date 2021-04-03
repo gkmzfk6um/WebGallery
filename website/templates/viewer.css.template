@@ -111,7 +111,6 @@ header {
 	left:50%;
 	transform: translate(-50%,-50%);
 	transition:visibility 0.1s linear,opacity 0.1s linear;
-	box-shadow: 0 0 100px 0 #e0e0e0;
 }
 
 a:active, a:focus {

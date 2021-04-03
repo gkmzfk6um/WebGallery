@@ -1,71 +1,87 @@
-const sum = function(as){ return  as.reduce( function(a,b){return a+b; } ,0) }
-Array.min = function(array){
-	return Math.min.apply(Math,array)
-}
+const sum = as => as.reduce( (a,b) => a+b ,0 );
+Array.min = (array) => Math.min.apply(Math,array);
+
 var initialLayoutAchived = false;
 
 function gallery() {
-	$('.gallery').each( function(index,elem){
 
-		var width = null;
-		var i = null;
-		//Loop to solve scrollbar appearing
-		while(width != $(this).innerWidth() &&  i++ < 2){
-			width= $(this).innerWidth();
-			children=$(this).children().toArray();
-			excess = $(children[0]).outerWidth(true)-$(children[0]).innerWidth();
-			$('children').each(function() { $(this).css( {'width':'','height':''});});
-			row = function(elems,lastRow){
-				heights = $.map(elems ,function(e){return  $(e).attr('data-height'); });
-				min = Array.min(heights);
-				widths =  $.map(elems, function(e){ 
-					return $(e).attr('data-width') * min/ $(e).attr('data-height')} );
-				
-				if(!lastRow){
-					scale =  1.0002*sum(widths)/(width-elems.length*excess);
-				}
-				else{
-					scale=1.0;
-				}
-				widths = $.map(widths,function(e){return e/scale});
-				height = min/scale;
+	const calculateLayout =  function(index,elem) {
+		var   avgScale = {sum:0, len: 0}
+		const width    = $(this).innerWidth();
+		const children = $(this).children().toArray();
+		const excess   = $(children[0]).outerWidth(true)-$(children[0]).innerWidth();
+		$('children').each( function() { $(this).css( {'width':'','height':''});});
 
 
-				if (scale < 1.0) {
-					return false;
-				}
-				else {
-					$(elems).each( function(i){
-						$(this).width(widths[i]);
-						$(this).height(height);
-					})
-					return true;
-				}
+		var row = function(elems,lastRow){
+			const heights = $.map(elems ,(e) => $(e).attr('data-height') );
+			const min = Array.min(heights);
+			var widths =  $.map(elems, (e) => $(e).attr('data-width') * min/ $(e).attr('data-height'));
+			const scale = lastRow ? (avgScale.sum / avgScale.len) : 1.0002*sum(widths)/(width-elems.length*excess);
+			widths = $.map(widths,function(e){return e/scale});
+			const height = min/scale;
+
+
+			if (scale < 1.0) {
+				return false;
 			}
-			
-			start=0;
-			end =1;
-			while(end <= children.length+1){
-				while(end <= children.length+1 && !row(children.slice(start,end),false)){
-					end++;
-				}
-				if (end > children.length+1)
-				{
-					row(children.slice(start,end),true);
-					break;
-				}
-				else{
-					start=end;
-					end++;
-				}
+			else {
+				$(elems).each( function(i){
+					$(this).width(widths[i]);
+					$(this).height(height);
+				})
+				avgScale.sum += scale
+				avgScale.len += 1;
+				return true;
 			}
-	}
-		console.log('Image layout achived after ' + i + ' attempt(s).' );
-		if (!initialLayoutAchived){
-			loadImagesWhenRdy();
-			initialLayoutAchived=true;
 		}
-	})
+		
+		var start = 0;
+		var end   = 1;
+		while(end <= children.length+1){
+			while(end <= children.length+1 && !row(children.slice(start,end),false)){
+				end++;
+			}
+			if (end > children.length+1)
+			{
+				row(children.slice(start,end),true);
+				break;
+			}
+			else{
+				start=end;
+				end++;
+			}
+		}
+		return $(this).innerWidth() == width;
+	};
+
+	{
+		//Recalculate layout until it is stable
+		let success  = true;
+		let retries = 0;
+		do
+		{
+			success = true;
+			$('.gallery').each( function(i,e) {
+				console.log('Calculation layout '+ i)
+				success = calculateLayout.call(this,i,e) && success; //To avoid and elision...
+				console.log("Success: " + success);
+			});
+		}
+		while (retries++ < 2 && !success );
+		if (success)
+		{
+			console.log("Achieved layout in " + retries +" attempts");
+			if (!initialLayoutAchived){
+				loadImagesWhenRdy();
+				initialLayoutAchived=true;
+			}
+		}
+		else
+		{
+			console.log("Failed to achive layout");
+		}
+	}
 	
 }
 
@@ -134,4 +150,4 @@ function loadImagesWhenRdy(){
 	})
 }
 
-gallery();
+$(document).ready(() => gallery());

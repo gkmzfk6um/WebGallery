@@ -90,7 +90,10 @@
   <script src="/js/plugins.js"></script>
   <script src="/js/view.js"></script>
   <script>
-	fetchMeta('{{json}}');
+	window.onload = function()
+	{
+		fetchMeta('{{json}}');
+	}
   </script>
 </body>
 
