@@ -26,3 +26,10 @@ html,body {
 a.normal  , a.normal:active, a.normal:focus, a.normal:hover {
 	color: inherit;
 }
+
+@media screen and (min-width:2000px )
+{
+	.body {
+		margin-top: 5rem;
+	}
+}

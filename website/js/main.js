@@ -147,6 +147,7 @@ function loadImagesWhenRdy(){
 	console.log('Arming image loading...')
 	$(document).ready(function(){
 		loadImages();
+		location.hash = location.hash;
 	})
 }
 

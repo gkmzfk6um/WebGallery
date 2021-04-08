@@ -32,6 +32,7 @@
   <link rel="stylesheet" href="/css/normalize-{{gitSha}}.css">
   <link rel="stylesheet" href="/css/main-{{gitSha}}.css">
   <link rel="stylesheet" href="/css/about-{{gitSha}}.css">
+  <link rel="stylesheet" href="/css/menu-{{gitSha}}.css">
 </head>
 
 <body>
@@ -44,10 +45,35 @@
 	<div id="site-logo">
 		<h2> <span>LUKAS</span> RAHMN </h2>	  
 		<div id="menu">
-			<a href="/">Back to my gallery</a>
+			<a>Menu</a>
 		</div>
 	</div>
   </header>
+  <div class="menu slideout-menu">
+      <div class="close-container">
+          <div class="leftright"></div>
+          <div class="rightleft"></div>
+      </div>
+      <ul>
+          <li>
+              <a href="/"> Timeline </a>
+              <ul>
+                  {% for key_year, pics in (inventory | sortbyyears).items() %}
+                  <li> <a href="#{%if key_year != year %}{{key_year}}{%else%}{{top}}{% endif %}"> {{key_year}} </a></li>
+                  {% endfor %}
+              </ul>
+          </li>
+          <li>
+              <a href="/categories"> Categories </a>
+              <ul>
+                  {% for key_category, pics in (inventory | sortbycategories).items() %}
+                  <li> <a href="/categories#{{key_category}}"> {{key_category}} </a> </li>
+                  {% endfor %}
+              </ul>
+          </li>
+          <li> <a href="about"> <b>About my gallery</b> </a> </li>
+      </ul>
+  </div>
   
   
   <div class="body">
@@ -107,6 +133,7 @@
   <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
   <script>window.jQuery || document.write('<script src="js/vendor/jquery-3.3.1.min.js"><\/script>')</script>
   <script src="/js/plugins.js"></script>
+  <script src="/js/menu.js"></script>
 </body>
 
 </html>
