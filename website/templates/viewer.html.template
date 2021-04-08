@@ -26,7 +26,7 @@
   <link rel="manifest" href="../site.webmanifest">
   <link rel="apple-touch-icon" href="/icons/icon_square.png">
 
-  <link rel="stylesheet" href="/css/normalize.css">
+  <link rel="stylesheet" href="/css/normalize-{{gitSha}}.css">
   <link rel="stylesheet" href="/css/main-{{gitSha}}.css">
   <link rel="stylesheet" href="/css/viewer-{{gitSha}}.css">
 </head>

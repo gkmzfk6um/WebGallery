@@ -1,0 +1,209 @@
+categories = {
+    "Nature": [ 
+        {
+            "mode": "or",
+            "filters": [
+                {"path": "dc:subject", "value": "Nature" } 
+            ]
+        }
+    ],
+    "Portraiture" : [
+        {
+            "mode": "or",
+            "filters": [
+                {"path": "dc:subject", "value": "Portrait" } 
+            ]
+        }
+    ],
+    "Analog" : [
+        {
+            "mode": "or",
+            "filters": [
+                {"namespace": "http://ns.adobe.com/exif/1.0/aux/", "path": "aux:Lens", "value": "65.0 mm" },
+                {"path": "dc:subject", "value": "Negative" } ,
+                {"path": "dc:subject", "value": "Negative Lab Pro" },
+                {"path": "dc:subject", "value": "Film" } 
+            ]
+        }
+    ],
+    "Street" : [
+        {
+            "mode": "or",
+            "filters": [
+                {"path": "dc:subject", "value": "Street" } 
+            ]
+        }
+    ]
+}
+
+from PIL import Image
+from libxmp.utils import file_to_dict
+from libxmp.consts import XMP_NS_DC
+from util import *
+import re
+import json
+
+def loadXmp(inventory):
+    for item in inventory:
+        if not ("exif" in item):
+            try: 
+                yield (item,file_to_dict(item["original"]["path"]))
+            except OSError:
+                print("!!!WARN Failed to read file" + item["original"]["path"])
+                continue
+
+def validateCategories():
+    failed = False
+    def warn(w):
+        nonlocal failed
+        print("!!!WARN: validateCategories(): {}".format(w))
+        failed = True
+    if not (type(categories) is dict):
+        warn("Categories must be a dictionary!")
+        return False
+
+    isString = lambda x : type(x) is str
+
+    prefix = ""
+    for catName,cat in categories.items():
+        if type(cat) is list:
+            if len(cat) == 0:
+                warn("Category {} must contain at least one filter definition".format(catName))
+            for i in range(len(cat)):
+                filterdef = cat[i]
+                if type(filterdef) is dict:
+                    for key,value in filterdef.items():
+                        if key == "mode":
+                            if not (value in ("or","and")):
+                                warn("Value \"{}\" isn't a valid mode, expected [or,and]".format())
+                        elif key == "filters":
+                            if type(value) is list:
+                                if len(value) == 0:
+                                    warn("attribute \"filters\" must contains at least one filter!")
+                                for j in range(len(value)):
+                                    filter = value[j] 
+                                    if type(filter) is dict:
+                                        for filterkey,filtervalue in filter.items():
+                                            if not filterkey in ("namespace","regex","path","value","debug"):
+                                                warn("Unknown attribute \"{}\" in filter[{}] of filterdefinition[{}] of {}, expected [namespace,regex,path,value]".format(filterkey,j,i,catName))
+                                            if not isString(filtervalue):
+                                                warn("Attribute \"{}\" in filter[{}] of filterdefinition[{}] of {} must have type string".format(filterkey,j,i,catName))
+                                        if not "path" in filter:
+                                            warn("Filter[{}] of filterdefinition[{}] of {} must contain attribute \"path\"".format(filterkey,j,i,catName))
+                                        if not ("regex" in filter or "value" in filter):
+                                            warn("Filter[{}] of filterdefinition[{}] of {} must contain attribute regex or value!".format(filterkey,j,i,catName))
+                                    else:
+                                        warn("filter[{}] of filterdefinition[{}] of {} must be of type dict!",j,i,catName)
+                            else:
+                                warn("property \"filters\" of {} filterdefinition[{}] must be list of filter!".format(catName,i))
+                        else:
+                            warn("\"{}\" isn't a valid filterdefinition property, expected [filters,mode]".format(key))
+                    if not "filters" in filterdef:
+                        warn("Filter definition must contain property \"filters\"")
+                else:
+                    warn("Type of filter definition {} filter[{}] ins't dictionary".format(catName,i))
+        else:
+            warn("Type of category \"{}\" isn't list of filter!")
+    return not failed
+
+
+xmpMetadata = {}
+def matchFilter(filter,xmp):
+    global xmpMetadata
+    namespace = XMP_NS_DC
+    if "namespace" in filter:
+        namespace = filter["namespace"]
+    
+    debug = "debug" in filter
+    # Collect debug data
+    if debug:
+        for ns,t  in xmp.items():
+            if not (ns in xmpMetadata):
+                xmpMetadata[ns] = {}
+            for key,val,p in xmp[ns]:
+                if not (key in xmpMetadata[ns]):
+                    xmpMetadata[ns][key]=0
+                xmpMetadata[ns][key] = xmpMetadata[ns][key]+1
+
+    def match(filter,value):
+        if "regex" in filter and re.match(filter["regex"],value):
+            return True
+        elif "value" in filter and filter["value"]==value:
+            return True
+        return False
+
+
+    # Do the match
+    if namespace in xmp:
+        ns = xmp[namespace]
+        for path,value,p in ns:
+            if path == filter["path"]:
+                if debug:
+                    print("## DEBUG {} ##".format(path))
+                    print("\tvalue: \"{}\"".format(value))
+                    for prop,val in p.items():
+                        if val:
+                            print("\tproperty: {}=True".format(prop))
+                if p["VALUE_IS_ARRAY"]:
+                    aPath = lambda i:  "{}[{}]".format(path,i)
+                    i = 1 
+                    for ipath,aValue,_ in ns:
+                        if ipath == aPath(i):
+                            if debug:
+                                print("\tvalue[{}]: {}".format(i,aValue))
+
+                            if match(filter,aValue):
+                                return True    
+                            i=i+1
+                else:
+                    if match(filter,value):
+                        return True
+    return False
+
+def setsortedcategories(cat):
+    global sortedinventory 
+    sortedinventory = cat
+
+
+def sortbycategories(inventory):
+    if not ('sortedinventory' in globals()):
+        global sortedinventory 
+        sortedinventory = {}
+        for category, filter in categories.items():
+           sortedinventory[category]=[]
+
+        for item, xmp in loadXmp(inventory):
+            for category, filterdefinitions in categories.items():
+                isMatch = False
+                for filterdefinition in filterdefinitions:
+                    mode = lambda x,y : x or y
+                    isMatch = False
+                    if "mode" in filterdefinition:
+                        if filterdefinition["mode"] == "and":
+                            isMatch = True
+                            mode = lambda x,y : x and y 
+
+                    for filter in filterdefinition["filters"]:
+                        isMatch = mode(isMatch,matchFilter(filter,xmp)  )  
+
+                    if isMatch:
+                        sortedinventory[category].append(item)
+                if isMatch:
+                    break
+    
+        print("Generated categories: ")
+        sortedinventoryItems = list(sortedinventory.items())
+        emptyCat = False
+        for i in range(len(sortedinventoryItems)):
+            name,imgs = sortedinventoryItems[i] 
+            print("({}) {}: {}".format(i,name,len(imgs)))
+            if len(imgs) == 0:
+                emptyCat= True
+                del sortedinventory[name]
+
+        if emptyCat:
+            print("!!!WARN: Category empty, dumping xmp-debug.json")
+            with open("xmp-debug.json","w") as f:
+                json.dump(xmpMetadata,f)
+    return sortedinventory
+

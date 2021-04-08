@@ -1,5 +1,10 @@
 import os
 import re
+from PIL import ExifTags
+
+TAGS_NR  = {}
+for k,v in ExifTags.TAGS.items():
+    TAGS_NR[v] = k
 
 def StripHTMLExt(link):
     if link is None :

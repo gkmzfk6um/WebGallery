@@ -151,3 +151,5 @@ function loadImagesWhenRdy(){
 }
 
 $(document).ready(() => gallery());
+
+

@@ -1,10 +1,16 @@
+ARG SOURCE_COMMIT=DEV            
 FROM node:current-buster-slim as website-build
+ARG SOURCE_COMMIT                  
+ENV SOURCE_COMMIT $SOURCE_COMMIT 
 WORKDIR /build 
-RUN  npm install --save-dev @babel/cli @babel/core @babel/preset-env babel-preset-minify
+RUN     apt update && apt install -y rename \
+     && npm install --save-dev @babel/cli @babel/core @babel/preset-env babel-preset-minify sass
 ENV BROWSERSLIST "> 0.5%, last 2 versions, Firefox ESR, not dead" 
 COPY website website
 RUN mv  website/js website/jssrc  \
-    && ./node_modules/.bin/babel website/jssrc --out-dir website/js --source-maps --presets=@babel/preset-env,minify
+    && ./node_modules/.bin/babel website/jssrc --out-dir website/js --source-maps --presets=@babel/preset-env,minify \
+    && ./node_modules/.bin/sass  website/sass:website/css --style=compressed --color \
+    &&  rename -v "s/(.*)\.css/\1-${SOURCE_COMMIT}.css/" website/css/*.css
 
 
 FROM nginx:mainline

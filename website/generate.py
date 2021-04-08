@@ -18,6 +18,7 @@ from libxmp.utils import file_to_dict
 import dropbox as db
 import clone
 from util import *
+from categories import sortbycategories,validateCategories,setsortedcategories
 import datetime
 
 viewerPath = "view/{}.html"
@@ -33,7 +34,6 @@ date2year = lambda x: datetime.datetime.strptime(x, "%Y:%m:%d %H:%M:%S").year
 def sortByYears(inventory):
     newinventory = {}
     for pic in inventory:
-        print(pic)
         year = date2year(pic['date'])
         if not(year in newinventory):
             newinventory[year] = []
@@ -41,13 +41,11 @@ def sortByYears(inventory):
     return newinventory
 
 
-filters.FILTERS['sortbyyears'] = sortByYears
-filters.FILTERS['tolink'] = toLink
-filters.FILTERS['date2year'] = date2year
+filters.FILTERS['sortbyyears']      = sortByYears
+filters.FILTERS['tolink']           = toLink
+filters.FILTERS['date2year']        = date2year
+filters.FILTERS['sortbycategories'] = sortbycategories
 
-TAGS_NR  = {}
-for k,v in ExifTags.TAGS.items():
-    TAGS_NR[v] = k
 
 def addMeta(dropbox,token):
     need_download = False
@@ -242,11 +240,7 @@ def genHTML():
                         else:
                             f.write(template.render(inventory=inventory,year=year,websiteName=websiteName,gitSha=gitSha))
             elif suffix == ".css":
-                filename = "css/{}-{}.css".format(name,gitSha)
-                with open(filename,'w') as f:
-                    print("Generating " + filename + "...")
-                    f.write(template.render(inventory=inventory,year=year,gitSha=gitSha))
-
+                print("WARN: Ignoring {}".format(name))
     return inventory
 
 
@@ -287,18 +281,22 @@ def fetchDropbox():
         json.dump({
             'last_update': datetime.datetime.now().isoformat(),
             'host': os.getenv('HOSTNAME'),
-            'version': 1,
+            'version': 2,
             'img': {
                 'inventory': inventory,
                 'new': newMeta,
                 'removed': removedMeta
-            }
+            },
+            'categories': sortbycategories(inventory)
         },f)
 
 
 
 def main():
     try:    
+        if not validateCategories():
+            raise Exception("Categories definition invalid!")
+
         if not os.getenv('MASTER_NODE_URL'):
             fetchDropbox()
         else:
@@ -307,6 +305,7 @@ def main():
                 if os.getenv('DROPBOX_API_TOKEN'):
                     dropboxAvailable=True
                 manifest=clone.fetchWebsite(os.getenv('MASTER_NODE_URL'),dropboxAvailable)
+                setsortedcategories(manifest['categories'])
             except Exception as e:
                 if dropboxAvailable:
                     print('Tried to clone master website but failed, reverting to dropbox')
