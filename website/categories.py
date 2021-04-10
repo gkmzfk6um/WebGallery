@@ -37,7 +37,8 @@ categories = {
 }
 
 from PIL import Image
-from libxmp.utils import file_to_dict
+from libxmp.utils import object_to_dict
+from libxmp import XMPMeta
 from libxmp.consts import XMP_NS_DC
 from util import *
 import re
@@ -45,12 +46,14 @@ import json
 
 def loadXmp(inventory):
     for item in inventory:
-        if not ("exif" in item):
-            try: 
-                yield (item,file_to_dict(item["original"]["path"]))
+        if 'xmp' in item:
+            try:
+                yield (item, object_to_dict(XMPMeta(xmp_str=item['xmp'])))
             except OSError:
-                print("!!!WARN Failed to read file" + item["original"]["path"])
+                print("!!!WARN Failed to deserialize XMP data in {}".format(item['name']))
                 continue
+        else:
+            print("!!!WARN: File metadata entry doesn't contain serialized xmp data, ignoring item from categories")
 
 def validateCategories():
     failed = False

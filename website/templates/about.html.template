@@ -59,7 +59,7 @@
               <a href="/"> Timeline </a>
               <ul>
                   {% for key_year, pics in (inventory | sortbyyears).items() %}
-                  <li> <a href="#{%if key_year != year %}{{key_year}}{%else%}{{top}}{% endif %}"> {{key_year}} </a></li>
+                  <li> <a href="/#{%if key_year != year %}{{key_year}}{%else%}{{top}}{% endif %}"> {{key_year}} </a></li>
                   {% endfor %}
               </ul>
           </li>

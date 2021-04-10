@@ -14,7 +14,8 @@ import re
 from PIL import Image
 from PIL import ImageCms
 from PIL import ExifTags
-from libxmp.utils import file_to_dict
+from libxmp import utils,XMPFiles,consts
+
 import dropbox as db
 import clone
 from util import *
@@ -119,11 +120,11 @@ def processImages():
             try:
                 with Image.open(f) as img:
                     exif = img._getexif()
-                    xmp = file_to_dict(f) 
-                    xmpUrl = "http://purl.org/dc/elements/1.1/"
+                    xmpObj = XMPFiles(file_path=f, open_forupdate=False).get_xmp()
+                    xmp =  utils.object_to_dict(xmpObj)
 
-                    if xmpUrl in xmp: 
-                        xmp=xmp["http://purl.org/dc/elements/1.1/"]
+                    if consts.XMP_NS_DC in xmp: 
+                        xmp=xmp[consts.XMP_NS_DC]
                         purlOrg={}
                         for k,v,_ in xmp:
                             purlOrg[k] = v
@@ -157,6 +158,7 @@ def processImages():
                         'displayname': displayname,
                         'dropbox': meta['dropbox'],
                         'date': date,
+                        'xmp': xmpObj.serialize_to_str(),
                         'rating': tag('Rating'),
                         'view': viewerPath.format(id),
                         'Copyright': tag('Copyright'),
@@ -281,7 +283,7 @@ def fetchDropbox():
         json.dump({
             'last_update': datetime.datetime.now().isoformat(),
             'host': os.getenv('HOSTNAME'),
-            'version': 2,
+            'version': 3,
             'img': {
                 'inventory': inventory,
                 'new': newMeta,

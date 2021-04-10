@@ -1,0 +1,126 @@
+html,body,#table-root 
+	margin: 0
+	width: 100%
+	height: 100%
+body 
+	background: #FAFAFA
+
+#table-root 
+	position: absolute
+
+header > span 
+	text-align: center
+	color: #444
+	font-weight: 600
+	display: table-cell
+	vertical-align: middle
+
+footer 
+	color: #e0e0e0
+	height: 2em
+
+header 
+	display: table
+	height: 2em
+	width: 100%
+	padding:  0
+	border-color: #303030
+
+
+.body
+	height: calc(100% - 4em - 2px - 2em  - 6em)
+	padding: 3em 0em 3em 0em
+
+
+@media screen and (min-width: 700px )
+	.body
+		padding-left: 3em
+		padding-right: 3em
+		
+
+@media screen and (max-height: 800px)
+	.body 
+		padding-top: 0
+		padding-bottom: 0
+		height: calc(100% - 4em - 2em - 2px)
+	
+
+
+
+@media screen and (max-height: 600px)
+	.body 
+		height: 100%
+	
+	
+	header 
+		display: none
+	
+	footer 
+		display: none
+	
+
+
+
+.viewer > a 
+	position: absolute
+	padding: 3em
+	margin-top: -3em
+	z-index: 2
+
+.viewer 
+	height: 100%
+	text-align: center
+	position: relative
+	margin: auto
+	overflow: hidden
+
+
+
+#back 
+	left: 0em
+	top: 1em
+	margin-left: -2.6em
+
+
+#fullscreen 
+	right: 0em
+	top: 1em
+	margin-right: -2.6em
+
+				
+#prev 
+	left: 0
+	margin-left: -3em
+	top : 50%
+
+#next 
+	right: 0
+	margin-right: -3em
+	top: 50%
+
+
+.viewer> img 
+	max-height: 100%
+	max-width:  100%
+	position:   absolute
+	top:        50%
+	left:       50%
+	transform: translate(-50%,-50%)
+	transition: visibility 0.1s linear,opacity 0.1s linear
+
+
+a:active, a:focus 
+	outline: 0
+	border: none
+	-moz-outline-style: none
+	outline-style: none
+
+
+footer > a > img 
+	display: inline
+
+
+footer a  , footer a:active, footer a:focus, footer a:hover 
+	text-decoration: none !important
+	color: #e0e0e0
+

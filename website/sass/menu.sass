@@ -1,20 +1,18 @@
+@use "defines"
 $a-tags: 'a, a:active, a:hover, a:visisted, a:link'
 
 // Color settings
-$background-color: #FCFCFC 
-$border-color: #F0F0F0
-$text-grey: #444
 $menu-box-shadow: 1rem 0 5rem rgba(0,0 ,0 ,0.2 )
 
 #site-logo 
     cursor: pointer
 
 .menu 
-    color: $text-grey
+    color: defines.$menu-text-color
     ul
         list-style-type: none
 .slideout-menu
-    background-color: $background-color
+    background-color: defines.$menu-background-color
     box-shadow:  $menu-box-shadow
     font-size: 1.3rem
     height: 100vh
@@ -37,10 +35,10 @@ $menu-box-shadow: 1rem 0 5rem rgba(0,0 ,0 ,0.2 )
         text-align: left
     a
         text-decoration: none
-        color: $text-grey
+        color: defines.$menu-text-color
     #{$a-tags} 
         text-decoration: none
-        color: $text-grey
+        color: defines.$menu-text-color 
     a:hover 
         color: black
 
@@ -118,7 +116,7 @@ $tomatored: #F25C66
         width: $width
         position: absolute
         margin-top: 20px
-        background-color: $text-grey
+        background-color: defines.$menu-text-color
         border-radius: 2px
         transform: rotate(45deg)
         transition: all .3s ease-in
@@ -128,7 +126,7 @@ $tomatored: #F25C66
         width: $width
         position: absolute
         margin-top: 20px
-        background-color: $text-grey
+        background-color: defines.$menu-text-color
         border-radius: 2px
         transform: rotate(-45deg)
         transition: all .3s ease-in
