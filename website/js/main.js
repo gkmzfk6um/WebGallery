@@ -143,14 +143,20 @@ function loadImages(){
 
 }
 
+var originalLocation;
+
 function loadImagesWhenRdy(){
 	console.log('Arming image loading...')
 	$(document).ready(function(){
 		loadImages();
-		location.hash = location.hash;
+		location.hash = originalLocation;
 	})
 }
 
-$(document).ready(() => gallery());
+$(document).ready(() => {
+	originalLocation = location.hash; 
+	location.hash = "#"
+	gallery()
+});
 
 

@@ -288,8 +288,7 @@ def fetchDropbox():
                 'inventory': inventory,
                 'new': newMeta,
                 'removed': removedMeta
-            },
-            'categories': sortbycategories(inventory)
+            }
         },f)
 
 
