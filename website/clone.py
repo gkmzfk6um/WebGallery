@@ -141,6 +141,5 @@ def fetchWebsite(url,shortTimeout):
         with open(metaFilename(meta),'w') as f:
             json.dump(meta,f)
 
-    new_manifest['categories']=master_manifest['categories']
     return new_manifest
     
