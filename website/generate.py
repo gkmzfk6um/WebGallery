@@ -19,7 +19,7 @@ from libxmp import utils,XMPFiles,consts
 import dropbox as db
 import clone
 from util import *
-from categories import sortbycategories,validateCategories,setsortedcategories
+from categories import sortbycategories,validateCategories
 import datetime
 
 viewerPath = "view/{}.html"
@@ -306,7 +306,6 @@ def main():
                 if os.getenv('DROPBOX_API_TOKEN'):
                     dropboxAvailable=True
                 manifest=clone.fetchWebsite(os.getenv('MASTER_NODE_URL'),dropboxAvailable)
-                setsortedcategories(manifest['categories'])
             except Exception as e:
                 if dropboxAvailable:
                     print('Tried to clone master website but failed, reverting to dropbox')

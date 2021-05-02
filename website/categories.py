@@ -163,9 +163,6 @@ def matchFilter(filter,xmp):
                         return True
     return False
 
-def setsortedcategories(cat):
-    global sortedinventory 
-    sortedinventory = cat
 
 
 def sortbycategories(inventory):
