@@ -83,10 +83,17 @@ def downloadFile(dropbox,token):
     r = requests.post(url, headers=headers,stream=True)
     if r.ok:
         r.raw.decode_content=True
-        filename ="img/raw/{}".format(dropbox['name'])
-        with open(filename,'wb') as f:
-            shutil.copyfileobj(r.raw,f)
-        print("Downloaded {} ({})".format(dropbox['name'],sizeof_fmt(os.path.getsize(filename))))
+        match = re.match("([^/\\\\]+)\.([jJ][pP][gG])",dropbox['name'])
+
+        if match:
+            filename = "img/raw/{}.jpg".format(match[1])
+            if match[2] != "jpg":
+                print("Renamed {} to {}.jpg".format(dropbox['name'],match[1]))
+            with open(filename,'wb') as f:
+                shutil.copyfileobj(r.raw,f)
+            print("Downloaded {} ({})".format(dropbox['name'],sizeof_fmt(os.path.getsize(filename))))
+        else:
+            raise Exception("File extension of ({}) ins't valid, expected .jpg".format(dropbox['name']))
     else:
         print("Failed to download {} from dropbox".format(dropbox['name']))
         print(r)

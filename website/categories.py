@@ -1,20 +1,4 @@
 categories = {
-    "Nature": [ 
-        {
-            "mode": "or",
-            "filters": [
-                {"path": "dc:subject", "value": "Nature" } 
-            ]
-        }
-    ],
-    "Portraiture" : [
-        {
-            "mode": "or",
-            "filters": [
-                {"path": "dc:subject", "value": "Portrait" } 
-            ]
-        }
-    ],
     "Analog" : [
         {
             "mode": "or",
@@ -26,11 +10,45 @@ categories = {
             ]
         }
     ],
-    "Street" : [
+    "Digital": [ 
         {
             "mode": "or",
             "filters": [
-                {"path": "dc:subject", "value": "Street" } 
+                {"namespace": "http://ns.adobe.com/exif/1.0/aux/", "path": "aux:Lens", "value": "Fujifilm Fujinon XF23mmF2 R WR" },
+                {"namespace": "http://ns.adobe.com/exif/1.0/aux/", "path": "aux:Lens", "value": "XF23mmF2 R WR" },
+                {"namespace": "http://ns.adobe.com/exif/1.0/aux/", "path": "aux:Lens", "value": "Fujifilm Fujinon XF50mmF2 R WR" },
+                {"namespace": "http://ns.adobe.com/exif/1.0/aux/", "path": "aux:Lens", "value": "XF50mmF2 R WR" },
+                {"namespace": "http://ns.adobe.com/exif/1.0/aux/", "path": "aux:Lens", "value": "Fujifilm Fujinon XF90mmF2 R LM WR" },
+                {"namespace": "http://ns.adobe.com/exif/1.0/aux/", "path": "aux:Lens", "value": "XF90mmF2 R LM WR" },
+                {"namespace": "http://ns.adobe.com/exif/1.0/aux/", "path": "aux:Lens", "value": "Fujifilm Fujinon XF18-55mmF2.8-4 R LM OIS" },
+                {"namespace": "http://ns.adobe.com/exif/1.0/aux/", "path": "aux:Lens", "value": "XF18-55mmF2.8-4 R LM OIS" },
+                {"path": "dc:subject", "value": "Digital" } 
+            ]
+        }
+    ],
+    "Portraiture" : [
+        {
+            "mode": "or",
+            "filters": [
+                {"path": "dc:subject", "value": "Portrait" } 
+            ]
+        }
+    ],
+    "Black and white" : [
+        {
+            "mode": "or",
+            "filters": [
+                {"path": "dc:subject", "value": "BnW"  },
+                {"path": "dc:subject", "value": "B&W" }, 
+                {"path": "dc:subject", "value": "BNW" } 
+            ]
+        }
+    ],
+    "Nighttime" : [
+        {
+            "mode": "or",
+            "filters": [
+                {"path": "dc:subject", "value": "Night"  }
             ]
         }
     ]
@@ -171,9 +189,17 @@ def sortbycategories(inventory):
         sortedinventory = {}
         for category, filter in categories.items():
            sortedinventory[category]=[]
-
+        debugTarget="debug"
         for item, xmp in loadXmp(inventory):
+            debug = debugTarget == item['displayname']
+            if debug:
+                for x,y in xmp.items():
+                    print(x)
+                    for a in y:
+                        print("\t{}: {}".format(a[0],a[1]))
             for category, filterdefinitions in categories.items():
+                if debug:
+                    print("Matching cat {}".format(category))
                 isMatch = False
                 for filterdefinition in filterdefinitions:
                     mode = lambda x,y : x or y
@@ -184,12 +210,15 @@ def sortbycategories(inventory):
                             mode = lambda x,y : x and y 
 
                     for filter in filterdefinition["filters"]:
+                        if debug:
+                            print("Trying filter {}".format(filter))
                         isMatch = mode(isMatch,matchFilter(filter,xmp)  )  
 
                     if isMatch:
+                        if debug:
+                            print("Matched {}".format(category))
                         sortedinventory[category].append(item)
-                if isMatch:
-                    break
+                        break
     
         print("Generated categories: ")
         sortedinventoryItems = list(sortedinventory.items())
