@@ -83,34 +83,36 @@
 	  <div id="left">
 	  	<h3> ABOUT </h3>
 	  	<p id="about">
-	  	      Welcome to my corner of the web where I share my photography work. 
-              I'm a amature photographer living and making photos in Mölndal and the surrounding region.
-	  	      What I display here is a curated selection of images, arranged from my most recent creation to the very first photo I took. As such it contains many different styles of photography, 
-			  portraits, landscapes and street photos, with no clear focus. Rather the collection is a portrayal of my journey as I try to learn the art of photography. 
-			  I do not like or necessarily enjoy every photo herein, but they do show me what I have learned and remind me how differently I would take that photo today. 
-			  Of course the point of this website is to share my work and love for photography with people like yourself, so if you are still reading this rambling of mine, I very much hope 
-			  that you can enjoy this little website.
 
-			  If you find something of particular interest I'm happy to say that I can provide prints upon requests in size ranging from A4 up to A2. Price depends on 
+        <b>Halloj!</b><br>
+
+        I'm a passionate amature photographer and analogue enthusiast living Mölndal.
+        I dabble with many styles of photography, ranging from capturing night scenes on analogue film to 
+        digital wedding photography.
+        <br><br>
+        Contact me for assignments, I do both on location shoots and studio portraiture.  
+        <br><br>
+			  If you find an image of particular interest I'm happy to say that I can provide prints upon requests in size ranging from A4 up to A2. Price depends on 
 			  size and the specific image, so for details please write to me. I also keep much higher resolution version of these images, especially for the panoramas which
 			  can be made available.
-			  Feel free to use the images as you desirer privately, but for commercial use I ask that you that you email me.
+			  Feel free to use any image as you desirer privately, but for commercial use or re-posting I ask that you that you email or DM me.
 			  <br><br>
-		      Once again, welcome!<br>
-
-	  	      Lukas Rahmn
+		      Ha det gött!<br>
+	  	    Lukas Rahmn
 	  	</p>
 
 	  	<h3>CONTACT</h3>
 	  	<p id="contact">
-	  		Feel free to contact me by email for any questions you might have. 
-	  	      To avoid spamming I leave it as an exercises to the reader to 
+	  		Feel free to contact me by email or DM me for any inquiries you might have. 
+	  	      To avoid spam I leave it as an exercises to the reader to 
 	  	      replace "firstname" and "surname" with my actual name in the email below.
 	  	      <span id="email">firstname@surname.net</span>
 	  	</p>
 		<p>
 			I'm also available at <a class="normal" href="https://www.instagram.com/lukasrahmn/" >Instagram<img style="height: 1em;" src="/icons/icons8-instagram.svg"/></a> 
 			and I would be very happy if you decide to follow me.
+
+      For those preferring Facebook, I have a <a  class="normal" href="https://www.facebook.com/rahmnphoto/">page</a> there as well. 
 		</p>
 
 
@@ -119,6 +121,8 @@
 	  	      The technical inclined readers might be interested to know that this
 	  	      website is selfmade and available as open source (MIT license) at 
 	  	      <a href="https://github.com/VirtualRaven/WebGallery">Github</a>.
+          Not it is only the website itself, not the images, that is license under the terms of 
+          the MIT licenses.
 		      All icons on the website is kindly provided by <a href="https://icons8.com/">Icons8</a> 
 
 	  	</p>
@@ -126,7 +130,7 @@
   </div>
 
   <footer>
-	  Copyright 2018-2020 Lukas Rahmn. All Rights Reserved.
+	  Copyright 2018-2021 Lukas Rahmn. All Rights Reserved.
   </footer>
 
   <script src="/js/vendor/modernizr-3.6.0.min.js"></script>
