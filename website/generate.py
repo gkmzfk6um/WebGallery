@@ -7,7 +7,7 @@ import os
 import json
 import numpy as np
 import base64
-from jinja2 import Template
+from jinja2 import Template, Environment, FileSystemLoader
 import jinja2.filters as filters
 import datetime
 import re
@@ -18,8 +18,9 @@ from libxmp import utils,XMPFiles,consts
 
 import dropbox as db
 import clone
+import store
 from util import *
-from categories import sortbycategories,validateCategories
+from categories import sortbycategories,loadAndValidateCategories
 import datetime
 
 viewerPath = "view/{}.html"
@@ -190,9 +191,13 @@ def genInventory():
 
 def genHTML():
     print('Generating website...')
+    loadAndValidateCategories()
+    
     year =datetime.datetime.now().year
     inventory = genInventory()
+    storeData = store.generateStore(inventory)
     websiteName =os.getenv('WEBSITE_URL')
+
     if not websiteName:
         websiteName = "/"
     with open("version.json",'r') as f:
@@ -204,45 +209,46 @@ def genHTML():
     gAdId = os.getenv('G_ANALYTICS_ID')
 
 
-    templates = glob.glob('templates/*.template')
-    for t in templates:
-        filename = os.path.basename(t)
+    environment = Environment(loader=FileSystemLoader("templates/"))
+    for templateName in environment.list_templates(".template"):
+        template = environment.get_template(templateName)
+        filename = os.path.basename(templateName)
         hname = os.path.splitext(filename)[0]
         name,suffix = os.path.splitext(hname)
-        with open(t,'r') as tm:
-            template= Template(tm.read())
-            if suffix == ".html":
-                if name == "viewer":
-                    for (i,img) in zip(range(0,len(inventory)),inventory):
-                        with open(img['view'],'w') as vf:
-                            print("Generating view  ({}/{})\r".format(i+1,len(inventory)),end='')
-                            prev = inventory[i-1]['view'] if i > 0 else None
-                            next = inventory[i+1]['view'] if i+1 < len(inventory) else None
-                            jsonPath= toJsonPath(img['view'])
-                            vf.write(template.render(pic=img,inventory=inventory,index=i,prev=prev,next=next,year=year,gitSha=gitSha,json=toLink(jsonPath)))
-                            with open(jsonPath ,'w') as jv:
-                                toSrc = lambda img : "{} {}w".format(toLink(img['path']),img['width'])
-                                obj = {
-                                    'name': img['displayname'],
-                                    'id' : name,
-                                    'colour': img['colour'],
-                                    'path': toLink(img['large']['path']),
-                                    'url':  toLink(img['view']),
-                                    'srcset' : "{},{}".format(*list(map(lambda size : toSrc(img[size]),['large','huge']))),
-                                    'next': toLink(toJsonPath(next)),
-                                    'prev': toLink(toJsonPath(prev))
-                                }
-                                json.dump(obj,jv)
-                    print('')
+
+         
+        if suffix == ".html":
+            if name == "viewer":
+                for (i,img) in zip(range(0,len(inventory)),inventory):
+                    print("Generating view  ({}/{})\r".format(i+1,len(inventory)),end='')
+                    prev = inventory[i-1]['view'] if i > 0 else None
+                    next = inventory[i+1]['view'] if i+1 < len(inventory) else None
+                    jsonPath= toJsonPath(img['view'])
+                    template.stream(pic=img,inventory=inventory,index=i,prev=prev,next=next,year=year,gitSha=gitSha,json=toLink(jsonPath)).dump(img['view'])
+                    with open(jsonPath ,'w') as jv:
+                        toSrc = lambda img : "{} {}w".format(toLink(img['path']),img['width'])
+                        obj = {
+                            'name': img['displayname'],
+                            'id' : name,
+                            'colour': img['colour'],
+                            'path': toLink(img['large']['path']),
+                            'url':  toLink(img['view']),
+                            'srcset' : "{},{}".format(*list(map(lambda size : toSrc(img[size]),['large','huge']))),
+                            'next': toLink(toJsonPath(next)),
+                            'prev': toLink(toJsonPath(prev))
+                        }
+                        json.dump(obj,jv)
+                print('')
+            else:
+                if name == 'store' and not(storeData):
+                    continue
+                print("Generating " + hname + "...")
+                if gAdId:
+                    template.stream(inventory=inventory,year=year,websiteName=websiteName,gAdId=gAdId,gitSha=gitSha,storeData=storeData).dump(hname)
                 else:
-                    with open(hname,'w') as f :
-                        print("Generating " + hname + "...")
-                        if gAdId:
-                            f.write(template.render(inventory=inventory,year=year,websiteName=websiteName,gAdId=gAdId,gitSha=gitSha))
-                        else:
-                            f.write(template.render(inventory=inventory,year=year,websiteName=websiteName,gitSha=gitSha))
-            elif suffix == ".css":
-                print("WARN: Ignoring {}".format(name))
+                    template.stream(inventory=inventory,year=year,websiteName=websiteName,gitSha=gitSha,storeData=storeData).dump(hname)
+        elif suffix == ".css":
+            print("WARN: Ignoring {}".format(name))
     return inventory
 
 
@@ -255,11 +261,17 @@ def fetchDropbox():
     newMeta=[]
     removedMeta = []
     removePathNoFail('api/manifest.json')
+    removePathNoFail('api/sitedata.json')
+    
     for i  in db.getFileMeta(token):
-       meta= addMeta(i,token)
-       foundMeta.append(meta)
-       if meta['dropbox']['outdated']:
-           newMeta.append(meta)
+       if i['name'] == 'sitedata.json':
+           db.downloadSitedata(i,token)
+       else:
+          meta= addMeta(i,token)
+          foundMeta.append(meta)
+          if meta['dropbox']['outdated']:
+              newMeta.append(meta)
+    
 
     for f in glob.glob('img/meta/*.json'):
         filename = os.path.basename(f)
@@ -277,13 +289,19 @@ def fetchDropbox():
         if  name not in map(lambda x : x['name'],foundMeta) :
             print('Purge image ' + name)
             removePathNoFail(f)
+    try: 
+        with open('api/sitedata.json','r') as f:
+            sitedata = json.load(f)
+    except Exception as e:
+        print("Failed do find sitedata.json in dropbox folder!")
+        raise
 
     inventory=genHTML()
     with open('api/manifest.json','w') as f:
         json.dump({
             'last_update': datetime.datetime.now().isoformat(),
             'host': os.getenv('HOSTNAME'),
-            'version': 3,
+            'version': 4,
             'img': {
                 'inventory': inventory,
                 'new': newMeta,
@@ -295,8 +313,6 @@ def fetchDropbox():
 
 def main():
     try:    
-        if not validateCategories():
-            raise Exception("Categories definition invalid!")
 
         if not os.getenv('MASTER_NODE_URL'):
             fetchDropbox()

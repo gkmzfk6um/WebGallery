@@ -1,58 +1,58 @@
-categories = {
-    "Analog" : [
-        {
-            "mode": "or",
-            "filters": [
-                {"namespace": "http://ns.adobe.com/exif/1.0/aux/", "path": "aux:Lens", "value": "65.0 mm" },
-                {"path": "dc:subject", "value": "Negative" } ,
-                {"path": "dc:subject", "value": "Negative Lab Pro" },
-                {"path": "dc:subject", "value": "Film" } 
-            ]
-        }
-    ],
-    "Digital": [ 
-        {
-            "mode": "or",
-            "filters": [
-                {"namespace": "http://ns.adobe.com/exif/1.0/aux/", "path": "aux:Lens", "value": "Fujifilm Fujinon XF23mmF2 R WR" },
-                {"namespace": "http://ns.adobe.com/exif/1.0/aux/", "path": "aux:Lens", "value": "XF23mmF2 R WR" },
-                {"namespace": "http://ns.adobe.com/exif/1.0/aux/", "path": "aux:Lens", "value": "Fujifilm Fujinon XF50mmF2 R WR" },
-                {"namespace": "http://ns.adobe.com/exif/1.0/aux/", "path": "aux:Lens", "value": "XF50mmF2 R WR" },
-                {"namespace": "http://ns.adobe.com/exif/1.0/aux/", "path": "aux:Lens", "value": "Fujifilm Fujinon XF90mmF2 R LM WR" },
-                {"namespace": "http://ns.adobe.com/exif/1.0/aux/", "path": "aux:Lens", "value": "XF90mmF2 R LM WR" },
-                {"namespace": "http://ns.adobe.com/exif/1.0/aux/", "path": "aux:Lens", "value": "Fujifilm Fujinon XF18-55mmF2.8-4 R LM OIS" },
-                {"namespace": "http://ns.adobe.com/exif/1.0/aux/", "path": "aux:Lens", "value": "XF18-55mmF2.8-4 R LM OIS" },
-                {"path": "dc:subject", "value": "Digital" } 
-            ]
-        }
-    ],
-    "Portraiture" : [
-        {
-            "mode": "or",
-            "filters": [
-                {"path": "dc:subject", "value": "Portrait" } 
-            ]
-        }
-    ],
-    "Black and white" : [
-        {
-            "mode": "or",
-            "filters": [
-                {"path": "dc:subject", "value": "BnW"  },
-                {"path": "dc:subject", "value": "B&W" }, 
-                {"path": "dc:subject", "value": "BNW" } 
-            ]
-        }
-    ],
-    "Nighttime" : [
-        {
-            "mode": "or",
-            "filters": [
-                {"path": "dc:subject", "value": "Night"  }
-            ]
-        }
-    ]
-}
+#categories = {
+#    "Analog" : [
+#        {
+#            "mode": "or",
+#            "filters": [
+#                {"namespace": "http://ns.adobe.com/exif/1.0/aux/", "path": "aux:Lens", "value": "65.0 mm" },
+#                {"path": "dc:subject", "value": "Negative" } ,
+#                {"path": "dc:subject", "value": "Negative Lab Pro" },
+#                {"path": "dc:subject", "value": "Film" } 
+#            ]
+#        }
+#    ],
+#    "Digital": [ 
+#        {
+#            "mode": "or",
+#            "filters": [
+#                {"namespace": "http://ns.adobe.com/exif/1.0/aux/", "path": "aux:Lens", "value": "Fujifilm Fujinon XF23mmF2 R WR" },
+#                {"namespace": "http://ns.adobe.com/exif/1.0/aux/", "path": "aux:Lens", "value": "XF23mmF2 R WR" },
+#                {"namespace": "http://ns.adobe.com/exif/1.0/aux/", "path": "aux:Lens", "value": "Fujifilm Fujinon XF50mmF2 R WR" },
+#                {"namespace": "http://ns.adobe.com/exif/1.0/aux/", "path": "aux:Lens", "value": "XF50mmF2 R WR" },
+#                {"namespace": "http://ns.adobe.com/exif/1.0/aux/", "path": "aux:Lens", "value": "Fujifilm Fujinon XF90mmF2 R LM WR" },
+#                {"namespace": "http://ns.adobe.com/exif/1.0/aux/", "path": "aux:Lens", "value": "XF90mmF2 R LM WR" },
+#                {"namespace": "http://ns.adobe.com/exif/1.0/aux/", "path": "aux:Lens", "value": "Fujifilm Fujinon XF18-55mmF2.8-4 R LM OIS" },
+#                {"namespace": "http://ns.adobe.com/exif/1.0/aux/", "path": "aux:Lens", "value": "XF18-55mmF2.8-4 R LM OIS" },
+#                {"path": "dc:subject", "value": "Digital" } 
+#            ]
+#        }
+#    ],
+#    "Portraiture" : [
+#        {
+#            "mode": "or",
+#            "filters": [
+#                {"path": "dc:subject", "value": "Portrait" } 
+#            ]
+#        }
+#    ],
+#    "Black and white" : [
+#        {
+#            "mode": "or",
+#            "filters": [
+#                {"path": "dc:subject", "value": "BnW"  },
+#                {"path": "dc:subject", "value": "B&W" }, 
+#                {"path": "dc:subject", "value": "BNW" } 
+#            ]
+#        }
+#    ],
+#    "Nighttime" : [
+#        {
+#            "mode": "or",
+#            "filters": [
+#                {"path": "dc:subject", "value": "Night"  }
+#            ]
+#        }
+#    ]
+#}
 
 from PIL import Image
 from libxmp.utils import object_to_dict
@@ -73,7 +73,12 @@ def loadXmp(inventory):
         else:
             print("!!!WARN: File metadata entry doesn't contain serialized xmp data, ignoring item from categories")
 
-def validateCategories():
+def loadAndValidateCategories():
+    global categories
+    with open('api/sitedata.json') as f:
+        sitedata = json.load(f)
+        categories = sitedata['categories']
+
     failed = False
     def warn(w):
         nonlocal failed

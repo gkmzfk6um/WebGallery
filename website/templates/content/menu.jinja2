@@ -1,0 +1,48 @@
+{%- macro boldifselected(name,selected) -%}
+    {% if selected %}
+        <b>{{name}}</b>
+    {% else %}
+        {{name}}
+    {% endif %}
+{%- endmacro -%}
+
+<div class="menu slideout-menu">
+    <div class="close-container" id="menu-close">
+        <div class="leftright"></div>
+        <div class="rightleft"></div>
+    </div>
+    <ul>
+        <li>
+            <a href="/">
+                {{ boldifselected('Timeline',( page == 'timeline')) }}
+            </a>
+            <ul>
+                {% for key_year, pics in (inventory | sortbyyears).items() %}
+                <li> <a href="/#{%if key_year != year %}{{key_year}}{%else%}{{top}}{% endif %}"> {{key_year}} </a></li>
+                {% endfor %}
+            </ul>
+        </li>
+        <li>
+            <a href="/categories">
+                {{ boldifselected('Categories', (page == 'categories' )) }}
+            </a>
+            <ul>
+                {% for key_category, pics in (inventory | sortbycategories).items() %}
+                <li> <a href="/categories#{{key_category}}"> {{key_category}} </a> </li>
+                {% endfor %}
+            </ul>
+        </li>
+        {% if storeData %}
+            <li> 
+                <a href="/store">
+                    {{ boldifselected('Store',(page == 'store')) }}
+                </a>
+            </li>
+        {% endif %}
+        <li> 
+            <a href="/about"> 
+                {{ boldifselected('About my gallery', page=="about") }} 
+            </a> 
+        </li>
+    </ul>
+</div>

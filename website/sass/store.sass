@@ -1,0 +1,166 @@
+@use "defines"
+
+.category 
+    width: 100%
+
+.category > * 
+    width: calc( 33.3% - ( 1.5rem * 3 ))
+    display: inline-block
+    margin-left: 1.5rem
+
+.printContainer
+    .print
+        > h4
+            font-size: 1rem
+            margin: 1rem
+        > p
+            display: none
+        .printBorder
+            background-color: white 
+            padding: 1rem
+            box-shadow: 0px 0px 62px 0px #E8E8E8
+            a 
+                display: block
+            .printImage
+                width: 100%
+                img
+                    height: 100%
+                    width: 100%
+                    visibility: hidden
+                    opacity: 0
+                    transition: visibility 0.1s linear,opacity 0.1s linear
+
+
+.imageContainer
+    @at-root div#{&}
+        text-align: center
+    display: inline-block
+    background-color: white
+    padding: 1rem
+    box-shadow: 0px 0px 62px 0px #E8E8E8
+    
+
+.printItem 
+    p
+        width: 100%
+        padding-right: 2rem
+        margin-top: 0.5rem
+    select
+        margin-left: 1rem
+    background: white
+    padding: 1rem
+    border-left: 0.5rem solid defines.$about-header-color
+    margin: auto
+    margin-bottom: 0.1em
+    max-width: 800px
+    text-align: left
+    box-shadow: 0px 0px 100px 1px #DDD
+    min-height: 80vh
+    position: relative 
+    opacity:  0
+    transition: opacity 0.5s linear
+
+.printItem > h4
+     background-color: defines.$about-header-color
+     color: white
+     display: inline-block
+     padding: 0.6em 1em 0.6em 2em
+     margin-left: -1em
+
+#addtocart
+    display: inline-block
+    color: white
+    font-weight: bold
+    margin-top: 1rem
+    padding: 0.2rem 1rem 0.2rem 1rem
+    background-color: defines.$about-header-color
+
+#price
+    display: block
+    margin-top: 1.5rem
+    margin-bottom:  0.7rem
+    font-weight: bold
+    font-size: 1.1rem
+
+.center
+    text-align: center
+
+#close-print
+    display: inline-block
+    position: absolute
+    right: 1rem
+    top: 1rem
+
+
+.printerror
+    display: none
+
+.oops
+    .printItem
+        display: none
+    .printerror
+        display: block
+
+
+.cart
+    text-align: left
+    position: fixed
+    right: 3rem
+    bottom: 3rem
+    height: 4rem
+    width: 4rem
+    border-radius: 3rem
+    background: defines.$background-color
+    transition: height 0.2s linear,width 0.2s linear
+    box-shadow: 0px 0px 62px 0px rgba(0,0,0,0.1)
+
+    span
+        &:nth-child(1)
+            box-shadow: 0px 0px 62px 0px rgba(0,0,0,0.1)
+            text-align: center
+            display: inline-flex
+            align-items: center
+            justify-content: center
+            position: absolute
+            right:-0.7rem
+            top: -0.7rem
+            height: 2rem
+            width: 2rem
+            border-radius: 1rem
+            background-color: defines.$tomatored
+            color: white
+    & > div
+        padding: 1rem
+        transition: 1s opacity  0.1s 
+        opacity: 0
+        display: none
+
+.cart-open
+    & > div
+        opacity: 1
+        display: block
+    height: min(80vh,600px)
+    width: min(80vw,400px)
+    & > span:nth-child(2)
+        display: none
+
+
+.cartitem
+    .quantitybutton
+        font-size: 2rem
+    div
+        display: inline-block
+    .close-container
+        $buttonsize: 1.5rem
+        width: $buttonsize
+        height:$buttonsize
+        margin: 0
+        .leftright, .rightleft
+            width: $buttonsize
+            margin-top: calc( $buttonsize / 2)
+
+
+
+@media screen and (min-width:2000px )
+    .printItem
+        margin-top: 6rem

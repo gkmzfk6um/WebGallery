@@ -1,3 +1,31 @@
+const urlParams = new URLSearchParams(window.location.search);
+const disableNav = urlParams.has('stay')
+const returnSrc  = () => {
+	var name;
+	if (window.viewerMeta)
+	{
+		name = window.viewerMeta['name'];
+
+	}
+	else
+	{
+		name = $("#picname").text();
+	}
+	var url = '/#' + name;
+	if (urlParams.has("src") )
+	{
+		const src = urlParams.get('src');
+		if (src == 'categories')
+		{
+			url = '/categories#' + name;
+		}
+		else if (src == "print")
+		{
+			url = window.location.pathname.replace(/^\/view\//,'/store/print/')
+		}
+	}
+	return url;
+};
 function fetchMeta(link,success ) {
 	if(success==null){
 		success=function(){
@@ -10,6 +38,25 @@ function fetchMeta(link,success ) {
 		success();
 	}
 	});
+}
+var setVisibility = t => {
+	var visible = true;
+	if (window.viewerMeta)
+	{
+		if (window.viewerMeta[t]==null)
+		{
+			visible = false;
+		}
+	}
+	if (disableNav)
+	{
+		visible = false;
+	}
+	return $('#'+t).css('visibility', !visible ? 'hidden': 'visible');
+}
+
+var setBack = () => {
+	$('#back').attr('href',returnSrc());
 }
 
 function updatePage(isBack){
@@ -28,12 +75,9 @@ function updatePage(isBack){
 		$('.viewer').children('img').remove();
 		$('.viewer').append(this);
 	});
-	var setVisibility = function(t) {
-		return $('#'+t).css('visibility',window.viewerMeta[t]==null? 'hidden': 'visible');
-	}
 	setVisibility('next');
 	setVisibility('prev');
-	$('#back').attr('href','/#' + window.viewerMeta['name']);
+	setBack();
 }
 
 function switchPicture(isNext){
@@ -83,3 +127,4 @@ $(window).on('popstate', function(e) {
 });
 
 
+$(document).ready(() => {setBack(); setVisibility('next'); setVisibility('prev')});

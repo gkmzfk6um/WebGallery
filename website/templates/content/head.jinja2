@@ -1,0 +1,30 @@
+  {% if gAdId is defined %}
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id={{gAdId}}"></script>
+	<script>
+  		window.dataLayer = window.dataLayer || [];
+    		function gtag(){dataLayer.push(arguments);}
+      		gtag('js', new Date());
+        	gtag('config', '{{gAdId}}');
+	</script>
+  {% endif %}
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>About this gallery</title>
+  <meta name="description" content="About Lukas Rahmn's gallery">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  
+  <meta name="theme-color" content="#FAFAFA">
+  <meta name="msapplication-navbutton-color" content="#FAFAFA">
+  <meta name="apple-mobile-web-app-status-bar-style" content="white">
+
+  <link href="https://fonts.googleapis.com/css2?family=Maven+Pro:wght@500;600&display=swap" rel="stylesheet"> 
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="apple-touch-icon" href="/icons/icon_square.png">
+  <!-- Place favicon.ico in the root directory -->
+
+  <link rel="stylesheet" href="/css/normalize-{{gitSha}}.css">
+  <link rel="stylesheet" href="/css/main-{{gitSha}}.css">
+  <link rel="stylesheet" href="/css/menu-{{gitSha}}.css">

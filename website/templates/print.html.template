@@ -1,0 +1,56 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+  {% include 'content/head.jinja2' %}
+  <link rel="stylesheet" href="/css/store-{{gitSha}}.css">
+</head>
+
+<body>
+
+  {% include 'content/header.jinja2' %}
+  {% set page = 'store' %}
+  {% include 'content/menu.jinja2' %}
+    <div class="body">
+        <div class="printItem">
+            <div class="close-container" id="close-print">
+                <div class="leftright"></div>
+                <div class="rightleft"></div>
+            </div>
+            <h4 id="title"></h4>
+            <div class="center">
+                <div>
+                    <a id="viewlink">
+                        <div class="imageContainer">
+                            <div id="image">
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div id="addtocart">
+                    Add to cart
+                </div>
+                <select id="size">
+                </select>
+                <select id="signature">
+                     <option value=0>Signature front</option>
+                     <option value=1>Signature rear</option>
+                     <option value=2>No signature!</option>
+                </select>
+            </div>
+            <span id="price"></span>
+            <p id="description">
+            </p>
+        </div>
+        <div class="printerror">
+            <h4> Print not found :/ </h4>
+            <p> The link might be wrong or the item has been removed from sale </p>
+        </div>
+    </div>
+    {% include 'content/footer.jinja2' %}
+    <script>
+        document.write('<script src="/js/print.js"><\/script>');
+    </script>
+    {% include 'content/cart.jinja2' %}
+</body>
+</html>

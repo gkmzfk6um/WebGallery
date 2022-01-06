@@ -101,3 +101,27 @@ def downloadFile(dropbox,token):
         print(r.json())
         raise Exception('Failed to request file information')
 
+def downloadSitedata(dropbox,token):
+    url = "https://content.dropboxapi.com/2/files/download"
+    headers = {
+        "Authorization": "Bearer {}".format(token),
+        "Dropbox-API-Arg": "{\"path\":\""+dropbox['id']+"\"}"
+    }
+    r = requests.post(url, headers=headers,stream=True)
+    if r.ok:
+        r.raw.decode_content=True
+        match = re.match("sitedata\.json",dropbox['name'])
+
+        if match:
+            filename = "api/sitedata.json"
+            with open(filename,'wb') as f:
+                shutil.copyfileobj(r.raw,f)
+            print("Downloaded {} ({})".format(dropbox['name'],sizeof_fmt(os.path.getsize(filename))))
+        else:
+            raise Exception("Expected sitedata.json not {}".format(dropbox['name']))
+    else:
+        print("Failed to download {} from dropbox".format(dropbox['name']))
+        print(r)
+        print(r.text)
+        print(r.json())
+        raise Exception('Failed to request file information')

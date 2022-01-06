@@ -8,7 +8,7 @@ function menu()
     const bodyDiv = $("div.body");
     const body    = $('body');
     const logo    = $('#site-logo');
-    $('.close-container').click( function() {
+    $('#menu-close').click( function() {
         if (!menu.hasClass(hide))
         {
             menu.removeClass (show);

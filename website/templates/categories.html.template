@@ -2,75 +2,14 @@
 <html class="no-js" lang="">
 
 <head>
-
-  {% if gAdId is defined %}
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id={{gAdId}}"></script>
-    <script>
-          window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-            gtag('config', '{{gAdId}}');
-    </script>
-  {% endif %}
-
-  <meta charset="utf-8">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>Lukas Rahmn's gallery</title>
-  <meta name="description" content="Gallery for photographies by Lukas Rahmn">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="theme-color" content="#FAFAFA">
-  <meta name="msapplication-navbutton-color" content="##FAFAFA">
-  <meta name="apple-mobile-web-app-status-bar-style" content="white">
-  <link href="https://fonts.googleapis.com/css2?family=Maven+Pro:wght@500;600&display=swap" rel="stylesheet"> 
-  <link rel="manifest" href="site.webmanifest">
-  <link rel="apple-touch-icon" href="/icons/icon_square.png">
-  <link rel="stylesheet" href="/css/normalize-{{gitSha}}.css">
-  <link rel="stylesheet" href="/css/main-{{gitSha}}.css">
-  <link rel="stylesheet" href="/css/menu-{{gitSha}}.css">
+  {% include 'content/head.jinja2' %}
 </head>
 
 <body>
-    <!--[if lte IE 9]>
-      <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
-    <![endif]-->
-
-    <!-- Add your site or application content here -->
-    <header>
-      <div id="site-logo">
-          <h2> <span>LUKAS</span> RAHMN </h2>	  
-          <div id="menu">
-              <a>Menu</a>
-          </div>
-      </div>
-    </header>
-    <div class="menu slideout-menu">
-        <div class="close-container">
-            <div class="leftright"></div>
-            <div class="rightleft"></div>
-        </div>
-        <ul>
-            <li>
-                <a href="/"> Timeline </a>
-                <ul>
-                    {% for key_year, pics in (inventory | sortbyyears).items() %}
-                    <li> <a href="/#{%if key_year != year %}{{key_year}}{%else%}{{top}}{% endif %}"> {{key_year}} </a></li>
-                    {% endfor %}
-                </ul>
-            </li>
-            <li>
-                <a href="/categories"> <b>Categories</b> </a>
-                <ul>
-                    {% for key_category, pics in (inventory | sortbycategories).items() %}
-                    <li> <a href="/categories#{{key_category}}"> {{key_category}} </a> </li>
-                    {% endfor %}
-                </ul>
-            </li>
-            <li> <a href="about"> About my gallery </a> </li>
-        </ul>
-    </div>
+    {% include 'content/header.jinja2' %}
+    {% set page = 'categories' %}
+    {% include 'content/menu.jinja2' %}
+    
     <div class="body">
         {%for catName, pics in (inventory | sortbycategories).items() %}
         <h2 id="{{catName}}">{{catName}}</h2>
@@ -90,9 +29,6 @@
         </div>
         {% endfor %}
     </div>
-    <footer>
-        Copyright {{year}} Lukas Rahmn. All Rights Reserved.
-    </footer>
 
     <template id="imgTmp">
         <a class="image" >
@@ -100,12 +36,9 @@
           <img></img>
        </a>
     </template>
+    {% include 'content/footer.jinja2' %}
     <script>
-        document.write('<script src="/js/vendor/modernizr-3.6.0.min.js"><\/script>');
-        document.write('<script src="/js/vendor/jquery-3.3.1.min.js"><\/script>');
-        document.write('<script src="/js/plugins.js"><\/script>');
         document.write('<script src="/js/main.js"><\/script>');
-        document.write('<script src="/js/menu.js"><\/script>');
     </script>
 </body>
 </html>

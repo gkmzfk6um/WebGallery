@@ -1,0 +1,36 @@
+<div id="cart" class="cart">
+    <span id="quantity">0</span>
+    <span>C</span>
+    <div>
+        <div class="close-container" id="cart-close">
+            <div class="leftright"></div>
+            <div class="rightleft"></div>
+        </div>
+        <h4>Cart</h4>
+        <div id="cartitems">
+        </div>
+        <template id="cartitemtemplate">
+            <div class="cartitem">
+                <div class="close-container">
+                    <div class="leftright"></div>
+                    <div class="rightleft"></div>
+                </div>
+                <img>
+                <div>
+                    <div class="plusbutton quantitybutton">+</div>
+                    <span class='quantity'> 0 </span>
+                    <div class="minusbutton quantitybutton">-</div>
+                </div>
+                <span>Name</span>
+            <div>
+        </template>
+        <div id="checkout" class="checkoutbutton">
+           Checkout 
+        </div>
+    </div>
+</div>
+<script  src="/js/vendor/js.cookie.min.js"></script>
+<script>
+    document.write('<script src="/js/cart.js"><\/script>');
+</script>
+</script

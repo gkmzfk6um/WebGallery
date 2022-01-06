@@ -1,0 +1,41 @@
+{% from 'content/macros.jinja2' import imageA with context %}
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+  {% include 'content/head.jinja2' %}
+  <link rel="stylesheet" href="/css/store-{{gitSha}}.css">
+</head>
+
+<body>
+
+  {% include 'content/header.jinja2' %}
+  {% set page = 'store' %}
+  {% include 'content/menu.jinja2' %}
+   <div class="body">
+       {%for category, prints in storeData.prints.items() %}
+       <h2 id="{{category}}">{{category}}</h2>
+       <div class="category" >{% for print in prints %}
+           {% set pic = print.data %}
+           <div class="printContainer">
+               <div class="print">
+                   <h4>{{pic.displayname}} </h4>
+                   <div class="printBorder">
+                       {{ imageA( '/store/print/'+ pic.dropbox.id  ,pic,'printImage')}}
+                   </div>
+                   <p class="description"> 
+                    {{print.description}}
+                   </p>
+               </div>
+           </div>
+           {% endfor %}
+       </div>
+       {% endfor %}
+   </div>
+   {% include 'content/footer.jinja2' %}
+   <script>
+       document.write('<script src="/js/store.js"><\/script>');
+   </script>
+    {% include 'content/cart.jinja2' %}
+</body>
+</html>

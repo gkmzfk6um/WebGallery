@@ -1,0 +1,12 @@
+{%- macro imageA(href,pic,class=image) -%}
+            <a href="{{href}}" id="{{pic.displayname}}" class="{{class}}" style="background-color:{{pic.colour}};"   
+                data-width="{{pic.medium.width}}" 
+                data-height="{{pic.medium.height}}" 
+                  data-srcset="
+                    {{pic.huge.path | tolink}} {{pic.huge.width}}w,
+                    {{pic.large.path | tolink}} {{pic.large.width}}w,
+                    {{pic.medium.path | tolink}} {{pic.medium.width}}w"
+                  data-src= "{{pic.medium.path | tolink }}"
+            >
+            </a>
+{%- endmacro -%}

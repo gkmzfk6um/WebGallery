@@ -1,0 +1,4 @@
+store/
+.vscode
+docker-compose-dev.yml
+kubernetes/secret.yaml
