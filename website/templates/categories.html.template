@@ -14,7 +14,7 @@
         {%for catName, pics in (inventory | sortbycategories).items() %}
         <h2 id="{{catName}}">{{catName}}</h2>
         <div class="gallery" >{% for pic in pics %}
-            <a href="{{pic.view | tolink }}" id="{{pic.displayname}}" class="image" style="background-color:{{pic.colour}};"   
+            <a href="{{pic.view | tolink }}?src=categories" id="{{pic.displayname}}" class="image" style="background-color:{{pic.colour}};"   
                 data-width="{{pic.medium.width}}" 
                 data-height="{{pic.medium.height}}" 
                   data-srcset="
