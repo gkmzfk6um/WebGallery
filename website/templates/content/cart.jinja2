@@ -1,6 +1,6 @@
 <div id="cart" class="cart">
     <span id="quantity">0</span>
-    <span>C</span>
+    <img class="icon" src="/icons/cart.png"></img>
     <div>
         <div class="close-container" id="cart-close">
             <div class="leftright"></div>
@@ -15,17 +15,21 @@
                     <div class="leftright"></div>
                     <div class="rightleft"></div>
                 </div>
-                <img>
-                <div>
-                    <div class="plusbutton quantitybutton">+</div>
-                    <span class='quantity'> 0 </span>
-                    <div class="minusbutton quantitybutton">-</div>
+                <div class="quantitycollection">
+                    <div class="plusbutton quantitybutton">+</div><span class='quantity'> 0 </span><div class="minusbutton quantitybutton">-</div>
                 </div>
-                <span>Name</span>
+                <div class='cartitemdescription'>
+                    <a class='itemname'>Name</a>
+                    <span class='itemoption'>Name</span>
+                    <span class='itemprice'>Name</span>
+                </div>
             <div>
         </template>
-        <div id="checkout" class="checkoutbutton">
-           Checkout 
+        <div class="cartbuttons">
+            <div id="checkout" class="checkoutbutton">
+               Checkout 
+            </div>
+            Total: <span id="totalprice">0</span>kr
         </div>
     </div>
 </div>

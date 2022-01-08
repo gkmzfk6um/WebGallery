@@ -24,11 +24,13 @@ spec:
 
       initContainers:
         - name: fetch-dropbox
-          image: virtualraven/webgallery:version-1.17
+          image: virtualraven/webgallery:version-2.0
           imagePullPolicy: Always
           command: ["sh"]
           args: ["/docker-entrypoint.d/10-fetch-images.sh"]
           env:
+            - name: 'ENABLE_GALLERY_STORE'
+              value: 'yay'
             - name: 'MASTER_NODE_URL'
               value: 'webgallery-master-service'
             - name: 'DROPBOX_API_TOKEN'
@@ -44,11 +46,13 @@ spec:
 
       containers:
       - name: web-gallery-nginx
-        image: virtualraven/webgallery:version-1.17
+        image: virtualraven/webgallery:version-2.0
         imagePullPolicy: Always
         ports:
         - containerPort: 80
         env:
+          - name: 'ENABLE_GALLERY_STORE'
+            value: 'yay'
           - name: 'DROPBOX_API_TOKEN'
             valueFrom:
                secretKeyRef:
@@ -82,17 +86,6 @@ spec:
           - name: images-thumbnails
             mountPath: /var/www/gallery/img/thumbnails
 
-      #- name: web-gallery-prometheus
-      #  image: nginx/nginx-prometheus-exporter:latest
-      #  ports:
-      #  - containerPort: 9113
-      #  args: 
-      #    - "-nginx.scrape-uri"
-      #    - "http://localhost:9114/nginx_status"
-      #    - "-nginx.retries"
-      #    - "20"
-      #    - "-nginx.retry-interval"
-      #    - "10s"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -114,11 +107,13 @@ spec:
     spec:
       containers:
       - name: web-gallery-nginx
-        image: virtualraven/webgallery:version-1.17
+        image: virtualraven/webgallery:version-2.0
         imagePullPolicy: Always
         ports:
         - containerPort: 80
         env:
+          - name: 'ENABLE_GALLERY_STORE'
+            value: 'yay'
           - name: 'MASTER_NODE_URL'
             value: 'webgallery-master-service'
           - name: 'WEBSITE_URL'
@@ -143,18 +138,6 @@ spec:
             port: 80
           failureThreshold: 60
           periodSeconds: 10
-      #- name: web-gallery-prometheus
-      #  image: nginx/nginx-prometheus-exporter:latest
-      #  ports:
-      #  - containerPort: 9113
-      #  args: 
-      #    - "-nginx.scrape-uri"
-      #    - "http://localhost:9114/nginx_status"
-      #    - "-nginx.retries"
-      #    - "20"
-      #    - "-nginx.retry-interval"
-      #    - "10s"
-
 ---
 apiVersion: v1
 kind: Service
@@ -167,3 +150,71 @@ spec:
     port: 80
   selector:
     role: web-gallery-master
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gallery-store
+  labels:
+    app: gallery-store
+    role: gallery-store
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: gallery-store
+  template:
+    metadata:
+      labels:
+        app: gallery-store-stripe
+        role: gallery-store
+    spec:
+      containers:
+      - name: gallery-store-stripe
+        image: virtualraven/webgallery-store:version-2.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 4280
+        env:
+          - name: 'NODE_URL'
+            value: 'http://webgallery-service'
+          - name: 'STRIPE_API_TOKEN'
+            valueFrom:
+               secretKeyRef:
+                name: stripe-credentials
+                key: api-token
+          - name: 'WEBSITE_URL'
+            valueFrom:
+               secretKeyRef:
+                name: website-data
+                key: url
+          - name: 'GALLERY_URL'
+            valueFrom:
+               secretKeyRef:
+                name: website-data
+                key: url
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 4280
+          periodSeconds: 3
+          failureThreshold: 10
+        startupProbe:
+          httpGet:
+            path: /ready
+            port: 4280
+          failureThreshold: 60
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webgallery-store
+spec:
+  ports:
+  - name: http
+    targetPort: 4280
+    port: 4280
+  selector:
+    role: gallery-store
+---

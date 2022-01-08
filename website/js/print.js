@@ -32,7 +32,7 @@ function build(data)
     $(".printItem").css("opacity","1")
     $('#addtocart').click( () => {
         var selectedVariant = data.variants[$('#size').val()];
-        selectedVariant['signature'] = $('#signature').val();
+        selectedVariant['signature'] = parseInt($('#signature').val());
         addItem(data['data']['dropbox']['id'], selectedVariant);
     });
 

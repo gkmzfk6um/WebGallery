@@ -8,6 +8,14 @@
     display: inline-block
     margin-left: 1.5rem
 
+@media screen and (max-width:1000px )
+    .category > * 
+        width: calc( 100% - 3rem )
+        display: inline-block
+        margin-left: 1.5rem
+        margin-right: 1.5rem
+
+
 .printContainer
     .print
         > h4
@@ -38,6 +46,8 @@
     background-color: white
     padding: 1rem
     box-shadow: 0px 0px 62px 0px #E8E8E8
+    img 
+        max-width: 100%
     
 
 .printItem 
@@ -110,11 +120,19 @@
     height: 4rem
     width: 4rem
     border-radius: 3rem
-    background: defines.$background-color
-    transition: height 0.2s linear,width 0.2s linear
+    background-color: defines.$header-h-color
+    transition: height 0.2s linear,width 0.2s linear,background-color 0.1s linear
     box-shadow: 0px 0px 62px 0px rgba(0,0,0,0.1)
+    .icon
+        opacity: 1
+        transition: opacity 0.1s linear
+        position: absolute
+        top: 25%
+        left: 25%
+        width: 50%
+        height: 50%
 
-    span
+    & > span
         &:nth-child(1)
             box-shadow: 0px 0px 62px 0px rgba(0,0,0,0.1)
             text-align: center
@@ -129,13 +147,25 @@
             border-radius: 1rem
             background-color: defines.$tomatored
             color: white
+            transition: transform 0.1s linear, opacity 0.1s linear
+            opacity: 0
+            transform: scale(0,0)
+        &:nth-child(1).visible
+            opacity: 1
+            transform: scale(1,1)
     & > div
         padding: 1rem
         transition: 1s opacity  0.1s 
         opacity: 0
         display: none
+        height: 100%
+
+    
 
 .cart-open
+    .icon
+        opacity: 0
+    background: defines.$background-color
     & > div
         opacity: 1
         display: block
@@ -145,11 +175,58 @@
         display: none
 
 
+.quantitybutton,.quantity
+    cursor: pointer
+    font-size: 2rem
+    transition: color 0.1s linear
+    -webkit-user-select: none  
+    -moz-user-select: none
+    -ms-user-select: none   
+    user-select: none
+.minusbutton:hover
+    color: defines.$tomatored
+.plusbutton:hover
+    color: defines.$mossgreen
+
+#cartitems
+    height: 60%
+    overflow-y: scroll
+    -ms-overflow-style: none
+    scrollbar-width: none
+
+#cartitems::-webkit-scrollbar
+    display: none
+
+.cartbuttons
+    -webkit-user-select: none  
+    -moz-user-select: none
+    -ms-user-select: none   
+    user-select: none
+
+    text-align: center
+    margin-top: 2rem
+
+.checkoutbutton
+    cursor: pointer
+    font-size: 1.3rem
+    font-weight: bold
+    transition: color 0.1s linear
+    -webkit-user-select: none  
+    -moz-user-select: none
+    -ms-user-select: none   
+    user-select: none
+    &:hover
+        color: defines.$mossgreen
 .cartitem
-    .quantitybutton
-        font-size: 2rem
-    div
-        display: inline-block
+
+    display: flex
+    justify-content: space-between
+    align-items: center
+    select: none
+    margin-top: 0.5rem
+    transform: scaleY(0)
+    height: 0
+    transition: transform 0.1s linear, height 0.2s linear
     .close-container
         $buttonsize: 1.5rem
         width: $buttonsize
@@ -159,7 +236,48 @@
             width: $buttonsize
             margin-top: calc( $buttonsize / 2)
 
+.cartitemdescription
+    & > a
+        color: defines.$html-color
+        transition: color 0.1s linear
+        text-decoration: none
+        font-size: 1.2rem
+        font-weight: bold
+        display: block
+        &:hover
+            color: defines.$html-color-lighter
+    & > span
+        font-size: 0.7rem
+        display: block
+        font-weight: lighter
 
+.added
+    height: auto
+    transform: scaleY(1)
+.removed
+    transform: scaleY(0)
+
+.quantitycollection
+    display: flex
+    justify-content: space-between
+    align-items: center
+
+#addtocart
+    &:hover
+        color: #eee
+    cursor: pointer
+    font-weight: bold
+    transition: color 0.1s linear
+    -webkit-user-select: none  
+    -moz-user-select: none
+    -ms-user-select: none   
+    user-select: none
+
+#checkout.disabled
+    color: #eee
+    cursor: inherit
+    &:hover
+        color: #eee
 
 @media screen and (min-width:2000px )
     .printItem

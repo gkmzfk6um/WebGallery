@@ -1,0 +1,32 @@
+{% from 'content/macros.jinja2' import imageA with context %}
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+  {% include 'content/head.jinja2' %}
+  <link rel="stylesheet" href="/css/store-{{gitSha}}.css">
+</head>
+
+<body>
+  {% include 'content/header.jinja2' %}
+  {% set page = 'store' %}
+  {% include 'content/menu.jinja2' %}
+   <div class="body storestatus">
+        <h2>Thank you!</h2>
+        <p>
+            You order has been received and I will process it as quickly as possible. A confirmation email
+            will be sent out shortly. 
+            If you have any questions don't hesitate to contact me on <span> gallery@rahmn.net </span>
+        </p>
+        <p>
+            Thank you for the purchase!
+        </p>
+   </div>
+   {% include 'content/footer.jinja2' %}
+   <script>
+        localStorage.removeItem('gallery-cart')
+   </script>
+    
+    {% include 'content/cart.jinja2' %}
+</body>
+</html>

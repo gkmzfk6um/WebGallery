@@ -1,0 +1,25 @@
+
+{% from 'content/macros.jinja2' import imageA with context %}
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+  {% include 'content/head.jinja2' %}
+  <link rel="stylesheet" href="/css/store-{{gitSha}}.css">
+</head>
+
+<body>
+  {% include 'content/header.jinja2' %}
+  {% set page = 'store' %}
+  {% include 'content/menu.jinja2' %}
+   <div class="body storestatus">
+        <h2>Canceled!</h2>
+        <p>
+            The checkout process was canceled, and hence no order has been made. 
+            If you have any questions or need help with the ordering process please contact me at <span> gallery@rahmn.net </span>
+        </p>
+   </div>
+   {% include 'content/footer.jinja2' %}
+    {% include 'content/cart.jinja2' %}
+</body>
+</html>
