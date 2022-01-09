@@ -239,7 +239,7 @@ function buildUI()
             'Sign rear',
             "Don't sign"
         ];
-        return `${variant.width}cm x ${variant.height} cm, ${signatureOptions[variant.signature]}`
+        return `${variant.width} cm x ${variant.height} cm, ${signatureOptions[variant.signature]}`
     }
 
     var items =0 ;
