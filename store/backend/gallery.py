@@ -43,8 +43,12 @@ def copyPath(obj,newObj,path,nodeType,validate):
     if match[2]:
         if not (root in newObj):
             newObj[root] = {}
-        newObj[root] = copyPath(obj[root],newObj[root],match[2],nodeType,validate)
-        return newObj
+        child = copyPath(obj[root],newObj[root],match[2],nodeType,validate)
+        if child  is None:
+            return None
+        else:
+            newObj[root] = child
+            return newObj
     else:
         value = obj[root]
         if type(value) is nodeType:
@@ -82,7 +86,6 @@ def validateCartItem(cartItem):
     return cloneAndValidateDict(cartItem,paths)
 
 def buildCartIdString(item):
-    logger.debug(item)
     return "{}{}h{}w{}s".format(item['id'],item['variant']['height'],item['variant']['width'],item['variant']['signature'])
 
 supported = 4
@@ -132,6 +135,7 @@ def info(ids):
                 
         if not(idFound):
             response['failed'].append(id)
+    logger.info(response)
     return response
 
 def crossReferenceCart(cart):
@@ -149,7 +153,6 @@ def crossReferenceCart(cart):
         variants = [variant for variant in itemInfo['variants'] if (variant['height'] == cartItemVariant['height'] and variant['width'] == cartItemVariant['width'] )]
         if len(variants) != 1:
             return 'Variant lookup failed',400
-        logger.debug(itemInfo)
         cartItem['name'] = itemInfo['name']
         cartItem['price']= variants[0]['price']
         cartItem['signatureDescription'] = signatureOptions[cartItemVariant['signature']]

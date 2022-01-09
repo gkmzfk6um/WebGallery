@@ -15,7 +15,7 @@ function build(data)
         $("#price").text(price+ "kr")
     }
 
-    $("#description").text(data['description'])
+    $("#description").html(data['description'])
     $("#title").text(data['data']['displayname'])
     $("#image").css('background-color',data['data']['colour'])
     $("#viewlink").attr("href","/"+data['data']['view'].replace(/\.html$/,"") + "?src=print&stay")
