@@ -91,7 +91,7 @@ def buildCartIdString(item):
 supported = 4
 def isReady(app):
     fetchUrl = '{}/api/manifest.json'.format(galleryUrl)
-    r = http.get(fetchUrl)
+    r = http.get(fetchUrl,timeout=1)
     if r.ok:
         obj = r.json()
         if not 'version' in obj:
@@ -117,7 +117,7 @@ def info(ids):
     for id in ids:
         idFound = False
         url = fetchPrefix+id
-        r= requests.get(fetchPrefix+id,allow_redirects=False,timeout=0.001)
+        r= http.get(fetchPrefix+id,allow_redirects=False,timeout=2)
         if r.ok:
             obj = r.json()
             assert id == obj['data']['dropbox']['id']

@@ -19,7 +19,7 @@
            {% set pic = print.data %}
            <div class="printContainer">
                <div class="print">
-                   <h4>{{pic.displayname}} </h4>
+                   <h4 id="{{pic.displayname}}">{{pic.displayname}} </h4>
                    <div class="printBorder">
                        {{ imageA( '/store/print/'+ pic.dropbox.id  ,pic,'printImage')}}
                    </div>

@@ -26,7 +26,7 @@ function build(data)
         $("#size").append(opt)
     });
     $("#size").on('change', sizechanged)
-    $("#close-print").click(() => window.location.pathname="/store" )
+    $("#close-print").click(() => window.location.href="/store#"+data['data']['displayname'] )
     sizechanged();
     loadimage(data);
     $(".printItem").css("opacity","1")

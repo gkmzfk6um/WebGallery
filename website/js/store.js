@@ -27,20 +27,15 @@ function resize()
 
 function initStore()
 {
+	var originalLocation = location.hash; 
+	location.hash = "#"
     resize();
+	location.hash = originalLocation;
     var timer;
     $(window).resize(function() {
     	clearTimeout(timer);
     	timer = setTimeout(resize,100)
     });
-
-    $(".printImage").click( (e) => {
-        $(".printContainer").removeClass("floating")
-        console.log($(e.delegateTarget).parents(".printContainer"))
-        $(e.delegateTarget).parents(".printContainer").addClass("floating")
-        resize()
-    } )
-
 
     $(".printImage").each( (i,e) => {
 	    const src= $(e).attr('data-src');

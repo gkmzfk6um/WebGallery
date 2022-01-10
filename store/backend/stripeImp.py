@@ -8,6 +8,18 @@ stripe.api_key = os.getenv('STRIPE_API_TOKEN')
 galleryUrl = os.getenv('GALLERY_URL')
 successUrl = "{}/store/success".format(galleryUrl)
 cancelUrl = "{}/store/cancel".format(galleryUrl)
+allowedCountires = [
+    ## -- EU --------------------
+    "AT","BE","BG","HR","CY","CZ",
+    "DK","EE","FI","FR","DE","GR",
+    "HU","IE","IT","LV","LT","LU",
+    "MT","NL","PL","PT","RO","SK",
+    "SI","ES","SE",
+    # -- EUROPE ------------------
+    "GB","NO",
+    # -- North America -----------
+    "CA","US"
+]
 
 
 def setSalesLogger(newLogger):
@@ -42,7 +54,7 @@ def checkout(cart):
         mode='payment',
         allow_promotion_codes=True,
         shipping_address_collection= { 
-            'allowed_countries' : ['SE']
+            'allowed_countries' : allowedCountires
         },
         phone_number_collection= {
             'enabled':True
