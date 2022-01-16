@@ -11,7 +11,7 @@ from jinja2 import Template, Environment, FileSystemLoader
 import jinja2.filters as filters
 import datetime
 import re
-from PIL import Image
+from PIL import Image,ImageOps
 from PIL import ImageCms
 from PIL import ExifTags
 from libxmp import utils,XMPFiles,consts
@@ -85,12 +85,14 @@ def globFiles():
         return ls
 
 def genThumbnails(id,img):
-    sizes = [150,300,512,1024,3000]
-    names = ['tiny', 'small','medium','large','huge']
+    sizes = [150,300,512,1024,3000,2048]
+    names = ['tiny', 'small','medium','large','huge','print']
     icc_profile=img.info.get('icc_profile')
     for (s,name) in zip(sizes,names):
         thumb = img.copy()
         thumb.thumbnail( (s,s) )
+        if name == 'print':
+            thumb = ImageOps.expand(thumb,border=86,fill='white')
         path = pathTemplate.format(id,name)
         thumb.save(path,quality=85,optimize=True, icc_profile=icc_profile)
         yield (name, {
@@ -217,7 +219,7 @@ def genHTML():
         name,suffix = os.path.splitext(hname)
 
          
-        if suffix == ".html":
+        if suffix == ".html" or suffix == ".xml":
             if name == "viewer":
                 for (i,img) in zip(range(0,len(inventory)),inventory):
                     print("Generating view  ({}/{})\r".format(i+1,len(inventory)),end='')
@@ -301,7 +303,7 @@ def fetchDropbox():
         json.dump({
             'last_update': datetime.datetime.now().isoformat(),
             'host': os.getenv('HOSTNAME'),
-            'version': 4,
+            'version': 5,
             'img': {
                 'inventory': inventory,
                 'new': newMeta,

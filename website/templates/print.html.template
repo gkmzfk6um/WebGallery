@@ -42,6 +42,9 @@
                 </select>
             </div>
             <span id="price"></span>
+            <span class="typewriter" id="info" >
+                This work is printed on Hahnemühle's Fine-art Baryta paper, an exclusive paper that I've come to love for it's slightly textured and subtle glossy surface, and will be delivered rolled up together with a certificate describing the work.
+            </span>
             <p id="description">
             </p>
         </div>

@@ -88,7 +88,7 @@ def validateCartItem(cartItem):
 def buildCartIdString(item):
     return "{}{}h{}w{}s".format(item['id'],item['variant']['height'],item['variant']['width'],item['variant']['signature'])
 
-supported = 4
+supported = 5
 def isReady(app):
     fetchUrl = '{}/api/manifest.json'.format(galleryUrl)
     r = http.get(fetchUrl,timeout=1)

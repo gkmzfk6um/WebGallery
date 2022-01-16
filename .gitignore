@@ -9,3 +9,4 @@ view/
 *.xml
 kubernetes/secret.yaml
 docker-compose-dev.yml
+kubernetes/secret-hot.yaml

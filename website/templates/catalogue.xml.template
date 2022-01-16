@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0" xmlns:atom="http://www.w3.org/2005/Atom">
+
+{% set website="https://gallery.rahmn.net" %}
+<channel> 
+    <title>Lukas Rahmn Gallery</title>
+    <description>Product Feed for Facebook</description> 
+    <link></link>
+    <atom:link href="{{website}}/catalogue.xml" rel="self" type="application/rss+xml" />
+       {% for category, prints in storeData.prints.items() %}
+       {% for print in prints %}
+       {% for variant in print.variants %}
+        <item>
+            <g:id>{{print.data.dropbox.id}}{{variant.width}}{{variant.height}}</g:id>
+            <g:item_group_id>{{print.data.dropbox.id}}</g:item_group_id>
+
+            <g:title>{{print.data.displayname | e}}</g:title>            
+            <g:description>{{print.brief | e}} </g:description>
+            <g:link>{{website}}/store/print/{{print.data.dropbox.id}}</g:link>
+            <g:image_link>{{website}}/img/thumbnails/{{print.data.dropbox.id}}_print.jpg</g:image_link>  
+
+            <g:size>{{variant.width}} cm x {{variant.height}} cm </g:size>
+            <g:price>{{variant.price.value}} {{variant.price.cur}}</g:price>
+                    
+            <g:google_product_category>500044</g:google_product_category>            
+            <g:fb_product_category>999</g:fb_product_category>
+            <g:brand>Lukas Rahmn</g:brand>
+            <g:condition>New</g:condition>  
+            <g:availability>in stock</g:availability>
+        </item>  
+        {% endfor %}
+        {% endfor %}
+        {% endfor %}
+    </channel>
+</rss>

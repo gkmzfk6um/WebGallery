@@ -2,3 +2,4 @@ store/
 .vscode
 docker-compose-dev.yml
 kubernetes/secret.yaml
+kubernetes/secret-hot.yaml
