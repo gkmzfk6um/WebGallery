@@ -24,7 +24,7 @@ spec:
 
       initContainers:
         - name: fetch-dropbox
-          image: virtualraven/webgallery:version-2.07
+          image: virtualraven/webgallery:version-2.08
           imagePullPolicy: Always
           command: ["sh"]
           args: ["/docker-entrypoint.d/10-fetch-images.sh"]
@@ -46,7 +46,7 @@ spec:
 
       containers:
       - name: web-gallery-nginx
-        image: virtualraven/webgallery:version-2.07
+        image: virtualraven/webgallery:version-2.08
         imagePullPolicy: Always
         ports:
         - containerPort: 80
@@ -107,7 +107,7 @@ spec:
     spec:
       containers:
       - name: web-gallery-nginx
-        image: virtualraven/webgallery:version-2.07
+        image: virtualraven/webgallery:version-2.08
         imagePullPolicy: Always
         ports:
         - containerPort: 80
@@ -171,7 +171,7 @@ spec:
     spec:
       containers:
       - name: gallery-store-stripe
-        image: virtualraven/webgallery-store:version-2.07
+        image: virtualraven/webgallery-store:version-2.08
         imagePullPolicy: Always
         ports:
         - containerPort: 4280

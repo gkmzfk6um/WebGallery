@@ -100,6 +100,7 @@ def cloneMeta(url,meta):
     downloadFile(url,meta['medium']['path'])
     downloadFile(url,meta['large']['path'])
     downloadFile(url,meta['huge']['path'])
+    downloadFile(url,meta['print']['path'])
 
 
 def fetchWebsite(url,shortTimeout):
