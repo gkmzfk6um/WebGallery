@@ -56,6 +56,28 @@ def checkout(cart):
         shipping_address_collection= { 
             'allowed_countries' : allowedCountires
         },
+        shipping_options=[
+            {
+                'shipping_rate_data': {
+                    'type': 'fixed_amount',
+                    'fixed_amount': {
+                        'amount': 0,
+                        'currency': 'Sek',
+                    },
+                    'display_name': 'PostNord',
+                    'delivery_estimate': {
+                        'minimum': {
+                            'unit': 'business_day',
+                            'value': 1,
+                        },
+                        'maximum': {
+                            'unit': 'business_day',
+                            'value': 7,
+                        },
+                    }
+                }
+            }
+        ],
         phone_number_collection= {
             'enabled':True
         },

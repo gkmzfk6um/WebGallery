@@ -13,7 +13,7 @@
   <div class="body">
 	 <div>
 	  <div id="left">
-	  	<h3> ABOUT </h3>
+	  	<h3> About </h3>
 	  	<p id="about">
 
         <b>Halloj!</b><br>
@@ -43,8 +43,20 @@
 			If you have any questions regarding prints or ordering please write to <span>gallery@rahmn.net</span> or DM on <a class="normal" href="https://www.instagram.com/lukasrahmn/" >Instagram</a>
 		</p>
 
+		<h3>Returns</h3>
+		<p>
+			Prints are examined carefully before shipping for any quality issues. In the unfortunate event that you do receive a damaged or defective print I ask that you contact me and provide
+			pictures of the damage. Such damaged prints will be replaced free of charge or refunded if unable to provide a new print. The exception to this is if damaged arose due to mishandling by the customer. <br><br>
 
-	  	<h3>CONTACT</h3>
+			Do note that inkjet prints are very delicate by nature and should be handled by the edges to avoid scratching or thumbprints on the print surface. To ensure longevity of artwork I highly 
+			recommend framing it behind glass or alternatively laminating it. If you have any questions regarding care or framing don't hesitate to contact me.<br><br>
+
+			If you are unhappy with your print for any reasons you have the right to revoke the purchase within 14 days of receiving it. In such a case write to <span>gallery@rahmn.net</span>
+			to arrange return and refund. In this case the return shipping cost is covered by the customer.<br><br>
+		</p>
+
+
+	  	<h3>Contact</h3>
 	  	<p id="contact">
 	  		Feel free to contact me by email or DM me for any inquiries you might have. 
 	  	      To avoid spam I leave it as an exercises to the reader to 
@@ -52,18 +64,33 @@
 	  	      <span id="email">firstname@surname.net</span>
 	  	</p>
 		<p>
-			I'm also available at <a class="normal" href="https://www.instagram.com/lukasrahmn/" >Instagram<img style="height: 1em;" src="/icons/icons8-instagram.svg"/></a> 
+			I'm also available at <a class="normal" href="https://www.instagram.com/lukasrahmn/" >Instagram</a> 
 			and I would be very happy if you decide to follow me.
 
       For those preferring Facebook, I have a <a  class="normal" href="https://www.facebook.com/rahmnphoto/">page</a> there as well. 
 		</p>
 
-	  	<h3>CONCERNING THE WEBSITE</h3>
+		<h3>Privacy</h3>
+		<p>	
+			By default this website does not use cookies or any tracking technologies, so rest assured your privacy is respected.
+			There are though some exceptions to this rule when visiting the sites store:
+			<ul>
+				<li> To facilitate easy shopping the content of your cart is saved persistently in your browser. </li>
+				<li> To be able to process any order you place some information is required to fulfill order. Such information includes items as 
+				      name, shipping address, phone number and payment information. Any such information is only collected during the checkout process
+					  by the Payment provider Stripe and processed on behalf of this website. For additional information of what information is collected
+					  by using the "Stripe Checkout" please also refer to <a class="normal" href="https://stripe.com/se/privacy">Stripe's privacy policy </a>
+
+					  The contact information you provide and the order content is made available and processed by this Website in order to fulfill your order.
+				</li>
+			</ul>
+		</p>
+	  	<h3>Concerning the website</h3>
 	  	<p id="tech">
 	  	      The technical inclined readers might be interested to know that this
-	  	      website is selfmade and available as open source (MIT license) at 
+	  	      website is made by my and available as open source (MIT license) at 
 	  	      <a href="https://github.com/VirtualRaven/WebGallery">Github</a>.
-          Not it is only the website itself, not the images, that is license under the terms of 
+          Note it is only the website itself, not the images, that is licensed under the terms of 
           the MIT licenses.
 		      All icons on the website is kindly provided by <a href="https://icons8.com/">Icons8</a> 
 
