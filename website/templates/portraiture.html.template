@@ -22,7 +22,7 @@
         {%for catName, pics in (inventory | sortbycategories).items() %}
         {% if catName == "Portraiture" %}
         <div class="gallery" >{% for pic in pics %}
-            <a href="{{pic.view | tolink }}?src=portaiture&stay" id="{{pic.displayname}}" class="image" style="background-color:{{pic.colour}};"   
+            <a href="{{pic.view | tolink }}?src=portraiture&stay" id="{{pic.displayname}}" class="image" style="background-color:{{pic.colour}};"   
                 data-width="{{pic.medium.width}}" 
                 data-height="{{pic.medium.height}}" 
                   data-srcset="
