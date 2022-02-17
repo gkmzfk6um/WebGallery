@@ -194,7 +194,7 @@ def sortbycategories(inventory):
         sortedinventory = {}
         for category, filter in categories.items():
            sortedinventory[category]=[]
-        debugTarget="Emilia II"
+        debugTarget="debug"
         for item, xmp in loadXmp(inventory):
             debug = debugTarget == item['displayname']
             if debug:

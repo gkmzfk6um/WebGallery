@@ -19,9 +19,9 @@ const returnSrc  = () => {
 		{
 			url = '/categories#' + name;
 		}
-		else if (src == "portaiture")
+		else if (src == "portraiture")
 		{
-			url = '/portaiture#' + name;
+			url = '/portraiture#' + name;
 		}
 		else if (src == "print")
 		{
