@@ -99,10 +99,10 @@ def loadAndValidateCategories():
                 filterdef = cat[i]
                 if type(filterdef) is dict:
                     for key,value in filterdef.items():
-                        if key == "mode":
+                        if key == "mode" or key == "exclusion-mode" :
                             if not (value in ("or","and")):
                                 warn("Value \"{}\" isn't a valid mode, expected [or,and]".format())
-                        elif key == "filters":
+                        elif key == "filters" or key == "exclusion":
                             if type(value) is list:
                                 if len(value) == 0:
                                     warn("attribute \"filters\" must contains at least one filter!")
@@ -123,7 +123,7 @@ def loadAndValidateCategories():
                             else:
                                 warn("property \"filters\" of {} filterdefinition[{}] must be list of filter!".format(catName,i))
                         else:
-                            warn("\"{}\" isn't a valid filterdefinition property, expected [filters,mode]".format(key))
+                            warn("\"{}\" isn't a valid filterdefinition property, expected [filters,exclusion,mode,exclusion-mode]".format(key))
                     if not "filters" in filterdef:
                         warn("Filter definition must contain property \"filters\"")
                 else:
@@ -194,7 +194,7 @@ def sortbycategories(inventory):
         sortedinventory = {}
         for category, filter in categories.items():
            sortedinventory[category]=[]
-        debugTarget="debug"
+        debugTarget="Emilia II"
         for item, xmp in loadXmp(inventory):
             debug = debugTarget == item['displayname']
             if debug:
@@ -208,22 +208,43 @@ def sortbycategories(inventory):
                 isMatch = False
                 for filterdefinition in filterdefinitions:
                     mode = lambda x,y : x or y
+                    excludeMode = lambda x,y : x or y 
                     isMatch = False
+                    excludedAcc = False
+                    excluded = False
+
                     if "mode" in filterdefinition:
                         if filterdefinition["mode"] == "and":
                             isMatch = True
-                            mode = lambda x,y : x and y 
+                            mode = lambda x,y : x and y
+                    
+                    if "exclusion-mode" in filterdefinition:
+                        if filterdefinition["exclusion-mode"] == "and":
+                            excludedAcc = True
+                            excludeMode = lambda x,y : x and y
 
-                    for filter in filterdefinition["filters"]:
-                        if debug:
-                            print("Trying filter {}".format(filter))
-                        isMatch = mode(isMatch,matchFilter(filter,xmp)  )  
+                    if 'exclusion' in filterdefinition:
+                        for exclusionFilter in filterdefinition['exclusion']:
+                            filterMatch  = matchFilter(exclusionFilter,xmp)
+                            excludedAcc=excludeMode(excludedAcc,filterMatch)
+                            if debug:
+                                print('Exclusion filter {} = {}/{}'.format(exclusionFilter,filterMatch,excludedAcc))
+                            excluded = excludedAcc
 
-                    if isMatch:
+                    if not(excluded):
+                        for filter in filterdefinition["filters"]:
+                            filterMatch  = matchFilter(filter,xmp)
+                            isMatch = mode(isMatch,filterMatch )  
+                            if debug:
+                                print("Filter {} = {}/{}".format(filter,filterMatch,isMatch))
+
+                    if isMatch and not(excluded):
                         if debug:
                             print("Matched {}".format(category))
                         sortedinventory[category].append(item)
                         break
+                    elif debug:
+                        print("match={}, excluded={}".format(isMatch,excluded))
     
         print("Generated categories: ")
         sortedinventoryItems = list(sortedinventory.items())

@@ -19,6 +19,10 @@ const returnSrc  = () => {
 		{
 			url = '/categories#' + name;
 		}
+		else if (src == "portaiture")
+		{
+			url = '/portaiture#' + name;
+		}
 		else if (src == "print")
 		{
 			url = window.location.pathname.replace(/^\/view\//,'/store/print/')

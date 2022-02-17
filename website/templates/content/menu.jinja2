@@ -28,14 +28,21 @@
             </a>
             <ul>
                 {% for key_category, pics in (inventory | sortbycategories).items() %}
-                <li> <a href="/categories#{{key_category}}"> {{key_category}} </a> </li>
+                    {% if key_category != "Portraiture" %}
+                    <li> <a href="/categories#{{key_category}}"> {{key_category}} </a> </li>
+                    {% endif %}
                 {% endfor %}
             </ul>
+        </li>
+        <li> 
+            <a href="/portraiture">
+                {{ boldifselected('Portraiture',(page == 'portraiture')) }}
+            </a>
         </li>
         {% if storeData %}
             <li> 
                 <a href="/store">
-                    {{ boldifselected('Store',(page == 'store')) }}
+                    {{ boldifselected('Print store',(page == 'store')) }}
                 </a>
             </li>
         {% endif %}

@@ -2,6 +2,7 @@
 <html class="no-js" lang="">
 
 <head>
+  {% set tabAboutDesc = "About Rahmn's gallery" %}
   {% include 'content/head.jinja2' %}
   <link rel="stylesheet" href="/css/about-{{gitSha}}.css">
 </head>
@@ -18,11 +19,11 @@
 
         <b>Halloj!</b><br>
 
-        I'm a passionate amature photographer and analogue enthusiast living Mölndal.
+        I'm a passionate amateur photographer and analogue enthusiast living Mölndal.
         I dabble with many styles of photography, ranging from capturing night scenes on analogue film to 
         digital wedding photography.
         <br><br>
-        Contact me for assignments, I do both on location shoots and studio portraiture.  
+        Contact me for assignments, I do both on location shoots and studio <a class="normal" href="/portraiture">portraiture</a>.  
         <br><br>
 			  Feel free to use any image as you desirer privately, but for commercial use, physical prints or re-posting I ask that you that you email or DM me.
 			  <br><br>

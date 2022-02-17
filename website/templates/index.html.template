@@ -2,6 +2,7 @@
 <html class="no-js" lang="">
 
 <head>
+  {% set tabAboutDesc = "Rahmn's gallery" %}
   {% include 'content/head.jinja2' %}
 </head>
 

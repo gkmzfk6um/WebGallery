@@ -3,6 +3,7 @@
 <html class="no-js" lang="">
 
 <head>
+  {% set tabAboutDesc = 'Print store' %}
   {% include 'content/head.jinja2' %}
   <link rel="stylesheet" href="/css/store-{{gitSha}}.css">
 </head>
