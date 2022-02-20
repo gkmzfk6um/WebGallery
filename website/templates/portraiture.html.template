@@ -14,10 +14,12 @@
     <div class="body">
         <h2>Portraiture</h2>
         <p class="typed-paragraph">
-          <b>I love taking portraits!</b> It is something special about having someone in front of the camera, be it outside or in my apartment studio in Mölndal.
-          As with the rest of my work I work with both analogue and digital cameras, but I tend to favor analogue if the circumstance and desired 
-          style allows for it. I'm available for hire and would love to help you with your next photo project. 
-          I'll happily receive any questions at gallery@rahmn.net or at <a class="normal" href="https://www.instagram.com/rahmnphoto/" >@rahmnphoto</a>.
+
+          <b>I am always looking for more opportunities to take portraits!</b>
+           Whether it's an impromptu shot in the park or a scheduled session in my apartment studio in Mölndal I enjoy every time.  
+           I work with both analog and digital cameras, but there is something magical about analog portraits. 
+           I'm available for hire and would love to help you with your next photo project. 
+           Please reach out to me with any questions you may have via email at gallery@rahmn.net or on Instagram at <a class="normal" href="https://www.instagram.com/rahmnphoto/" >@rahmnphoto</a>.
         </p>
         {%for catName, pics in (inventory | sortbycategories).items() %}
         {% if catName == "Portraiture" %}
