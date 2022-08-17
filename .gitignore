@@ -10,3 +10,7 @@ view/
 kubernetes/secret.yaml
 docker-compose-dev.yml
 kubernetes/secret-hot.yaml
+content-managment/target
+content-managment/resources
+.vscode
+Cargo.lock

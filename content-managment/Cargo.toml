@@ -1,0 +1,24 @@
+[package]
+name = "content-managment"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+chrono = { version = "0.4.22", features = ["serde"] }
+reqwest = { version= "0.11", features = ["json", "gzip"] }
+tokio = { version = "1.18.2", features = ["full"] }
+rmp-serde = "1.1.0"
+serde_json = "1.0"
+lz4_flex = "0.9"
+num = "0.4"
+xmp_toolkit = "0.5.3"
+indicatif = "0.17.0"
+colored = "2.0.0"
+image = "0.24.3"
+clap = { version = "3.2.17", features = ["derive"] }
+rayon = "1.5.3"
+lazy_static = "1.4.0"
+serde_yaml = "0.9.9"
