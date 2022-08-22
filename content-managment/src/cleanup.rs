@@ -1,4 +1,4 @@
-use crate::datamodel::{Resource,Resources,ResourceData};
+use crate::datamodel::{Resource,Resources,ResourceData,ResourceProvider};
 use std::path::{Path,PathBuf};
 use std::collections::HashSet;
 use indicatif::ProgressBar;
@@ -8,6 +8,7 @@ pub fn cleanup(resources : &mut Resources )
 
 
     clean_broken_resources(resources);
+    clean_broken_dependencies(resources);
     
     resources.resources
     .values()
@@ -27,6 +28,18 @@ pub fn clean_broken_resources(resources : &mut Resources )
         if Path::new(&v.path).exists() {true} else {println!("Purging resource without valid path {:#?}",v); false }
     });
 }
+
+pub fn clean_broken_dependencies(resources: &mut Resources )
+{
+    resources.resources.retain( |_, v| {
+        match &v.resource_provider
+        {
+            ResourceProvider::Generated(deps) => {if deps.is_valid() {true} else {println!("Purging resource with invalid dependency"); false}},
+            _ => true
+        }
+    });
+}
+
 
 fn cleanup_folder(folder_path: &str, valid_paths: &HashSet<PathBuf> )
 {

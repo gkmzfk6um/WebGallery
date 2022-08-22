@@ -1,7 +1,8 @@
 mod thumbnails;
 mod categories;
 
-use crate::datamodel::{Resources,ResourceProvider};
+use crate::datamodel::{Resources,ResourceProvider,DependencyFuncName};
+use crate::datamodel::dependency::{DependencyFunc};
 use std::vec::Vec;
 use indicatif::ProgressBar;
 
@@ -30,4 +31,12 @@ pub fn generate(resources: &mut Resources)
     }
 
     thumbnails::generate(resources);
+    categories::generate(resources);
+}
+
+pub fn register_deps() -> [(DependencyFuncName,DependencyFunc);1]
+{
+    [
+        (DependencyFuncName(String::from(categories::CATEGORY_DEP_FUNC_NAME)), std::boxed::Box::new(categories::category_dep_func))
+    ]
 }

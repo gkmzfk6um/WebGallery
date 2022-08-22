@@ -1,14 +1,28 @@
 pub mod data;
 mod resource_file_manager;
-mod dependency;
+pub mod dependency;
 use serde::{Serialize, Deserialize};
 use chrono::{DateTime, Utc};
 use std::hash::{Hash,Hasher};
-    
+ use std::collections::HashMap;
+
+
+    #[derive(Serialize, Deserialize,Eq,PartialEq,Debug,Clone,Hash)]
+    pub struct DependencyFuncName(pub String);
+
+
+
+    #[derive(Serialize, Deserialize,Eq,PartialEq,Debug,Clone)]
+    pub enum DependencyType 
+    {
+        Direct,
+        Glob(DependencyFuncName)
+    }
 
     #[derive(Serialize, Deserialize,Eq,PartialEq,Debug,Clone)]
     pub struct Dependencies {
-        dependencies: std::collections::HashMap<String,String>
+        dependencies: HashMap<String,String>,
+        dep_type: DependencyType
     }
 
     #[derive(Serialize, Deserialize,Eq,PartialEq,Debug,Clone)]
@@ -54,7 +68,7 @@ use std::hash::{Hash,Hasher};
         pub name:         String,
         pub date:         DateTime<Utc>,
         pub colour : String,
-        pub variants: std::collections::HashMap<ThumbnailSize,String>
+        pub variants: HashMap<ThumbnailSize,String>
     }
 
     
@@ -78,13 +92,19 @@ use std::hash::{Hash,Hasher};
     pub struct SiteDataConfig {
         pub filename: String
     }
+    
+    #[derive(Serialize, Deserialize,Eq,PartialEq,Debug,Clone)]
+    pub struct GeneratedDataDesc {
+        pub name: String
+    }
 
 
     #[derive(Serialize, Deserialize,Eq,PartialEq,Debug,Clone)]
     pub enum ResourceData {
         Image(ImageMetadata),
         Thumbnail(ImageVariant),
-        Sitedata(SiteDataConfig)
+        Sitedata(SiteDataConfig),
+        GeneratedData(GeneratedDataDesc)
     }
 
     
@@ -126,5 +146,5 @@ use std::hash::{Hash,Hasher};
     #[derive(Serialize, Deserialize,Eq,PartialEq,Default,Debug,Clone)]
     pub struct Resources
     {
-        pub resources : std::collections::HashMap<String,Resource>
+        pub resources : HashMap<String,Resource>
     }
