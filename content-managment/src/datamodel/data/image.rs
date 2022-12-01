@@ -33,16 +33,16 @@ impl From<XmpError> for ImageMetadataError {
 }
 
 impl ImageMetadata {
-    pub fn new(filename: &str, path : &str ) -> Result<ImageMetadata,ImageMetadataError>
+    pub fn new<T: AsRef<std::path::Path>>(filename: &str, path : T ) -> Result<ImageMetadata,ImageMetadataError>
     {
         let mut xmp_file = xmp_toolkit::XmpFile::new()?;
-        xmp_file.open_file(path,xmp_toolkit::OpenFileOptions::default().for_read())?;
-        let xmp_meta = xmp_file.xmp().ok_or( ImageMetadataError::new(format!("No XMP in file {}!",path)))?;
+        xmp_file.open_file(&path,xmp_toolkit::OpenFileOptions::default().for_read())?;
+        let xmp_meta = xmp_file.xmp().ok_or( ImageMetadataError::new(format!("No XMP in file {}!",path.as_ref().display())))?;
 
         let  xmp_title = match xmp_meta.property(DC, "dc:title[1]")
         {
             Some(name) => name,
-            None =>  { println!("No XMP title for {}",path); String::from(filename)} 
+            None =>  { println!("No XMP title for {}",path.as_ref().display()); String::from(filename)} 
         };
 
         let parsed_xmp_date = 
@@ -59,10 +59,10 @@ impl ImageMetadata {
 
             if xmp_date == None
             {
-               let metadata = std::fs::metadata(path);
+               let metadata = std::fs::metadata(&path);
                if let Err(_) = metadata
                {
-                    return Err(ImageMetadataError::new(String::from(format!("Failed to open file {} to read timestamp",path))));
+                    return Err(ImageMetadataError::new(String::from(format!("Failed to open file {} to read timestamp",path.as_ref().display()))));
 
                }
                if let Ok(time) = metadata.unwrap().created() {
@@ -85,7 +85,7 @@ impl ImageMetadata {
                                 match chrono::NaiveDateTime::parse_from_str(&xmp_date,"%Y-%m-%dT%H:%M:%S%.f")
                                 {
                                     Ok(date) => date.and_local_timezone(chrono::Utc).unwrap(),
-                                    _ => return Err(ImageMetadataError::new(format!("Failed to parse {} XMP timestamp ({})",path,xmp_date)))
+                                    _ => return Err(ImageMetadataError::new(format!("Failed to parse {} XMP timestamp ({})",path.as_ref().display(),xmp_date)))
                                 }
                             }
 

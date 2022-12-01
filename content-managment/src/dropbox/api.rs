@@ -228,13 +228,13 @@ pub async fn get_manifest(client : &reqwest::Client) -> ManifestResult {
 }
 
 
-async fn dropbox_fetch_resource(client : &reqwest::Client, id : &str, path : &str) -> Result<(),DropboxError>
+async fn dropbox_fetch_resource<T: AsRef<std::path::Path>>(client : &reqwest::Client, id : &str, path : T) -> Result<(),DropboxError>
 {
 
     let mut file = match File::create(&path).await
     {
         Ok(f) => f,
-        Err(_) => return Err(DropboxError::new(format!("Failed to open {}",&path)))
+        Err(_) => return Err(DropboxError::new(format!("Failed to open {}",path.as_ref().display())))
     };
     
 
@@ -265,18 +265,18 @@ async fn dropbox_fetch_resource(client : &reqwest::Client, id : &str, path : &st
 
 }
 
-fn allocate_resource(name :&str , path : &str, filter: &ResourceFilter) -> Result<ResourceData,DropboxError>
+fn allocate_resource<T: AsRef<std::path::Path> >(name :&str , path : T, filter: &ResourceFilter) -> Result<ResourceData,DropboxError>
 {
     match filter
     {
         ResourceFilter::Data  => 
         {
-            SiteDataConfig::new(&name,&path ).map( |x| ResourceData::Sitedata(x) ).map_err(|x| DropboxError::from(x))
+            SiteDataConfig::new(&name,path ).map( |x| ResourceData::Sitedata(x) ).map_err(|x| DropboxError::from(x))
         },
         ResourceFilter::Images => 
         {
 
-            ImageMetadata::new(&name,&path).map( |x| ResourceData::Image(x) ).map_err(|x| DropboxError::from(x))
+            ImageMetadata::new(&name,path).map( |x| ResourceData::Image(x) ).map_err(|x| DropboxError::from(x))
 
         }
     }
@@ -326,12 +326,12 @@ pub async fn fetch_resources(client: &reqwest::Client, manifest : Vec<DropboxMan
                     Ok(_) => 
                     {
                         
-                        match allocate_resource(&manifest_entry.name,&path,&filter)
+                        match allocate_resource(&manifest_entry.name,path,&filter)
                         {
                             Ok(resource_data) =>
                             {
                                 let resource = Resource::new(
-                                    String::from(path),
+                                    path,
                                     resource_data,
                                     &manifest_entry.id,
                                     &manifest_entry.content_hash,

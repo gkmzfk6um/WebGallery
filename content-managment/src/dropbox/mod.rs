@@ -52,7 +52,7 @@ pub async fn populate_using_dropbox(resources : Resources) -> Resources
         }
         for resource in fetch_resources(&client,v,&ResourceFilter::Data).await
         {
-            res.resources.insert(String::from(&resource.id),resource);
+            res.resources.insert(String::from(resource.id()),resource);
         }
     }
     
@@ -64,7 +64,7 @@ pub async fn populate_using_dropbox(resources : Resources) -> Resources
         }
         for resource in fetch_resources(&client,v,&ResourceFilter::Images).await
         {
-            res.resources.insert(String::from(&resource.id),resource);
+            res.resources.insert(String::from(resource.id()),resource);
         } 
     }
 

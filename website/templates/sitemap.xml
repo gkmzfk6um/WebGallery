@@ -29,7 +29,7 @@
 		<loc>{{websiteName}}/about</loc>
 		<priority> 0.4 </priority>
 	</url>
-    {%for category, prints in storeData.prints.items() %}
+    {%for category, prints in storeData.prints %}
     {% for print in prints %}
 	<url>
 		<loc>

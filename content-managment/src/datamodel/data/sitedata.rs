@@ -10,14 +10,14 @@ pub struct SiteDataConfigError {
 
 impl SiteDataConfig
 {
-    pub fn new(_filename : &str,  path: &str) ->Result<SiteDataConfig,SiteDataConfigError>
+    pub fn new<T: AsRef<std::path::Path>> (_filename : &str,  path: T) ->Result<SiteDataConfig,SiteDataConfigError>
     {
-        match File::open(path)
+        match File::open(&path)
         {
             Ok(_) => Ok(SiteDataConfig {
                 filename: String::from(_filename)
             }),
-            Err(_) => Err(SiteDataConfigError {error: format!("Failed to open resource file {}!",path)})
+            Err(_) => Err(SiteDataConfigError {error: format!("Failed to open resource file {}!",path.as_ref().display())})
         }
     }
 }

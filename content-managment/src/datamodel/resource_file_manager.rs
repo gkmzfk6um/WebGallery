@@ -4,15 +4,20 @@ use crate::datamodel::{Resource,Resources};
 use rmp_serde;
 use lz4_flex;
 use serde::{Serialize};
+use crate::ARGS;
 use std::fmt::Debug;
 use crate::datamodel::dependency::reverse_dependencies;
+use std::path::Path;
+use std::path::PathBuf;
 
 impl Resources
 {
     pub fn read_resources() -> Resources
     {
         let mut resources : Resources = Default::default();
-        let mut r = std::fs::read_dir("resources/meta").unwrap();
+
+        let dir = ARGS.root.join(Path::new("resources/meta"));
+        let mut r = std::fs::read_dir(&dir).expect( format!("Could not read folder {}",dir.display()).as_str());
         while let Some(Ok(dir)) = r.next()
         {
             let path = dir.path();
@@ -65,9 +70,17 @@ fn delete_file<T: std::convert::AsRef<std::ffi::OsStr>>(path: T)
 
 impl Resource
 {
-    pub fn get_metadata_path(&self) -> String
+    pub fn get_metadata_path(&self) -> PathBuf
     {
-        format!("resources/meta/{}.binres",std::path::Path::new(&self.path).file_name().unwrap().to_str().unwrap())
+        let filename = format!("{}.binres",self.get_filename());
+        let mut buff = ARGS.root.join(Path::new("resources/meta"));
+        buff.push(filename);
+        buff
+    }
+
+    pub fn get_filename(&self) -> &str
+    {
+        self.path.file_name().unwrap().to_str().unwrap()
     }
 
     pub fn delete_resource(&self)
@@ -76,16 +89,54 @@ impl Resource
         delete_file(self.get_metadata_path());
     }
 
+    pub fn get_path(&self) -> std::path::PathBuf
+    {
+        if self.path.is_absolute()
+        {
+            self.path.clone()
+        }
+        else 
+        {
+            std::path::PathBuf::from(&ARGS.root).join(&self.path)
+        }
+    }
+
     pub fn write_resource(&self) {
         let path = self.get_metadata_path();
         let fut = File::create(&path);
+
+
+        let path_relative_root =
+        {
+            std::fs::canonicalize(self.get_path())
+            .map_err( | _ | format!("Failed to canoicalize {}", self.path.display() ) )
+            .and_then( | absolute_path | { 
+                assert!(absolute_path.starts_with(&ARGS.root)); 
+                absolute_path.strip_prefix(&ARGS.root)
+                .map_err( | _ | format!("Failed to make {} relative to root!", self.path.display()))
+                .map( |x| x.to_path_buf() )
+            })
+        };
+
+        if let Err(s) = path_relative_root
+        {
+            println!("write_resource(): {}",s);
+            self.delete_resource();
+            return;
+        }
+
+        let mut resource : Resource = self.clone();
+        resource.path  = path_relative_root.unwrap();
+
+
+
         match fut
         {
             Ok(mut file) => 
             {
                 let mut buf = Vec::new();
                 let mut compressor = lz4_flex::frame::FrameEncoder::new(&mut buf);
-                let s = self.serialize(&mut rmp_serde::Serializer::new(&mut compressor));
+                let s = resource.serialize(&mut rmp_serde::Serializer::new(&mut compressor));
                 match s {
                     Ok(_) => {
                         match compressor.finish()
@@ -105,7 +156,7 @@ impl Resource
                 };
 
             },
-            Err(_) => panic!("Failed to open resource file {}",path )
+            Err(_) => panic!("Failed to open resource file {}",path.display() )
         };
     }
 

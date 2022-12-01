@@ -1,4 +1,4 @@
-{% from 'content/macros.jinja2' import imageA with context %}
+{% import 'content/macros.jinja2' as macros %}
 <!doctype html>
 <html class="no-js" lang="">
 
@@ -14,7 +14,7 @@
   {% set page = 'store' %}
   {% include 'content/menu.jinja2' %}
    <div class="body">
-       {%for category, prints in storeData.prints.items() %}
+       {%for category, prints in storeData.prints %}
        <h2 id="{{category}}">{{category}}</h2>
        <div class="category" >{% for print in prints %}
            {% set pic = print.data %}
@@ -22,7 +22,7 @@
                <div class="print">
                    <h4 id="{{pic.displayname}}">{{pic.displayname}} </h4>
                    <div class="printBorder">
-                       {{ imageA( '/store/print/'+ pic.dropbox.id  ,pic,'printImage')}}
+                       {{ macros::imageA( href="/store/print/" ~ pic.dropbox.id,pic=pic,image="printImage")}}
                    </div>
                    <p class="description"> 
                     {{print.description}}

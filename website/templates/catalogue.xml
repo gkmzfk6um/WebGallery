@@ -7,7 +7,7 @@
     <description>Product Feed for Facebook</description> 
     <link></link>
     <atom:link href="{{website}}/catalogue.xml" rel="self" type="application/rss+xml" />
-       {% for category, prints in storeData.prints.items() %}
+       {% for category, prints in storeData.prints %}
        {% for print in prints %}
        {% for variant in print.variants %}
         <item>

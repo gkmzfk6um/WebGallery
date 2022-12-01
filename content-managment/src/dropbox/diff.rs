@@ -67,8 +67,8 @@ pub fn diff_manifest_and_inventory(resources :&Resources, manifest : &DropboxMan
         }
     };
 
-    let manifeset_ids : HashSet<&String> = HashSet::from_iter(manifest.files.values().filter(filter).map(|x| &x.id));
-    let inventory_ids : HashSet<&String> = HashSet::from_iter(resources.resources.values().filter(resource_filter).map( |x| &x.id ));
+    let manifeset_ids : HashSet<&str> = HashSet::from_iter(manifest.files.values().filter(filter).map(|x| x.id.as_str() ));
+    let inventory_ids : HashSet<&str> = HashSet::from_iter(resources.resources.values().filter(resource_filter).map( |x| x.id() ));
 
     let mut to_remove : Vec<String> = Vec::from_iter(inventory_ids.difference(&manifeset_ids).map(|x| x.to_string() ));
     let mut to_add    : Vec<String> = Vec::from_iter(manifeset_ids.difference(&inventory_ids).map(|x| x.to_string() ));
@@ -76,9 +76,9 @@ pub fn diff_manifest_and_inventory(resources :&Resources, manifest : &DropboxMan
     
     for overlap  in inventory_ids.intersection(&manifeset_ids)
     {
-        let id : &String = *overlap;
-        let manifest_hash = manifest.files.get(id).unwrap().content_hash.as_str();
-        let inventory_hash = resources.resources.get(id).unwrap().content_hash.as_str();
+        let id = String::from(*overlap);
+        let manifest_hash = manifest.files.get(&id).unwrap().content_hash.as_str();
+        let inventory_hash = resources.resources.get(&id).unwrap().content_hash.as_str();
         if manifest_hash != inventory_hash
         {
             to_add.push(id.to_string());

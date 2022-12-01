@@ -3,10 +3,11 @@
 # Useful .gitignore templates: https://github.com/github/gitignore
 img/
 view/
-*.html
 *.swo
 *.swp
-*.xml
+website/*.xml
+website/*.html
+website/resources
 kubernetes/secret.yaml
 docker-compose-dev.yml
 kubernetes/secret-hot.yaml

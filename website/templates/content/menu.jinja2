@@ -1,11 +1,4 @@
-{%- macro boldifselected(name,selected) -%}
-    {% if selected %}
-        <b>{{name}}</b>
-    {% else %}
-        {{name}}
-    {% endif %}
-{%- endmacro -%}
-
+{% import "content/boldifselected.jinja2" as macros %}
 <div class="menu slideout-menu">
     <div class="close-container" id="menu-close">
         <div class="leftright"></div>
@@ -14,20 +7,20 @@
     <ul>
         <li>
             <a href="/">
-                {{ boldifselected('Timeline',( page == 'timeline')) }}
+                {{ macros::boldifselected(name='Timeline',current=page, pagename='timeline') }}
             </a>
             <ul>
-                {% for key_year, pics in (inventory | sortbyyears).items() %}
+                {% for key_year, pics in sortedbyyears %}
                 <li> <a href="/#{%if key_year != year %}{{key_year}}{%else%}{{top}}{% endif %}"> {{key_year}} </a></li>
                 {% endfor %}
             </ul>
         </li>
         <li>
             <a href="/categories">
-                {{ boldifselected('Categories', (page == 'categories' )) }}
+                {{ macros::boldifselected(name='Categories',current=page, pagename = 'categories') }}
             </a>
             <ul>
-                {% for key_category, pics in (inventory | sortbycategories).items() %}
+                {% for key_category, pics in sortbycategories %}
                     {% if key_category != "Portraiture" %}
                     <li> <a href="/categories#{{key_category}}"> {{key_category}} </a> </li>
                     {% endif %}
@@ -36,19 +29,19 @@
         </li>
         <li> 
             <a href="/portraiture">
-                {{ boldifselected('Portraiture',(page == 'portraiture')) }}
+                {{ macros::boldifselected(name='Portraiture',current=page,pagename= 'portraiture') }}
             </a>
         </li>
         {% if storeData %}
             <li> 
                 <a href="/store">
-                    {{ boldifselected('Print store',(page == 'store')) }}
+                    {{ macros::boldifselected(name='Print store',current=page,pagename= 'store') }}
                 </a>
             </li>
         {% endif %}
         <li> 
             <a href="/about"> 
-                {{ boldifselected('About', page=="about") }} 
+                {{ macros::boldifselected(name='About', current=page,pagename="about") }} 
             </a> 
         </li>
     </ul>

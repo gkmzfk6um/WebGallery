@@ -8,6 +8,8 @@ use crate::datamodel::ResourceProvider;
 use crate::datamodel::ResourceData;
 use image::io::Reader as ImageReader;
 use rayon::prelude::*;
+use crate::ARGS;
+use std::path::Path;
 
 use indicatif::ProgressBar;
 
@@ -32,8 +34,9 @@ pub fn generate_thumbnail(image : &Resource, size: &ThumbnailSize, image_data: i
 {
 
     let mut deps = Dependencies::new();
-    let id = format!("{}-thumbnail-{}",&image.id,size);
-    let path = format!("resources/thumbnails/{}-thumbnail-{}.jpg", std::path::Path::new(&image.path).file_stem().unwrap().to_str().unwrap() ,size);
+    let id = format!("{}-thumbnail-{}",image.id(),size);
+    let filename = format!("{}-thumbnail-{}.jpg", image.get_path().file_stem().unwrap().to_str().unwrap() ,size);
+    let path =ARGS.root.join(Path::new("resources/thumbnails")).join(Path::new(&filename));
     deps.add_dependency(&image);
 
 
@@ -92,7 +95,7 @@ pub fn generate(resources: &mut Resources)
         .map( |image| 
         {
             let mut image_thumbnails : Vec<Resource> = Vec::with_capacity(NUMBER_OF_THUMBNAILS);
-            match ImageReader::open(&image.path)
+            match ImageReader::open(&image.get_path())
             {
                 Ok(reader) => {
                         match reader.decode()
@@ -108,7 +111,7 @@ pub fn generate(resources: &mut Resources)
                                         let thumbnail = generate_thumbnail(&image,&size,resized_image);
                                         match &mut image.resource_data
                                         {
-                                            Image(i) => i.variants.insert(size.clone(),String::from(&thumbnail.id)),
+                                            Image(i) => i.variants.insert(size.clone(),String::from(thumbnail.id())),
                                             _ => panic!("Resource must be image!")
                                         };
 
@@ -138,7 +141,7 @@ pub fn generate(resources: &mut Resources)
        {
            for thumbnail in thumbnails
            {
-               resources.resources.insert(String::from(&thumbnail.id), thumbnail);
+               resources.resources.insert(String::from(thumbnail.id()), thumbnail);
            }
        }
        bar.finish();

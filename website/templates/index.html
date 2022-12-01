@@ -2,21 +2,24 @@
 <html class="no-js" lang="">
 
 <head>
-  {% set tabAboutDesc = 'Work by category' %}
+  {% set tabAboutDesc = "Rahmn's gallery" %}
   {% include 'content/head.jinja2' %}
 </head>
 
 <body>
     {% include 'content/header.jinja2' %}
-    {% set page = 'categories' %}
+    {% set page = 'timeline' %}
     {% include 'content/menu.jinja2' %}
-    
+
     <div class="body">
-        {%for catName, pics in (inventory | sortbycategories).items() %}
-        {% if catName != "Portraiture" %}
-        <h2 id="{{catName}}">{{catName}}</h2>
+        {%for key_year, pics in sortedbyyears %}
+        {%if key_year != year %}
+        <h2 id="{{key_year}}">{{key_year}}</h2>
+        {%else%}
+        <h2>Latest creations</h2>
+        {% endif %}
         <div class="gallery" >{% for pic in pics %}
-            <a href="{{pic.view | tolink }}?src=categories" id="{{pic.displayname}}" class="image" style="background-color:{{pic.colour}};"   
+            <a href="{{pic.view | tolink }}" id="{{pic.displayname}}" class="image" style="background-color:{{pic.colour}};"   
                 data-width="{{pic.medium.width}}" 
                 data-height="{{pic.medium.height}}" 
                   data-srcset="
@@ -29,7 +32,6 @@
             </a>
             {% endfor %}
         </div>
-        {% endif %}
         {% endfor %}
     </div>
 
@@ -39,6 +41,7 @@
           <img></img>
        </a>
     </template>
+
     {% include 'content/footer.jinja2' %}
     <script>
         document.write('<script src="/js/main.js"><\/script>');

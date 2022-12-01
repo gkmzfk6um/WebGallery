@@ -2,29 +2,21 @@
 <html class="no-js" lang="">
 
 <head>
-  {% set tabAboutDesc = 'Portraiture' %}
+  {% set tabAboutDesc = 'Work by category' %}
   {% include 'content/head.jinja2' %}
 </head>
 
 <body>
     {% include 'content/header.jinja2' %}
-    {% set page = 'portraiture' %}
+    {% set page = 'categories' %}
     {% include 'content/menu.jinja2' %}
     
     <div class="body">
-        <h2>Portraiture</h2>
-        <p class="typed-paragraph">
-
-          <b>I am always looking for more opportunities to take portraits!</b>
-           Whether it's an impromptu shot in the park or a scheduled session in my apartment studio in Mölndal I enjoy every time.  
-           I work with both analog and digital cameras, but there is something magical about analog portraits. 
-           I'm available for hire and would love to help you with your next photo project. 
-           Please reach out to me with any questions you may have via email at gallery@rahmn.net or on Instagram at <a class="normal" href="https://www.instagram.com/rahmnphoto/" >@rahmnphoto</a>.
-        </p>
-        {%for catName, pics in (inventory | sortbycategories).items() %}
-        {% if catName == "Portraiture" %}
+        {% for catName, pics in  sortbycategories %}
+        {% if catName != "Portraiture" %}
+        <h2 id="{{catName}}">{{catName}}</h2>
         <div class="gallery" >{% for pic in pics %}
-            <a href="{{pic.view | tolink }}?src=portraiture&stay" id="{{pic.displayname}}" class="image" style="background-color:{{pic.colour}};"   
+            <a href="{{pic.view | tolink }}?src=categories" id="{{pic.displayname}}" class="image" style="background-color:{{pic.colour}};"   
                 data-width="{{pic.medium.width}}" 
                 data-height="{{pic.medium.height}}" 
                   data-srcset="

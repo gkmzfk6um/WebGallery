@@ -5,6 +5,8 @@ use std::sync::Mutex;
 
 pub type DependencyFunc = Box<dyn Fn(&Resource) -> bool + Send + Sync>;
 pub type DependencyData = Mutex<HashMap<DependencyFuncName,DependencyFunc>>;
+use sha2::{Sha256, Digest};
+
 lazy_static! {
     static ref DEPENDENCY_FUNCS : DependencyData = {
         let funcs : DependencyData = Default::default();
@@ -18,6 +20,7 @@ lazy_static! {
         funcs
     };
 }
+
 
 fn is_dep_outdated(resources: &Resources, dependencies : &HashMap<String,String> ) -> bool
 {
@@ -70,12 +73,21 @@ impl Dependencies
         }
     }
 
-    pub fn is_glob(&self) -> bool {
-        match self.dep_type
+    pub fn get_dependencies(&self) -> &HashMap<String,String>
+    {
+        &self.dependencies
+    }
+
+
+    pub fn hash_deps(&self) -> String {
+        assert!(self.dependencies.len() > 0);
+        let mut hasher = Sha256::new();
+        for (name,hash) in self.dependencies.iter()
         {
-            DependencyType::Direct => false,
-            DependencyType::Glob(_) => true 
+            hasher.update(name.as_bytes());
+            hasher.update(hash.as_bytes());
         }
+        format!("{:x}", hasher.finalize())
     }
 
 
@@ -93,10 +105,10 @@ impl Dependencies
 
     pub fn is_outdated(&self, resources: &Resources) -> bool
     {
+        
         match &self.dep_type {
             DependencyType::Direct => is_dep_outdated(resources,&self.dependencies),
             DependencyType::Glob(f_name) => {
-
                 let funcs = DEPENDENCY_FUNCS.lock().unwrap();
                 match funcs.get(&f_name)
                 {
@@ -108,7 +120,7 @@ impl Dependencies
                             let  has_dep = f(&x);
                             if had_dep != has_dep
                             {
-                                return false;
+                                return true;
                             }
                         }
                         is_dep_outdated(resources,&self.dependencies)

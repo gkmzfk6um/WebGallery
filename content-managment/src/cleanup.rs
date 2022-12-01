@@ -2,6 +2,9 @@ use crate::datamodel::{Resource,Resources,ResourceData,ResourceProvider};
 use std::path::{Path,PathBuf};
 use std::collections::HashSet;
 use indicatif::ProgressBar;
+use crate::ARGS;
+
+
 pub fn cleanup(resources : &mut Resources )
 {
     let mut path_buffer : HashSet<PathBuf> = Default::default();
@@ -13,19 +16,19 @@ pub fn cleanup(resources : &mut Resources )
     resources.resources
     .values()
     .map( |x| {
-        Path::new(&x.path).canonicalize().unwrap() 
+       x.get_path().canonicalize().unwrap() 
     })
     .for_each(|x| {path_buffer.insert(x); });
-    cleanup_folder("resources/data",&path_buffer );
-    cleanup_folder("resources/images",&path_buffer );
-    cleanup_folder("resources/thumbnails",&path_buffer );
+    cleanup_folder(&ARGS.root.join(&Path::new("resources/data")),       &path_buffer );
+    cleanup_folder(&ARGS.root.join(&Path::new("resources/images")),     &path_buffer );
+    cleanup_folder(&ARGS.root.join(&Path::new("resources/thumbnails")), &path_buffer );
 
 }
 
 pub fn clean_broken_resources(resources : &mut Resources )
 {
     resources.resources.retain( |_, v| {
-        if Path::new(&v.path).exists() {true} else {println!("Purging resource without valid path {:#?}",v); false }
+        if Path::new(&v.get_path()).exists() {true} else {println!("Purging resource without valid path {:#?}",v); false }
     });
 }
 
@@ -41,7 +44,7 @@ pub fn clean_broken_dependencies(resources: &mut Resources )
 }
 
 
-fn cleanup_folder(folder_path: &str, valid_paths: &HashSet<PathBuf> )
+fn cleanup_folder<T: AsRef<Path>>(folder_path: T, valid_paths: &HashSet<PathBuf> )
 {
         let mut r = std::fs::read_dir(folder_path).unwrap();
         while let Some(Ok(dir)) = r.next()
@@ -76,7 +79,7 @@ pub fn remove_thumbnails(resources : &mut Resources)
         |x|
         match x.resource_data {
             ResourceData::Thumbnail(_) => {
-                Some(String::from(&x.id))
+                Some(String::from(x.id()))
             },
             _=> None
         }
@@ -90,7 +93,7 @@ pub fn remove_data(resources : &mut Resources)
         |x|
         match x.resource_data {
             ResourceData::Sitedata(_) => {
-                Some(String::from(&x.id))
+                Some(String::from(x.id()))
             },
             _=> None
         }
@@ -100,6 +103,6 @@ pub fn remove_all(resources : &mut Resources)
 {
     println!("Cleaning everything...");
     remove_resources(resources, 
-        |x| Some(String::from(&x.id))
+        |x| Some(String::from(x.id()))
     );
 }

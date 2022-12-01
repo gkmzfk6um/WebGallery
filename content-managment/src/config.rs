@@ -1,3 +1,5 @@
+use crate::ARGS;
+use std::path::{Path,PathBuf};
 
 #[derive(Debug, Copy, Clone,PartialEq,Eq)]
 pub enum ResourceFilter 
@@ -6,11 +8,11 @@ pub enum ResourceFilter
     Images
 }
 
-pub fn resource_path<T: std::fmt::Display>(name: T, filter : &ResourceFilter ) -> String
+pub fn resource_path<T: AsRef<Path>>(name: T, filter : &ResourceFilter ) -> PathBuf
 {
     match filter 
     {
-        ResourceFilter::Data => format!("resources/data/{}",name),
-        ResourceFilter::Images => format!("resources/images/{}",name)
+        ResourceFilter::Data =>   ARGS.root.join("resources/data/").join(name) ,
+        ResourceFilter::Images => ARGS.root.join("resources/images/").join(name)
     }
 }
