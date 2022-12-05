@@ -1,7 +1,7 @@
 {%- macro boldifselected(name,current,pagename) -%}
-    {% if current == pagename %}
+    {%- if current == pagename -%}
         <b>{{name}}</b>
-    {% else %}
+    {%- else -%}
         {{name}}
-    {% endif %}
+    {%- endif -%}
 {%- endmacro -%}

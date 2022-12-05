@@ -42,7 +42,7 @@ pub fn generate(resources: &mut Resources)
     thumbnails::generate(resources);
     categories::generate(resources);
     print::generate(resources);
-    //templates::generate(resources);
+    templates::generate(resources);
 }
 
 pub fn register_deps() -> [(DependencyFuncName,DependencyFunc);3]

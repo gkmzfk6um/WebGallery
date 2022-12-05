@@ -6,13 +6,13 @@
 		<loc>{{websiteName}}/</loc>
 		<priority> 0.5 </priority>
 		<changefreq>Weekly</changefreq>
-		{% for pic in inventory %}
+		{% for pic in images %} {% set image = pic.resource_data.Image %}
 		<image:image>
 			<image:loc>
-				{{websiteName}}{{pic.large.path | tolink}}
+				{{websiteName}}{{ resource_to_url(resource=resources[image.variants['Large']])  }}
 			</image:loc>
 			<image:title>
-				{{pic.name}}
+				{{image.name}}
 			</image:title>
 		</image:image>
 		{% endfor %}
@@ -33,24 +33,24 @@
     {% for print in prints %}
 	<url>
 		<loc>
-			{{websiteName}}/store/print/{{print.data.dropbox.id }}
+			{{websiteName}}{{resource_to_print_url(resource=resources[print.id])}}
 		</loc>
 		<priority>0.7</priority>
 	</url>
 	{% endfor %}
 	{% endfor %}
-	{% for pic in inventory %}
+	{% for pic in images %}{% set image = pic.resource_data.Image %}
 	<url>
 		<loc>
-			{{websiteName}}{{pic.view | tolink}}
+			{{websiteName}}{resource_to_view_url(resource=pic) }}
 		</loc>
 		<priority>0.5</priority>
 		<image:image>
 			<image:loc>
-				{{websiteName}}{{pic.large.path | tolink}}
+				{{websiteName}}{{ resource_to_url(resource=resources[image.variants['Large']]) }}
 			</image:loc>
 			<image:title>
-				{{pic.name}}
+				{{image.name}}
 			</image:title>
 		</image:image>
 	</url>

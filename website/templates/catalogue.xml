@@ -7,17 +7,21 @@
     <description>Product Feed for Facebook</description> 
     <link></link>
     <atom:link href="{{website}}/catalogue.xml" rel="self" type="application/rss+xml" />
-       {% for category, prints in storeData.prints %}
-       {% for print in prints %}
-       {% for variant in print.variants %}
+       {% for category, prints in storeData.prints -%}
+       {% for print in prints -%}
+       {% for variant in print.variants -%}
+       {% set variant = storeData.variants[variant] -%}
         <item>
-            <g:id>{{print.data.dropbox.id}}{{variant.width}}{{variant.height}}</g:id>
-            <g:item_group_id>{{print.data.dropbox.id}}</g:item_group_id>
+            {% set print_resource = resources[print.id] -%}
+            {% set print_image = print_resource.resource_data.Image -%}
 
-            <g:title>{{print.data.displayname | e}}</g:title>            
-            <g:description>{{print.brief | e}} </g:description>
-            <g:link>{{website}}/store/print/{{print.data.dropbox.id}}</g:link>
-            <g:image_link>{{website}}/img/thumbnails/{{print.data.dropbox.id}}_print.jpg</g:image_link>  
+            <g:id>{{print.id}}{{variant.width}}{{variant.height}}</g:id>
+            <g:item_group_id>{{print.id}}</g:item_group_id>
+
+            <g:title>{{print_image.name}}</g:title>            
+            <g:description>{{print.brief}} </g:description>
+            <g:link>{{website}}{{resource_to_print_url(resource=print_resource)}}}}</g:link>
+            <g:image_link>{{website}}{{resource_to_url(resource= resources[print_image.variants['Large']])}}</g:image_link>  
 
             <g:size>{{variant.width}} cm x {{variant.height}} cm </g:size>
             <g:price>{{variant.price.value}} {{variant.price.cur}}</g:price>
@@ -28,8 +32,8 @@
             <g:condition>New</g:condition>  
             <g:availability>in stock</g:availability>
         </item>  
-        {% endfor %}
-        {% endfor %}
-        {% endfor %}
+        {% endfor -%}
+        {% endfor -%}
+        {% endfor -%}
     </channel>
 </rss>

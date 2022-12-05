@@ -12,20 +12,23 @@
     {% include 'content/menu.jinja2' %}
     
     <div class="body">
-        {% for catName, pics in  sortbycategories %}
+        {% for catName, pics in  sortedbycategories %}
         {% if catName != "Portraiture" %}
         <h2 id="{{catName}}">{{catName}}</h2>
-        <div class="gallery" >{% for pic in pics %}
-            <a href="{{pic.view | tolink }}?src=categories" id="{{pic.displayname}}" class="image" style="background-color:{{pic.colour}};"   
-                data-width="{{pic.medium.width}}" 
-                data-height="{{pic.medium.height}}" 
+        <div class="gallery" >{% for pic in pics %} {%set image = pic.resource_data.Image %}
+            <a href="{{resource_to_view_url(resource=pic) }}?src=categories" id="{{image.name}}" class="image" style="background-color:{{image.colour}};"   
+              {% set medium_thumbnail = resources[image.variants['Medium']] %}
+              {% set large_thumbnail = resources[image.variants['Large']] %}
+              {% set huge_thumbnail = resources[image.variants['Huge']] %}
+                data-width ="{{medium_thumbnail.resource_data.Thumbnail.width }}" 
+                data-height="{{medium_thumbnail.resource_data.Thumbnail.height }}" 
                   data-srcset="
-                    {{pic.huge.path | tolink}} {{pic.huge.width}}w,
-                    {{pic.large.path | tolink}} {{pic.large.width}}w,
-                    {{pic.medium.path | tolink}} {{pic.medium.width}}w"
-                  data-src= "{{pic.medium.path | tolink }}"
+                    {{resource_to_url(resource=huge_thumbnail) }} {{huge_thumbnail.resource_data.Thumbnail.width}}w,
+                    {{resource_to_url(resource=large_thumbnail) }} {{large_thumbnail.resource_data.Thumbnail.width}}w,
+                    {{resource_to_url(resource=medium_thumbnail) }} {{medium_thumbnail.resource_data.Thumbnail.width}}w,
+                  data-src= "{{ resource_to_url(resource=medium_thumbnail) }}"
             >
-                <span>{{pic.displayname}} </span>
+                <span>{{image.name}} </span>
             </a>
             {% endfor %}
         </div>

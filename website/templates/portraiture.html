@@ -21,7 +21,7 @@
            I'm available for hire and would love to help you with your next photo project. 
            Please reach out to me with any questions you may have via email at gallery@rahmn.net or on Instagram at <a class="normal" href="https://www.instagram.com/rahmnphoto/" >@rahmnphoto</a>.
         </p>
-        {%for catName, pics in sortbycategories %}
+        {%for catName, pics in sortedbycategories %}
         {% if catName == "Portraiture" %}
         <div class="gallery" >{% for pic in pics %}
             <a href="{{pic.view | tolink }}?src=portraiture&stay" id="{{pic.displayname}}" class="image" style="background-color:{{pic.colour}};"   

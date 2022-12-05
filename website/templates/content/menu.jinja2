@@ -6,43 +6,33 @@
     </div>
     <ul>
         <li>
-            <a href="/">
-                {{ macros::boldifselected(name='Timeline',current=page, pagename='timeline') }}
-            </a>
+            <a href="/"> {{ macros::boldifselected(name='Timeline',current=page, pagename='timeline') }} </a>
             <ul>
-                {% for key_year, pics in sortedbyyears %}
-                <li> <a href="/#{%if key_year != year %}{{key_year}}{%else%}{{top}}{% endif %}"> {{key_year}} </a></li>
-                {% endfor %}
+                {% for key_year, pics in sortedbyyears -%}
+                <li> <a href="/#{%if key_year != year %}{{key_year}}{%else%}Latest creations{% endif %}"> {{key_year}} </a></li>
+                {% endfor -%}
             </ul>
         </li>
         <li>
-            <a href="/categories">
-                {{ macros::boldifselected(name='Categories',current=page, pagename = 'categories') }}
-            </a>
+            <a href="/categories"> {{ macros::boldifselected(name='Categories',current=page, pagename = 'categories') }} </a>
             <ul>
-                {% for key_category, pics in sortbycategories %}
-                    {% if key_category != "Portraiture" %}
+                {% for key_category, pics in sortedbycategories -%}
+                    {% if key_category != "Portraiture" -%}
                     <li> <a href="/categories#{{key_category}}"> {{key_category}} </a> </li>
-                    {% endif %}
-                {% endfor %}
+                    {% endif -%}
+                {% endfor -%}
             </ul>
         </li>
         <li> 
-            <a href="/portraiture">
-                {{ macros::boldifselected(name='Portraiture',current=page,pagename= 'portraiture') }}
-            </a>
+            <a href="/portraiture"> {{ macros::boldifselected(name='Portraiture',current=page,pagename= 'portraiture') }} </a>
         </li>
-        {% if storeData %}
+        {% if storeData -%}
             <li> 
-                <a href="/store">
-                    {{ macros::boldifselected(name='Print store',current=page,pagename= 'store') }}
-                </a>
+                <a href="/store"> {{ macros::boldifselected(name='Print store',current=page,pagename= 'store') }} </a>
             </li>
-        {% endif %}
+        {% endif -%}
         <li> 
-            <a href="/about"> 
-                {{ macros::boldifselected(name='About', current=page,pagename="about") }} 
-            </a> 
+            <a href="/about"> {{ macros::boldifselected(name='About', current=page,pagename="about") }} </a> 
         </li>
     </ul>
 </div>

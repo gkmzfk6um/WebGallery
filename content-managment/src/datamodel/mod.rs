@@ -24,7 +24,7 @@ pub mod resource_file_manager;
     #[derive(Serialize, Deserialize,Eq,PartialEq,Debug,Clone)]
     pub struct Dependencies {
         dependencies: HashMap<String,String>,
-        dep_type: DependencyType
+        dep_type: DependencyType,
     }
 
     #[derive(Serialize, Deserialize,Eq,PartialEq,Debug,Clone)]

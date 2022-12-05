@@ -1,7 +1,10 @@
 use tera::{Context,Tera};
-use crate::datamodel::{Resources,ResourceData,Resource};
+use crate::datamodel::{Resources,ResourceData,Resource,GeneratedDataDesc,ImageMetadata};
 use crate::ARGS;
+use std::collections::HashMap;
 use std::fs::File;
+use urlencoding::encode;
+use chrono::{Datelike};
 
 fn template_id(template_name: &str) -> String
 {
@@ -19,26 +22,188 @@ pub fn template_path(template_name: &str) -> std::path::PathBuf
 }
 
 
+
+fn sort_by_years(resources: &Resources) -> HashMap<i32,&Resource>
+{
+    
+    let mut map = HashMap::new();
+    map.extend(
+        resources.resources
+        .values()
+        .filter_map( | x :  &Resource| {
+            match x.resource_data.to_value::<ImageMetadata>() 
+            {
+                Some(metadata) => Some( (metadata.date.year(),x) ),
+                None => None
+            }
+        })
+    );
+    map
+}
+fn sort_by_categories<'a>(resources: &'a Resources, categories :  &HashMap<String,Vec<String>> ) -> HashMap<String,Vec<&'a Resource>>
+{
+    
+    let mut map = HashMap::new();
+    for (category,ids) in categories
+    {
+        let mut res = Vec::new();
+        res.reserve(ids.len());
+        for id in ids
+        {
+            if let Some(r) = resources.resources.get(id)
+            {
+                res.push(r);
+            }
+            else 
+            {
+                println!("Could not find id {} in inventory!", id);
+            }
+        }
+        if res.len() > 0 
+        {
+            map.insert(category.clone(),res);
+        }
+    }
+    map
+}
+
+fn create_context(resources: &Resources)-> Context
+{
+    let mut context = Context::new();
+    context.insert("resources",&resources.resources);
+    
+    let images :  Vec<&Resource> =
+    resources.resources
+        .values()
+        .filter( |x : &&Resource | -> bool {
+            match x.resource_data 
+            {
+                ResourceData::Image(_) => true,
+                _ => false
+            } 
+        })
+        .collect();
+    context.insert("images",&images);
+    context.insert("websiteName","WEBSITE_NAME");
+    context.insert("gitSha","DUMMY_SHA");
+    context.insert("year", &chrono::offset::Utc::now().year() );
+    context.insert("sortedbyyears",&sort_by_years(resources));
+    if let Some(categories) = resources.find_data(|x : &GeneratedDataDesc| x.name == "categories" )
+    {
+        let f = File::open(categories.get_path()).expect(&format!("Could not open {:#?}",categories));
+        match serde_json::from_reader(f)
+        {
+            Ok::<HashMap<String,Vec<String>>, _>(val) => {
+                context.insert("sortedbycategories",&sort_by_categories(resources,&val));
+            },
+            Err(e) => {
+                println!("Failed to read {:#?}\n{:#?}",categories,e);
+            }
+        }
+
+    }
+    else 
+    {
+        println!("Could not find categories!");
+    }
+    if let Some(prints) =  resources.find_data( |x : &GeneratedDataDesc| x.name == "prints" )
+    {
+        let f = File::open(prints.get_path()).expect(&format!("Could not open {:#?}",prints));
+        match serde_json::from_reader(f)
+        {
+            Ok::<serde_json::Value, _>(val) => {
+                context.insert("storeData", &val);
+            },
+            Err(e) => {
+                println!("Failed to read {:#?}\n{:#?}",prints,e);
+            }
+        }
+    }
+    else {
+        println!("Could not find print.json");
+    }
+
+
+
+    return context;
+}
+
+
+
+
+fn register_function(tera : &mut Tera)
+{
+    fn get_resource(args : &HashMap<String,tera::Value>) -> Resource
+    {
+        serde_json::from_value(args.get("resource").unwrap().clone()).unwrap()
+    }
+    fn get_image_name<'a>(image: &'a Resource) -> std::borrow::Cow<'a,str>
+    {
+        urlencoding::encode(&image.resource_data.to_value::<ImageMetadata>().unwrap().name)
+    }
+
+    tera.register_function("resource_to_view_url", 
+        Box::new(move |args : &HashMap<String,tera::Value> | -> Result<tera::Value, tera::Error> {
+            let resource = get_resource(args);
+            let name = get_image_name(&resource);
+            Ok(tera::Value::String(format!("/view/{}",name)))
+        })
+    );
+    
+    tera.register_function("resource_to_print_url", 
+        Box::new(move |args : &HashMap<String,tera::Value> | -> Result<tera::Value, tera::Error> {
+            let resource = get_resource(args);
+            let name = get_image_name(&resource);
+            Ok(tera::Value::String(format!("/store/print/{}",name)))
+        })
+    );
+    
+    tera.register_function("resource_to_url", 
+        Box::new(move |args : &HashMap<String,tera::Value> | -> Result<tera::Value, tera::Error> {
+            let resource : Resource = serde_json::from_value(args.get("resource").unwrap().clone()).unwrap();
+            let path = resource.get_path_relative_root().unwrap();
+            let mut url_path = String::from("");
+            for component  in path.components()
+            {
+                match component
+                {
+                    std::path::Component::Normal(s) => {
+                        url_path.push('/'); 
+                        url_path.push_str(&urlencoding::encode(&s.to_str().unwrap()))
+                    },
+                    _ => panic!("Found unexpected component of path {}",path.display())
+                }
+            }
+
+            Ok(tera::Value::String(url_path))
+        })
+    );
+
+    
+}
+
+
 pub fn generate(resources: &mut Resources)
 {
-    let glob_pattern = ARGS.root.canonicalize().unwrap().join("templates/**");
+    let glob_pattern = ARGS.root.join("templates/**");
     let glob_pattern_str = glob_pattern.to_str().unwrap();
     println!("tera glob: {}", glob_pattern_str);
-    let tera = match Tera::new(glob_pattern_str) {
+    let mut tera = match Tera::new(glob_pattern_str) {
         Ok(t) => t,
         Err(e) => {
             panic!("Parsing error(s): {}", e);
         }
     };
-    let mut context = Context::new();
-    context.insert("resources",resources);
-    context.insert("gitSha","DUMMY_SHA");
+    register_function(&mut tera);
+    tera.autoescape_on(vec![]);
+
+    let context = create_context(resources);
 
 
     for template in tera.get_template_names(){
         if !template.ends_with(".jinja2") && !resources.resources.contains_key(&template_id(template))
         {
-            let mut f = File::create(template_path(template)).unwrap();
+            let f = File::create(template_path(template)).unwrap();
             match tera.render_to(template,&context,f) 
             {
                 Ok(_) => { println!("Rendered {}",template); },
@@ -59,7 +224,8 @@ pub fn templates_dep_func(resources : &Resource) -> bool {
         ResourceData::Image(_) => true,
         ResourceData::Thumbnail(_) => true,
         ResourceData::GeneratedData(data) => {
-           data.name == "categories"
+           data.name == "categories" ||
+           data.name == "print.json"
         }
         _ => false
     }

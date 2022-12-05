@@ -14,7 +14,7 @@
   {% endif %}
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>Photo: {{pic.displayname}}</title>
+  <title>Photo: {{pic.resource_data.Image.name}}</title>
   <meta name="description" content="{{pic.displayname}} by Lukas Rahmn">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="mobile-web-app-capable" content="yes">
@@ -34,7 +34,7 @@
 <body>
 	<div id="table-root">
   <header>
-	<span id="picname">{{pic.displayname}} </span>
+	<span id="picname">{{pic.resource_data.Image.name}} </span>
   </header>
   <div class="body">
 	  <div class="viewer" >

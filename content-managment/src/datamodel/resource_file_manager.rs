@@ -101,22 +101,24 @@ impl Resource
         }
     }
 
+    pub fn get_path_relative_root(&self) -> Result<std::path::PathBuf,String>
+    {
+        std::fs::canonicalize(self.get_path())
+        .map_err( | _ | format!("Failed to canoicalize {}", self.path.display() ) )
+        .and_then( | absolute_path | { 
+            assert!(absolute_path.starts_with(&ARGS.root)); 
+            absolute_path.strip_prefix(&ARGS.root)
+            .map_err( | _ | format!("Failed to make {} relative to root!", self.path.display()))
+            .map( |x| x.to_path_buf() )
+        })
+    }
+
     pub fn write_resource(&self) {
         let path = self.get_metadata_path();
         let fut = File::create(&path);
 
 
-        let path_relative_root =
-        {
-            std::fs::canonicalize(self.get_path())
-            .map_err( | _ | format!("Failed to canoicalize {}", self.path.display() ) )
-            .and_then( | absolute_path | { 
-                assert!(absolute_path.starts_with(&ARGS.root)); 
-                absolute_path.strip_prefix(&ARGS.root)
-                .map_err( | _ | format!("Failed to make {} relative to root!", self.path.display()))
-                .map( |x| x.to_path_buf() )
-            })
-        };
+        let path_relative_root = self.get_path_relative_root();
 
         if let Err(s) = path_relative_root
         {

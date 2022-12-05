@@ -1,4 +1,4 @@
-use crate::datamodel::{DependencyFuncName,Resources,Resource,ResourceData,ResourceProvider,Dependencies,GeneratedDataDesc,ImageMetadata};
+use crate::datamodel::{DependencyFuncName,Resources,Resource,ResourceData,ResourceProvider,Dependencies,GeneratedDataDesc};
 use std::vec::Vec;
 use serde::{Serialize, Deserialize};
 use std::collections::{HashMap};
@@ -12,20 +12,20 @@ pub const PRINT_RES_ID : &str = "generated_data_resource:prints";
 pub const PRINT_DEP_FUNC_NAME : &str =  "print_dep_func";
 
 #[derive(Serialize, Deserialize,Eq,PartialEq,Debug,Clone)]
-struct Price{
+pub struct Price{
     value: u32,
     cur: String
 }
 
 #[derive(Serialize, Deserialize,Eq,PartialEq,Debug,Clone)]
-struct Variant{
+pub struct Variant{
     price: Price,
     width: u32,
     height: u32
 }
 
 #[derive(Serialize, Deserialize,Eq,PartialEq,Debug,Clone)]
-struct PrintRaw
+pub struct PrintRaw
 {
     name: String,
     variants: Vec<String>,
@@ -34,7 +34,7 @@ struct PrintRaw
 }
 
 #[derive(Serialize, Deserialize,Eq,PartialEq,Debug,Clone)]
-struct PrintCompiled
+pub struct PrintCompiled
 {
     name: String,
     variants: Vec<String>,
@@ -44,7 +44,7 @@ struct PrintCompiled
 }
 
 #[derive(Serialize, Deserialize,Eq,PartialEq,Debug,Clone)]
-struct PrintDefinition<PrintType>
+pub struct PrintDefinition<PrintType>
 {
     variants:HashMap<String,Variant>,
     prints:  HashMap<String,Vec<PrintType>>
@@ -83,7 +83,7 @@ fn compile_print_file(resources: &Resources, print_input: &PrintDefinition<Print
     for (category, prints) in &print_input.prints
     {
 
-        let mut compiledCategory : Vec<PrintCompiled> = std::default::Default::default();
+        let mut compiled_category : Vec<PrintCompiled> = std::default::Default::default();
         'print_loop: for print in prints
         {
             for variant in &print.variants
@@ -128,7 +128,7 @@ fn compile_print_file(resources: &Resources, print_input: &PrintDefinition<Print
                         id: res.id().to_string(),
                         brief: print.brief.clone()
                     };
-                    compiledCategory.push(compiled);
+                    compiled_category.push(compiled);
 
                 },
                 None => {
@@ -138,9 +138,9 @@ fn compile_print_file(resources: &Resources, print_input: &PrintDefinition<Print
             }
         }
 
-        if compiledCategory.len() > 0
+        if compiled_category.len() > 0
         {
-            output.prints.insert(category.to_string(),compiledCategory);
+            output.prints.insert(category.to_string(),compiled_category);
         }
         else {
             println!("Print: Category {} empty!",category);
@@ -157,7 +157,7 @@ pub fn generate(resources: &mut Resources)
         if let Some(input_path) =  find_print_config_res(resources)
         {
             let data = std::fs::read_to_string(input_path).expect("Unable to print.json");
-            let mut print_data: PrintDefinition<PrintRaw>= serde_json::from_str(&data).expect("Unable to parse");
+            let print_data: PrintDefinition<PrintRaw>= serde_json::from_str(&data).expect("Unable to parse");
 
 
             let root_relative_path = Path::new("resources/data/computed_print.json");

@@ -17,21 +17,34 @@
        {%for category, prints in storeData.prints %}
        <h2 id="{{category}}">{{category}}</h2>
        <div class="category" >{% for print in prints %}
-           {% set pic = print.data %}
+           {% set print_resource = resources[print.id] -%}
+           {% set image = print_resource.resource_data.Image -%}
            <div class="printContainer">
                <div class="print">
-                   <h4 id="{{pic.displayname}}">{{pic.displayname}} </h4>
+                   <h4 id="{{image.name}}">{{image.name}} </h4>
                    <div class="printBorder">
-                       {{ macros::imageA( href="/store/print/" ~ pic.dropbox.id,pic=pic,image="printImage")}}
+                        <a href="{{resource_to_print_url(resource=print_resource) }}" id="{{image.name}}" class="printImage" style="background-color:{{image.colour}};"   
+                          {% set medium_thumbnail = resources[image.variants['Medium']] -%}
+                          {% set large_thumbnail = resources[image.variants['Large']] -%}
+                          {% set huge_thumbnail = resources[image.variants['Huge']] -%}
+                            data-width ="{{medium_thumbnail.resource_data.Thumbnail.width }}" 
+                            data-height="{{medium_thumbnail.resource_data.Thumbnail.height }}" 
+                              data-srcset="
+                                {{resource_to_url(resource=huge_thumbnail) }} {{huge_thumbnail.resource_data.Thumbnail.width}}w,
+                                {{resource_to_url(resource=large_thumbnail) }} {{large_thumbnail.resource_data.Thumbnail.width}}w,
+                                {{resource_to_url(resource=medium_thumbnail) }} {{medium_thumbnail.resource_data.Thumbnail.width}}w,
+                              data-src= "{{ resource_to_url(resource=medium_thumbnail) }}"
+                        >
+                        </a>
                    </div>
                    <p class="description"> 
-                    {{print.description}}
+                    {{print.description | linebreaksbr}}
                    </p>
                </div>
            </div>
-           {% endfor %}
+           {% endfor -%}
        </div>
-       {% endfor %}
+       {% endfor -%}
    </div>
    {% include 'content/footer.jinja2' %}
    <script>

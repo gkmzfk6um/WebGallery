@@ -30,6 +30,7 @@ pub enum CleanTargets
 pub enum ManifestOptions 
 {
     Yaml,
+    Json
 }
 
 /// Web gallery file managment and content generator
@@ -58,6 +59,10 @@ pub struct Cli {
    // Create resource directory tree if it doesn't exist
    #[clap(long, value_parser,default_value="false")]
    create_dir: bool,
+   
+   // Create resource directory tree if it doesn't exist
+   #[clap(long, value_parser,default_value="false")]
+   sync_dropbox: bool,
 
    // print manifest in specified format to std::out
    #[clap(arg_enum,short, long, value_parser)]
@@ -97,69 +102,69 @@ fn create_resource_folder()
 async fn main() {
 
     create_resource_folder();
-    let mut stored_resources = Resources::read_resources();
-    cleanup::cleanup(&mut stored_resources);
-    let mut res = populate_using_dropbox(stored_resources).await;
+
+    let mut res = {
+        let mut stored_resources = Resources::read_resources();
+        cleanup::cleanup(&mut stored_resources);
+        if ARGS.sync_dropbox {
+            populate_using_dropbox(stored_resources).await
+        }
+        else {
+            stored_resources
+        }
+    };
     
-    match ARGS.clean {
-        Some(op) => {
+    if let Some(op) = ARGS.clean  {
             match op {
                 CleanTargets::Thumbnails => {cleanup::remove_thumbnails(&mut res); },
                 CleanTargets::Data => {cleanup::remove_data(&mut res); },
                 CleanTargets::All => {cleanup::remove_all(&mut res); },
             }
-        },
-        None => ()
-    } ;
+    }
 
+    else if let Some(regex) = &ARGS.print_id
+    {
+        let re = Regex::new(&regex).unwrap();
+        for (id,resource) in &res.resources
+        {
+            if re.is_match(id)
+            {
+                println!("{:#?}\n",resource);
+            }
+        }
+    }
+    else if let Some(regex) = &ARGS.print_name 
+    {
+        let re = Regex::new(&regex).unwrap();
+        for (_,resource) in &res.resources
+        {
+            if re.is_match(&resource.get_filename())
+            {
+                println!("{:#?}\n",resource);
+            }
+        }
 
-    if ARGS.generate
+    }
+    else if let Some(ManifestOptions::Yaml) =  ARGS.manifest
+    {
+         println!("{}",res.as_yaml());
+    }
+    
+    else if let Some(ManifestOptions::Json) =  ARGS.manifest
+    {
+         println!("{}",serde_json::to_string(&res).unwrap());
+    }
+    else if ARGS.generate
     {
         generate::generate(&mut res);
     }
 
+
+
+
+
+
     cleanup::cleanup(&mut res);
-
-    match &ARGS.print_id 
-    {
-        Some(regex) => 
-        {
-            let re = Regex::new(&regex).unwrap();
-            for (id,resource) in &res.resources
-            {
-                if re.is_match(id)
-                {
-                    println!("{:#?}\n",resource);
-                }
-            }
-        },
-        _ => ()
-    };
-    
-    match &ARGS.print_name
-    {
-        Some(regex) => 
-        {
-            let re = Regex::new(&regex).unwrap();
-            for (_,resource) in &res.resources
-            {
-                if re.is_match(&resource.get_filename())
-                {
-                    println!("{:#?}\n",resource);
-                }
-            }
-        },
-        _ => ()
-    };
-
-    match ARGS.manifest
-    {
-        Some(ManifestOptions::Yaml) => println!("{}",res.as_yaml()),
-        _ => ()
-    };
-
-
-
     res.write_resources();
 }
 
