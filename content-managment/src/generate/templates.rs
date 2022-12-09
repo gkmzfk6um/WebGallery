@@ -185,7 +185,7 @@ fn register_function(tera : &mut Tera)
 
 pub fn generate(resources: &mut Resources)
 {
-    let glob_pattern = ARGS.root.join("templates/**");
+    let glob_pattern = ARGS.root.join("static-templates/**");
     let glob_pattern_str = glob_pattern.to_str().unwrap();
     println!("tera glob: {}", glob_pattern_str);
     let mut tera = match Tera::new(glob_pattern_str) {
