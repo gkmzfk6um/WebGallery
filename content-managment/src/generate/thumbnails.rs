@@ -1,11 +1,5 @@
-use crate::datamodel::Resources;
-use crate::datamodel::Resource;
-use crate::datamodel::ResourceData::Image;
-use crate::datamodel::Dependencies;
-use crate::datamodel::ThumbnailSize;
-use crate::datamodel::ImageVariant;
-use crate::datamodel::ResourceProvider;
-use crate::datamodel::ResourceData;
+use content_managment_datamodel::datamodel::{Resources,Resource,ResourceData::Image,Dependencies,ThumbnailSize,ImageVariant,ResourceProvider,ResourceData};
+use crate::datamodel::resource_file_manager::ResourceFileManager;
 use image::io::Reader as ImageReader;
 use rayon::prelude::*;
 use crate::ARGS;
@@ -33,7 +27,7 @@ const NUMBER_OF_THUMBNAILS : usize =  4;
 pub fn generate_thumbnail(image : &Resource, size: &ThumbnailSize, image_data: image::DynamicImage) -> Resource
 {
 
-    let mut deps = Dependencies::new();
+    let mut deps = Dependencies::new_default();
     let id = format!("{}-thumbnail-{}",image.id(),size);
     let filename = format!("{}-thumbnail-{}.jpg", image.get_path().file_stem().unwrap().to_str().unwrap() ,size);
     let path =ARGS.root.join(Path::new("resources/thumbnails")).join(Path::new(&filename));

@@ -11,10 +11,14 @@ use indicatif::ProgressBar;
 use colored::Colorize;
 use std::env;
 
-use crate::datamodel::{Resource,ImageMetadata,ResourceData,SiteDataConfig};
+use content_managment_datamodel::datamodel::{Resource,ResourceData};
 use crate::config::ResourceFilter;
 use crate::datamodel::data::image::ImageMetadataError;
 use crate::datamodel::data::sitedata::SiteDataConfigError;
+use crate::datamodel::resource_file_manager::ResourceFileManager;
+use crate::datamodel::data::image::ImageMetadataCreator;
+use crate::datamodel::data::sitedata::SiteDataConfigCreator;
+
 
 const API_KEY_ENV_NAME : &str = "CONTENT_MANAGMENT_DROPBOX_API_KEY";
 lazy_static! {
@@ -271,12 +275,12 @@ fn allocate_resource<T: AsRef<std::path::Path> >(name :&str , path : T, filter: 
     {
         ResourceFilter::Data  => 
         {
-            SiteDataConfig::new(&name,path ).map( |x| ResourceData::Sitedata(x) ).map_err(|x| DropboxError::from(x))
+            SiteDataConfigCreator::new(&name,path ).map( |x| ResourceData::Sitedata(x) ).map_err(|x| DropboxError::from(x))
         },
         ResourceFilter::Images => 
         {
 
-            ImageMetadata::new(&name,path).map( |x| ResourceData::Image(x) ).map_err(|x| DropboxError::from(x))
+            ImageMetadataCreator::new(&name,path).map( |x| ResourceData::Image(x) ).map_err(|x| DropboxError::from(x))
 
         }
     }
@@ -335,7 +339,7 @@ pub async fn fetch_resources(client: &reqwest::Client, manifest : Vec<DropboxMan
                                     resource_data,
                                     &manifest_entry.id,
                                     &manifest_entry.content_hash,
-                                    crate::datamodel::ResourceProvider::Dropbox,
+                                    content_managment_datamodel::datamodel::ResourceProvider::Dropbox,
                                 );
                                 resource.write_resource();
                                 Ok(resource)

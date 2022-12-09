@@ -13,5 +13,7 @@ docker-compose-dev.yml
 kubernetes/secret-hot.yaml
 content-managment/target
 content-managment/resources
+content-managment-datamodel/target
+content-managment-datamodel/resources
 .vscode
 Cargo.lock

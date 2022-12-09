@@ -26,3 +26,4 @@ sha2 = "0.10.2"
 tera = "1"
 regex = "1"
 urlencoding = "2.1.2"
+content-managment-datamodel = { path = "../content-managment-datamodel", version = "0.1.0" }

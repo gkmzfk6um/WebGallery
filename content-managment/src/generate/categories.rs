@@ -1,4 +1,4 @@
-use crate::datamodel::{DependencyFuncName,Resources,Resource,ResourceData,ResourceProvider,Dependencies,GeneratedDataDesc};
+use content_managment_datamodel::datamodel::{DependencyFuncName,Resources,Resource,ResourceData,ResourceProvider,Dependencies,GeneratedDataDesc};
 use std::vec::Vec;
 use serde::{Serialize, Deserialize};
 use std::collections::{HashMap,HashSet};
@@ -7,6 +7,8 @@ use xmp_toolkit::xmp_ns::{DC};
 use std::io::Write;
 use crate::ARGS;
 use std::path::Path;
+use crate::datamodel::resource_file_manager::ResourceFileManager;
+use crate::datamodel::dependency::DependencyManger;
 
 pub const CATEGORIES_RES_ID : &str = "generated_data_resource:computed_categories";
 pub const CATEGORY_DEP_FUNC_NAME : &str =  "category_dep_func";

@@ -6,7 +6,8 @@ mod cleanup;
 #[macro_use]
 extern crate lazy_static;
 
-use crate::datamodel::Resources;
+use content_managment_datamodel::datamodel::Resources;
+use crate::datamodel::resource_file_manager::ResourcesFileManager;
 use crate::dropbox::populate_using_dropbox;
 use clap::{Parser,ValueEnum};
 use std::fs;

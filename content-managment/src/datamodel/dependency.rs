@@ -1,4 +1,4 @@
-use crate::datamodel::{Dependencies,Resources,Resource,ResourceProvider,DependencyType,DependencyFuncName};
+use content_managment_datamodel::datamodel::{Dependencies,Resources,Resource,ResourceProvider,DependencyType,DependencyFuncName};
 use std::vec::Vec;
 use std::collections::HashMap;
 use std::sync::Mutex;
@@ -41,48 +41,47 @@ fn is_dep_outdated(resources: &Resources, dependencies : &HashMap<String,String>
     return false;
 }
 
-impl Dependencies
+
+pub trait DependencyManger {
+    fn new_glob( name : &DependencyFuncName, resources: &Resources) -> Self;
+    fn hash_deps(&self) -> String;
+    fn is_valid(&self) -> bool;
+    fn is_outdated(&self, resources: &Resources) -> bool;
+}
+
+
+impl DependencyManger for Dependencies
 {
-    pub fn new() -> Dependencies
-    {
-        Dependencies {
-            dependencies: Default::default(),
-            dep_type: DependencyType::Direct
-        }
-    }
-    pub fn new_glob( name : &DependencyFuncName, resources: &Resources) -> Dependencies
+    fn new_glob( name : &DependencyFuncName, resources: &Resources) -> Dependencies
     {
         let DependencyFuncName(str_name) = name; 
         let funcs = DEPENDENCY_FUNCS.lock().unwrap();
         if let Some(f) = funcs.get(name)
         {
-            Dependencies {
-                dependencies: {
+            Dependencies::new(
+                {
                     let mut deps : HashMap<String,String> = Default::default();
                     resources.resources
                     .values()
-                    .filter_map( |x| if f(&x)  {Some((x.id.clone(), x.content_hash.clone()))} else {None} ) 
-                    .for_each(|(name,hash) | { deps.insert(name,hash); });
+                    .filter_map( |x| if f(&x)  {Some((x.id().clone(), x.content_hash.clone()))} else {None} ) 
+                    .for_each(|(name,hash) | { deps.insert(name.to_string(),hash); });
                     deps
                 },
-                dep_type: DependencyType::Glob(DependencyFuncName(str_name.clone()))
-            }
+                 DependencyType::Glob(DependencyFuncName(str_name.clone()))
+            )
         }
         else {
             panic!("No glob dependency with name {:#?} exists!",name)
         }
     }
 
-    pub fn get_dependencies(&self) -> &HashMap<String,String>
-    {
-        &self.dependencies
-    }
 
 
-    pub fn hash_deps(&self) -> String {
-        assert!(self.dependencies.len() > 0);
+    fn hash_deps(&self) -> String {
+        let dependencies = self.get_dependencies();
+        assert!(dependencies.len() > 0);
         let mut hasher = Sha256::new();
-        for (name,hash) in self.dependencies.iter()
+        for (name,hash) in dependencies.iter()
         {
             hasher.update(name.as_bytes());
             hasher.update(hash.as_bytes());
@@ -91,9 +90,9 @@ impl Dependencies
     }
 
 
-    pub fn is_valid(&self) -> bool
+    fn is_valid(&self) -> bool
     {
-        match &self.dep_type
+        match self.dep_type()
         {
             DependencyType::Direct => true,
             DependencyType::Glob(name) => {
@@ -103,11 +102,11 @@ impl Dependencies
         }
     }
 
-    pub fn is_outdated(&self, resources: &Resources) -> bool
+    fn is_outdated(&self, resources: &Resources) -> bool
     {
         
-        match &self.dep_type {
-            DependencyType::Direct => is_dep_outdated(resources,&self.dependencies),
+        match self.dep_type() {
+            DependencyType::Direct => is_dep_outdated(resources,&self.get_dependencies()),
             DependencyType::Glob(f_name) => {
                 let funcs = DEPENDENCY_FUNCS.lock().unwrap();
                 match funcs.get(&f_name)
@@ -116,31 +115,18 @@ impl Dependencies
                     Some(f) => {
                         for x in resources.resources.values()
                         {
-                            let had_dep = self.dependencies.contains_key(&x.id);
+                            let had_dep = self.get_dependencies().contains_key(x.id());
                             let  has_dep = f(&x);
                             if had_dep != has_dep
                             {
                                 return true;
                             }
                         }
-                        is_dep_outdated(resources,&self.dependencies)
+                        is_dep_outdated(resources,self.get_dependencies())
                     }
                 }
             }
         }
-    }
-
-    pub fn depends_on(&self, resource: &Resource) -> bool
-    {
-        self.dependencies.get(&resource.id).is_some()
-    }
-
-    pub fn add_dependency(&mut self, resource: &Resource)
-    {
-        match self.dep_type{
-            DependencyType::Direct =>  self.dependencies.insert(resource.id.clone(), resource.content_hash.clone()),
-            DependencyType::Glob(_) => panic!("Can't add dependencies manually to dependency of glob type!")
-        };
     }
 
 }
@@ -151,7 +137,7 @@ pub fn reverse_dependencies(resource : & Resource, resources : & Resources ) -> 
     .filter_map( |x| 
         if let ResourceProvider::Generated(y)= &x.resource_provider { 
             if y.depends_on(resource) { 
-                Some(String::from(&x.id))
+                Some(String::from(x.id()))
             }
             else 
             {

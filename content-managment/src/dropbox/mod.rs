@@ -2,8 +2,8 @@ mod api;
 mod diff;
 
 use colored::Colorize;
-
-use crate::datamodel::Resources;
+use crate::datamodel::resource_file_manager::ResourcesFileManager;
+use content_managment_datamodel::datamodel::Resources;
 use crate::dropbox::api::fetch_resources;
 use crate::dropbox::diff::{diff_manifest_and_inventory};
 use crate::config::ResourceFilter;

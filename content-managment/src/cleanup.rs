@@ -1,8 +1,11 @@
-use crate::datamodel::{Resource,Resources,ResourceData,ResourceProvider};
+use content_managment_datamodel::datamodel::{Resource,Resources,ResourceData,ResourceProvider};
 use std::path::{Path,PathBuf};
 use std::collections::HashSet;
 use indicatif::ProgressBar;
 use crate::ARGS;
+use crate::datamodel::resource_file_manager::ResourceFileManager;
+use crate::datamodel::resource_file_manager::ResourcesFileManager;
+use crate::datamodel::dependency::DependencyManger;
 
 
 pub fn cleanup(resources : &mut Resources )

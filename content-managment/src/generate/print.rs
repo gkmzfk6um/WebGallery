@@ -1,54 +1,17 @@
-use crate::datamodel::{DependencyFuncName,Resources,Resource,ResourceData,ResourceProvider,Dependencies,GeneratedDataDesc};
+use content_managment_datamodel::datamodel::{DependencyFuncName,Resources,Resource,ResourceData,ResourceProvider,Dependencies,GeneratedDataDesc};
 use std::vec::Vec;
-use serde::{Serialize, Deserialize};
-use std::collections::{HashMap};
 use std::fs::File;
 use std::io::Write;
 use crate::ARGS;
 use std::path::Path;
 use std::string::String;
+use crate::datamodel::resource_file_manager::ResourceFileManager;
+use crate::datamodel::dependency::DependencyManger;
+use content_managment_datamodel::print::*;
 
 pub const PRINT_RES_ID : &str = "generated_data_resource:prints";
 pub const PRINT_DEP_FUNC_NAME : &str =  "print_dep_func";
 
-#[derive(Serialize, Deserialize,Eq,PartialEq,Debug,Clone)]
-pub struct Price{
-    value: u32,
-    cur: String
-}
-
-#[derive(Serialize, Deserialize,Eq,PartialEq,Debug,Clone)]
-pub struct Variant{
-    price: Price,
-    width: u32,
-    height: u32
-}
-
-#[derive(Serialize, Deserialize,Eq,PartialEq,Debug,Clone)]
-pub struct PrintRaw
-{
-    name: String,
-    variants: Vec<String>,
-    description: Vec<String>,
-    brief: String
-}
-
-#[derive(Serialize, Deserialize,Eq,PartialEq,Debug,Clone)]
-pub struct PrintCompiled
-{
-    name: String,
-    variants: Vec<String>,
-    description: String,
-    id: String,
-    brief: String
-}
-
-#[derive(Serialize, Deserialize,Eq,PartialEq,Debug,Clone)]
-pub struct PrintDefinition<PrintType>
-{
-    variants:HashMap<String,Variant>,
-    prints:  HashMap<String,Vec<PrintType>>
-}
     
 
 pub fn find_print_config_res(resources: &mut Resources) -> Option<std::path::PathBuf>

@@ -1,6 +1,6 @@
 use std::fs::File;
 use std::io::{Read,Write};
-use crate::datamodel::{Resource,Resources};
+use content_managment_datamodel::datamodel::{Resource,Resources};
 use rmp_serde;
 use lz4_flex;
 use serde::{Serialize};
@@ -10,9 +10,28 @@ use crate::datamodel::dependency::reverse_dependencies;
 use std::path::Path;
 use std::path::PathBuf;
 
-impl Resources
+pub trait ResourcesFileManager 
 {
-    pub fn read_resources() -> Resources
+    fn read_resources() -> Self;
+    fn write_resources(&self);
+    fn remove_resource(&mut self, id: &str);
+    fn as_yaml(&self) -> String;
+
+}
+
+pub trait ResourceFileManager : Sized {
+    fn get_metadata_path(&self) -> PathBuf;
+    fn delete_resource(&self);
+    fn get_path(&self) -> std::path::PathBuf;
+    fn get_path_relative_root(&self) -> Result<std::path::PathBuf,String>;
+    fn write_resource(&self);
+    fn read_resource<T: std::convert::AsRef<std::path::Path> + std::convert::AsRef<std::ffi::OsStr>  + Debug>(path: &T) -> Option<Self>;
+}
+
+
+impl ResourcesFileManager for  Resources
+{
+    fn read_resources() -> Resources
     {
         let mut resources : Resources = Default::default();
 
@@ -23,14 +42,14 @@ impl Resources
             let path = dir.path();
             if let Some(resource) = Resource::read_resource(&path)
             {
-                resources.resources.insert(String::from(&resource.id),resource);
+                resources.resources.insert(String::from(resource.id()),resource);
             }
         }
         resources
     }
     
 
-    pub fn write_resources(&self)
+    fn write_resources(&self)
     {
         for resource in self.resources.values()
         {
@@ -38,7 +57,7 @@ impl Resources
         }
     } 
 
-    pub fn remove_resource(&mut self, id: &str)
+    fn remove_resource(&mut self, id: &str)
     {
         match self.resources.remove(id)
         {
@@ -53,7 +72,7 @@ impl Resources
         }
     }
 
-    pub fn as_yaml(&self) -> String
+    fn as_yaml(&self) -> String
     {
         serde_yaml::to_string(self).unwrap()
     }
@@ -68,9 +87,11 @@ fn delete_file<T: std::convert::AsRef<std::ffi::OsStr>>(path: T)
         }
 }
 
-impl Resource
+
+
+impl ResourceFileManager for Resource
 {
-    pub fn get_metadata_path(&self) -> PathBuf
+    fn get_metadata_path(&self) -> PathBuf
     {
         let filename = format!("{}.binres",self.get_filename());
         let mut buff = ARGS.root.join(Path::new("resources/meta"));
@@ -78,42 +99,38 @@ impl Resource
         buff
     }
 
-    pub fn get_filename(&self) -> &str
-    {
-        self.path.file_name().unwrap().to_str().unwrap()
-    }
 
-    pub fn delete_resource(&self)
+    fn delete_resource(&self)
     {
-        delete_file(&self.path);
+        delete_file(&self.get_path());
         delete_file(self.get_metadata_path());
     }
 
-    pub fn get_path(&self) -> std::path::PathBuf
+    fn get_path(&self) -> std::path::PathBuf
     {
-        if self.path.is_absolute()
+        if self.path().is_absolute()
         {
-            self.path.clone()
+            self.path().to_path_buf()
         }
         else 
         {
-            std::path::PathBuf::from(&ARGS.root).join(&self.path)
+            std::path::PathBuf::from(&ARGS.root).join(&self.path())
         }
     }
 
-    pub fn get_path_relative_root(&self) -> Result<std::path::PathBuf,String>
+    fn get_path_relative_root(&self) -> Result<std::path::PathBuf,String>
     {
         std::fs::canonicalize(self.get_path())
-        .map_err( | _ | format!("Failed to canoicalize {}", self.path.display() ) )
+        .map_err( | _ | format!("Failed to canoicalize {}", self.path().display() ) )
         .and_then( | absolute_path | { 
             assert!(absolute_path.starts_with(&ARGS.root)); 
             absolute_path.strip_prefix(&ARGS.root)
-            .map_err( | _ | format!("Failed to make {} relative to root!", self.path.display()))
+            .map_err( | _ | format!("Failed to make {} relative to root!", self.path().display()))
             .map( |x| x.to_path_buf() )
         })
     }
 
-    pub fn write_resource(&self) {
+    fn write_resource(&self) {
         let path = self.get_metadata_path();
         let fut = File::create(&path);
 
@@ -128,7 +145,7 @@ impl Resource
         }
 
         let mut resource : Resource = self.clone();
-        resource.path  = path_relative_root.unwrap();
+        resource.set_relative_path(path_relative_root.unwrap());
 
 
 
@@ -163,7 +180,7 @@ impl Resource
     }
 
 
-    pub fn read_resource<T: std::convert::AsRef<std::path::Path> + std::convert::AsRef<std::ffi::OsStr>  + Debug>(path: &T) -> Option<Resource>
+    fn read_resource<T: std::convert::AsRef<std::path::Path> + std::convert::AsRef<std::ffi::OsStr>  + Debug>(path: &T) -> Option<Resource>
     {
         match File::open(path)
         {

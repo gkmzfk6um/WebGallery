@@ -1,4 +1,4 @@
-use crate::datamodel::ImageMetadata;
+use content_managment_datamodel::datamodel::ImageMetadata;
 use xmp_toolkit;
 use xmp_toolkit::{XmpError};
 use xmp_toolkit::xmp_ns::{DC,EXIF};
@@ -32,8 +32,13 @@ impl From<XmpError> for ImageMetadataError {
     }    
 }
 
-impl ImageMetadata {
-    pub fn new<T: AsRef<std::path::Path>>(filename: &str, path : T ) -> Result<ImageMetadata,ImageMetadataError>
+pub trait ImageMetadataCreator: Sized
+{
+    fn new<T: AsRef<std::path::Path>>(filename: &str, path : T ) -> Result<Self,ImageMetadataError>;
+}
+
+impl ImageMetadataCreator for ImageMetadata {
+    fn new<T: AsRef<std::path::Path>>(filename: &str, path : T ) -> Result<ImageMetadata,ImageMetadataError>
     {
         let mut xmp_file = xmp_toolkit::XmpFile::new()?;
         xmp_file.open_file(&path,xmp_toolkit::OpenFileOptions::default().for_read())?;

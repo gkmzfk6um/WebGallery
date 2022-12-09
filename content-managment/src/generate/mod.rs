@@ -3,10 +3,12 @@ mod categories;
 mod templates;
 mod print;
 
-use crate::datamodel::{Resources,ResourceProvider,DependencyFuncName};
+use content_managment_datamodel::datamodel::{Resources,ResourceProvider,DependencyFuncName};
 use crate::datamodel::dependency::{DependencyFunc};
 use std::vec::Vec;
 use indicatif::ProgressBar;
+use crate::datamodel::resource_file_manager::ResourcesFileManager;
+use crate::datamodel::dependency::DependencyManger;
 
 pub fn generate(resources: &mut Resources)
 {

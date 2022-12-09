@@ -3,7 +3,7 @@ use std::vec::{Vec};
 use std::collections::HashSet;
 
 use crate::dropbox::api::{DropboxManifest,DropboxManifestEntry};
-use crate::datamodel::{Resources,Resource,ResourceData};
+use content_managment_datamodel::datamodel::{Resources,Resource,ResourceData};
 use crate::config::ResourceFilter;
 
 

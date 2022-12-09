@@ -1,10 +1,10 @@
 use tera::{Context,Tera};
-use crate::datamodel::{Resources,ResourceData,Resource,GeneratedDataDesc,ImageMetadata};
+use content_managment_datamodel::datamodel::{Resources,ResourceData,Resource,GeneratedDataDesc,ImageMetadata};
 use crate::ARGS;
 use std::collections::HashMap;
 use std::fs::File;
-use urlencoding::encode;
 use chrono::{Datelike};
+use crate::datamodel::resource_file_manager::ResourceFileManager;
 
 fn template_id(template_name: &str) -> String
 {
