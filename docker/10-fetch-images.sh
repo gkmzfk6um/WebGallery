@@ -1,1 +1,1 @@
-cd /var/www/gallery && python3 -u ./generate.py 
+/opt/content-managment --root="/var/www/gallery" --sync-dropbox --generate

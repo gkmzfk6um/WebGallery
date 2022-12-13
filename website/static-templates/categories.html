@@ -16,7 +16,7 @@
         {% if catName != "Portraiture" %}
         <h2 id="{{catName}}">{{catName}}</h2>
         <div class="gallery" >{% for pic in pics %} {%set image = pic.resource_data.Image %}
-            <a href="{{resource_to_view_url(resource=pic) }}?src=categories" id="{{image.name}}" class="image" style="background-color:{{image.colour}};"   
+            <a id="{{catName}}-{{image.name}}" class="image" style="background-color:{{image.colour}};"   
               {% set medium_thumbnail = resources[image.variants['Medium']] %}
               {% set large_thumbnail = resources[image.variants['Large']] %}
               {% set huge_thumbnail = resources[image.variants['Huge']] %}
@@ -44,6 +44,7 @@
        </a>
     </template>
     {% include 'content/footer.jinja2' %}
+    {% include 'content/viewer.jinja2' %}
     <script>
         document.write('<script src="/js/main.js"><\/script>');
     </script>

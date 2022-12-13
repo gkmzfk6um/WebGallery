@@ -8,8 +8,15 @@
         <li>
             <a href="/"> {{ macros::boldifselected(name='Timeline',current=page, pagename='timeline') }} </a>
             <ul>
-                {% for key_year, pics in sortedbyyears -%}
-                <li> <a href="/#{%if key_year != year %}{{key_year}}{%else%}Latest creations{% endif %}"> {{key_year}} </a></li>
+                {% for tuple in sortedbyyears -%}
+                {% set pics = tuple[1] %}
+                {% set key_year = tuple[0] | int -%}
+                <li> <a href="/#
+                    {%- if key_year  == year -%}
+                        Latest creations
+                    {%- else -%}
+                        {{key_year}}
+                    {%- endif %}"> {{key_year}} </a></li>
                 {% endfor -%}
             </ul>
         </li>

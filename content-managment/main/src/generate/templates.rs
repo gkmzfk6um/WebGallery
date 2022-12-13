@@ -5,6 +5,7 @@ use std::collections::HashMap;
 use std::fs::File;
 use chrono::{Datelike};
 use crate::datamodel::resource_file_manager::ResourceFileManager;
+use std::cmp::Ordering;
 
 fn template_id(template_name: &str) -> String
 {
@@ -21,13 +22,16 @@ pub fn template_path(template_name: &str) -> std::path::PathBuf
     }
 }
 
+lazy_static! {
+    static ref GIT_SHA: String =  std::env::var("SOURCE_COMMIT").expect(format!("Environment variable SOURCE_COMMIT must be set to to generate HTML").as_str());
+}
 
 
-fn sort_by_years(resources: &Resources) -> HashMap<i32,&Resource>
+
+fn sort_by_years(resources: &Resources) -> Vec<(i32,Vec<&Resource>)>
 {
     
-    let mut map = HashMap::new();
-    map.extend(
+    let mut images : Vec<(i32,&Resource)> = 
         resources.resources
         .values()
         .filter_map( | x :  &Resource| {
@@ -36,9 +40,45 @@ fn sort_by_years(resources: &Resources) -> HashMap<i32,&Resource>
                 Some(metadata) => Some( (metadata.date.year(),x) ),
                 None => None
             }
-        })
+    }).collect();
+    images.sort_by(
+        | (y1,r1),  (y2,r2) | -> Ordering
+        {
+            if y1 == y2
+            {
+                r1.as_data::<ImageMetadata>().date.cmp(&r2.as_data::<ImageMetadata>().date)
+            }
+            else 
+            {
+                y2.cmp(y1)
+            }
+        }
     );
-    map
+
+
+    let mut result = Vec::new();
+    let mut it = images.drain(..).peekable();
+    while let Some( (y,r) ) = it.next()
+    {
+            let mut v = vec![r];
+            loop 
+            {
+                if let Some( (y2, _) ) = it.peek()
+                {
+                    if  &y == y2 
+                    {
+                        let (_,r) = it.next().unwrap();
+                        v.push(r);
+                        continue;
+                    }
+                }
+                break;
+            }
+            result.push((y,v));
+    }
+    result
+    
+    
 }
 fn sort_by_categories<'a>(resources: &'a Resources, categories :  &HashMap<String,Vec<String>> ) -> HashMap<String,Vec<&'a Resource>>
 {
@@ -85,7 +125,7 @@ fn create_context(resources: &Resources)-> Context
         .collect();
     context.insert("images",&images);
     context.insert("websiteName","WEBSITE_NAME");
-    context.insert("gitSha","DUMMY_SHA");
+    context.insert("gitSha",GIT_SHA.as_str());
     context.insert("year", &chrono::offset::Utc::now().year() );
     context.insert("sortedbyyears",&sort_by_years(resources));
     if let Some(categories) = resources.find_data(|x : &GeneratedDataDesc| x.name == "categories" )
@@ -142,13 +182,6 @@ fn register_function(tera : &mut Tera)
         urlencoding::encode(&image.resource_data.to_value::<ImageMetadata>().unwrap().name)
     }
 
-    tera.register_function("resource_to_view_url", 
-        Box::new(move |args : &HashMap<String,tera::Value> | -> Result<tera::Value, tera::Error> {
-            let resource = get_resource(args);
-            let name = get_image_name(&resource);
-            Ok(tera::Value::String(format!("/view/{}",name)))
-        })
-    );
     
     tera.register_function("resource_to_print_url", 
         Box::new(move |args : &HashMap<String,tera::Value> | -> Result<tera::Value, tera::Error> {

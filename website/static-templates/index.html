@@ -12,15 +12,17 @@
     {% include 'content/menu.jinja2' %}
 
     <div class="body">
-        {%for key_year, pics in sortedbyyears -%}
-        {%if key_year != year -%}
+        {%for tuple in sortedbyyears -%}
+        {% set key_year = tuple[0] | int -%}
+        {% set pics = tuple[1]  -%}
+        {% if key_year != year -%}
         <h2 id="{{key_year}}">{{key_year}}</h2>
-        {%else -%}
+        {% else -%}
         <h2>Latest creations</h2>
         {% endif -%}
-        <div class="gallery" >{% for pic in images %}
+        <div class="gallery" >{% for pic in pics %}
           {%set image = pic.resource_data.Image -%}
-            <a href="{{resource_to_view_url(resource=pic) }}" id="{{image.name}}" class="image" style="background-color:{{image.colour}};"   
+            <a  id="{{image.name}}" class="image" style="background-color:{{image.colour}};"   
               {% set medium_thumbnail = resources[image.variants['Medium']] -%}
               {% set large_thumbnail = resources[image.variants['Large']] -%}
               {% set huge_thumbnail = resources[image.variants['Huge']] -%}
@@ -48,6 +50,7 @@
     </template>
 
     {% include 'content/footer.jinja2' %}
+    {% include 'content/viewer.jinja2' %}
     <script>
         document.write('<script src="/js/main.js"><\/script>');
     </script>

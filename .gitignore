@@ -11,9 +11,8 @@ website/resources
 kubernetes/secret.yaml
 docker-compose-dev.yml
 kubernetes/secret-hot.yaml
-content-managment/target
-content-managment/resources
-content-managment-datamodel/target
-content-managment-datamodel/resources
+content-managment/target/
+content-managment/main/target/
+content-managment/datamodel/target/
 .vscode
 Cargo.lock

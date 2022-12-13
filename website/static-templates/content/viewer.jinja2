@@ -1,0 +1,22 @@
+{% import "content/macros.jinja2" as macros %}
+<div class="viewer">
+    <a id="viewer-back">
+        {{ macros::return_svg_icon() }}
+    </a>
+    <a id="viewer-prev">
+        {{ macros::back_svg_icon() }}
+    </a>
+    <div id="viewer-img-container">
+    <img></img>
+    </div>
+
+    <a id="viewer-next" >
+        {{ macros::forward_svg_icon() }}
+    </a>
+    <a id="viewer-fullscreen">
+        {{ macros::fullscreen_svg_icon() }}
+    </a>
+</div>
+<script>
+    document.write('<script src="/js/viewer.js"><\/script>');
+</script>

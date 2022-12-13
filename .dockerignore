@@ -3,3 +3,8 @@ store/
 docker-compose-dev.yml
 kubernetes/secret.yaml
 kubernetes/secret-hot.yaml
+content-managment/target
+content-managment/Cargo.lock
+content-managment-datamodel/target
+content-managment-datamodel/Cargo.lock
+website/resources

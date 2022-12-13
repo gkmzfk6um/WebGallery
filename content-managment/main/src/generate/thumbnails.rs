@@ -12,8 +12,8 @@ use indicatif::ProgressBar;
 pub fn get_image_size(size: &ThumbnailSize) -> u32
 {
     match size {
-        ThumbnailSize::Small  =>  512,
-        ThumbnailSize::Medium => 1024,
+        ThumbnailSize::Small  => 256,
+        ThumbnailSize::Medium => 512,
         ThumbnailSize::Large  => 2048,
         ThumbnailSize::Huge   => 3000
 
