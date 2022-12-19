@@ -5,6 +5,10 @@ kubernetes/secret.yaml
 kubernetes/secret-hot.yaml
 content-managment/target
 content-managment/Cargo.lock
-content-managment-datamodel/target
-content-managment-datamodel/Cargo.lock
+content-managment/datamodel/target
+content-managment/datamodel/Cargo.lock
+content-managment/main/target
+content-managment/main/Cargo.lock
+content-managment/api/target
+content-managment/api/Cargo.lock
 website/resources

@@ -1,5 +1,5 @@
 const cartTemplate = {
-    version: 0,
+    version: 1,
     items: {
 
     }
@@ -22,11 +22,15 @@ function findVariantInfo(cartItem)
 {
     const info = cartInfo[cartItem.id];
     var foundVariant;
-    info.variants.every(function(variant)
+    Object.entries(info.variants).every(function(obj)
     {
-        if (cartItem.variant.width == variant.width && cartItem.variant.height == variant.height)
+        var variant_name = obj[0]
+        var variant = obj[1]
+        console.log(cartItem);
+        if (cartItem.variant.width == variant.width && cartItem.variant.height == variant.height )
         {
             foundVariant = variant;
+            foundVariant['name'] = variant_name;
             return false;
         }
         return true;
@@ -52,7 +56,7 @@ function updateCartInfo(cb)  {
                 v.quantity=0;
                 itemsRemoved=true;
             }
-            if (!findVariantInfo(v))
+            else if (!findVariantInfo(v))
             {
                 console.log('Removing ' + k +' from cart, no such item found')
                 v.quantity=0;
@@ -67,6 +71,8 @@ function updateCartInfo(cb)  {
         if (itemsRemoved)
         {
             alert('Some items in the cart could not be found and has been removed.');
+            each(cart.items, (key,val) => val.quantity == 0 ? delete cart.items[key] : undefined);
+            updateLocalStorage();
         }
 
         cb();
@@ -340,7 +346,8 @@ function addItem(id,variant)
             variant: {
                 width: variant.width,
                 height: variant.height,
-                signature: variant.signature
+                signature: variant.signature,
+                name: variant.name
             },
             id: id
         };

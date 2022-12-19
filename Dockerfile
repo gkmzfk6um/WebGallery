@@ -21,21 +21,34 @@ RUN  apt update && apt install -y curl build-essential openssl pkg-config libssl
 COPY content-managment/Cargo.toml content-managment/Cargo.toml
 COPY content-managment/main/Cargo.toml content-managment/main/Cargo.toml
 COPY content-managment/datamodel/Cargo.toml content-managment/datamodel/Cargo.toml
+COPY content-managment/api/Cargo.toml content-managment/api/Cargo.toml
 
 RUN  mkdir -p content-managment/main/src  \
     && mkdir -p content-managment/datamodel/src  \
+    && mkdir -p content-managment/api/src  \
     && echo "// dummy file" > content-managment/main/src/lib.rs  \
     && echo "// dummy file" > content-managment/datamodel/src/lib.rs  \
+    && echo "// dummy file" > content-managment/api/src/lib.rs  \
     && . "$HOME/.cargo/env" \ 
     && cd content-managment \
     && cargo build --release 
 RUN    rm content-managment/main/src/lib.rs \
-    && rm content-managment/datamodel/src/lib.rs 
+    && rm content-managment/datamodel/src/lib.rs  \
+    && rm content-managment/api/src/lib.rs 
 COPY content-managment content-managment
 RUN . "$HOME/.cargo/env" \ 
     && cd content-managment \
     &&  touch datamodel/src/lib.rs \
     &&  cargo build --release
+
+FROM node:current-buster-slim as website-backend
+ARG SOURCE_COMMIT                  
+ENV SOURCE_COMMIT $SOURCE_COMMIT 
+RUN useradd  gallery-owner \
+   && apt update && apt install -y openssl
+COPY --from=rust-website-build --chown=gallery-owner:gallery-owner /build/content-managment/target/release/api /opt/
+USER gallery-owner
+CMD ["/opt/api"]
 
 
 FROM nginx:mainline

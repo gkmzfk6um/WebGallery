@@ -43,7 +43,7 @@ def info():
     
 @app.route('/checkout',methods=['POST'])
 def checkout():
-    supportedCartVersions=[0]
+    supportedCartVersions=[1]
     if not(request.is_json):
         return 'Expected content type JSON',400
     elif not(isinstance(request.json,dict)):

@@ -14,5 +14,7 @@ kubernetes/secret-hot.yaml
 content-managment/target/
 content-managment/main/target/
 content-managment/datamodel/target/
+content-managment/api/target
+content-managment/api/Cargo.lock
 .vscode
 Cargo.lock

@@ -33,9 +33,11 @@ pub struct PrintCompiled
     pub brief: String
 }
 
-#[derive(Serialize, Deserialize,Eq,PartialEq,Debug,Clone)]
+
+#[derive(Serialize, Deserialize,Eq,PartialEq,Debug,Clone,Default)]
 pub struct PrintDefinition<PrintType>
 {
     pub variants:HashMap<String,Variant>,
     pub prints:  HashMap<String,Vec<PrintType>>
 }
+

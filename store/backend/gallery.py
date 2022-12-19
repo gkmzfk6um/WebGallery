@@ -101,7 +101,7 @@ def isReady(app):
             app.logger.warn("Gallery API incompatible. API v{} < supported v{}".format(obj['version'],supported))
             return False
     else:
-        app.logger.warn('Failled to connect to Gallery')
+        app.logger.warn('Failed to connect to Gallery')
         return False
     return True
 
@@ -109,7 +109,7 @@ def info(ids):
     if any( [ not(validateId(x)) for x in ids ]):
         return 'Invalid id',400
     
-    fetchPrefix = '{}/api/print/'.format(galleryUrl)
+    fetchPrefix = '{}/api/print/id/'.format(galleryUrl)
     response = {
         'success': {},
         'failed': []
@@ -120,17 +120,18 @@ def info(ids):
         r= http.get(fetchPrefix+id,allow_redirects=False,timeout=2)
         if r.ok:
             obj = r.json()
-            assert id == obj['data']['dropbox']['id']
+            assert id == obj['image']['id']
             response['success'][id] = {
-                'name': obj['data']['displayname'],
-                'variants': []
+                'name': obj['image']['resource_data']['Image']['name'],
+                'variants': {}
             }
-            for variant in obj['variants']:
-                response['success'][id]['variants'].append({
+            for variant_name,variant in obj['variants'].items():
+                logger.info(variant)
+                response['success'][id]['variants'][variant_name] = {
                     'width': variant['width'],
                     'height': variant['height'],
                     'price' : variant['price']['value']
-                })
+                }
             idFound = True
                 
         if not(idFound):
@@ -150,7 +151,7 @@ def crossReferenceCart(cart):
     for cartId,cartItem in cart.items():
         cartItemVariant = cartItem['variant']
         itemInfo = idInfo[cartItem['id']]
-        variants = [variant for variant in itemInfo['variants'] if (variant['height'] == cartItemVariant['height'] and variant['width'] == cartItemVariant['width'] )]
+        variants = [variant for variantName,variant in itemInfo['variants'].items() if ( variantName == cartItemVariant['name'] and variant['height'] == cartItemVariant['height'] and variant['width'] == cartItemVariant['width'] )]
         if len(variants) != 1:
             return 'Variant lookup failed',400
         cartItem['name'] = itemInfo['name']

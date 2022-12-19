@@ -3,6 +3,8 @@ use xmp_toolkit;
 use xmp_toolkit::{XmpError};
 use xmp_toolkit::xmp_ns::{DC,EXIF};
 use chrono::{DateTime};
+use image::{ImageError,GenericImageView};
+use image::io::Reader as ImageReader;
 
 #[derive(Debug)]
 pub struct ImageMetadataError 
@@ -28,6 +30,23 @@ impl From<XmpError> for ImageMetadataError {
         ImageMetadataError {
             error: None,
             xmp_error: Some(error) 
+        }
+    }    
+}
+
+impl From<std::io::Error> for ImageMetadataError {
+    fn from(error: std::io::Error) -> Self {
+        ImageMetadataError {
+            error: Some(format!("{:#?}",error) ),
+            xmp_error: None,
+        }
+    }    
+}
+impl From<ImageError> for ImageMetadataError {
+    fn from(error: ImageError) -> Self {
+        ImageMetadataError {
+            error: Some(format!("{:#?}",error) ),
+            xmp_error: None,
         }
     }    
 }
@@ -100,10 +119,41 @@ impl ImageMetadataCreator for ImageMetadata {
             }
         };
 
+        let hex_color = {
+            let image=  ImageReader::open(path)?.decode()?;
+            let rgb_img = image.into_rgb8();
+            let (width,height) = rgb_img.dimensions();
+
+            let (mut r,mut g,mut b) = (0u128,0u128,0u128);
+            for (_,row) in rgb_img.enumerate_rows()
+            {
+
+            let (mut rr,mut rg,mut rb) = (0u128,0u128,0u128);
+                for ( _ , _ , pixel) in row 
+                {
+                    rr+= u128::from(pixel[0]);
+                    rg+= u128::from(pixel[1]);
+                    rb+= u128::from(pixel[2]);
+                }
+                r+=rr/u128::from(width);
+                g+=rg/u128::from(width);
+                b+=rb/u128::from(width);
+            }
+            r/=u128::from(height);
+            g/=u128::from(height);
+            b/=u128::from(height);
+                
+           String::from(&format!("{:#08x}", r << 16 | g << 8 | b << 0)[2..])
+        };
+        if  hex_color.len() != 6
+        {
+             return Err( ImageMetadataError::new(format!("Hex failed {}",hex_color)) )
+        }
+
         Ok(ImageMetadata {
             name:         xmp_title,
             date:         parsed_xmp_date,
-            colour :      String::from(""),
+            colour :      String::from(hex_color),
             variants: Default::default()
         })
     }

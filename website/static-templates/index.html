@@ -22,7 +22,7 @@
         {% endif -%}
         <div class="gallery" >{% for pic in pics %}
           {%set image = pic.resource_data.Image -%}
-            <a  id="{{image.name}}" class="image" style="background-color:{{image.colour}};"   
+            <a  id="{{image.name}}" class="image" style="background-color:#{{image.colour}};"   
               {% set medium_thumbnail = resources[image.variants['Medium']] -%}
               {% set large_thumbnail = resources[image.variants['Large']] -%}
               {% set huge_thumbnail = resources[image.variants['Huge']] -%}

@@ -23,7 +23,7 @@
                <div class="print">
                    <h4 id="{{image.name}}">{{image.name}} </h4>
                    <div class="printBorder">
-                        <a href="{{resource_to_print_url(resource=print_resource) }}" id="{{image.name}}" class="printImage" style="background-color:{{image.colour}};"   
+                        <a href="{{resource_to_print_url(resource=print_resource) }}" id="{{image.name}}" class="printImage" style="background-color:#{{image.colour}};"   
                           {% set medium_thumbnail = resources[image.variants['Medium']] -%}
                           {% set large_thumbnail = resources[image.variants['Large']] -%}
                           {% set huge_thumbnail = resources[image.variants['Huge']] -%}
