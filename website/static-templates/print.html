@@ -23,7 +23,7 @@
                 <div>
                     <a id="viewlink">
                         <div class="imageContainer">
-                            <div id="image">
+                            <div id="image" class="printImage">
                             </div>
                         </div>
                     </a>
@@ -55,6 +55,7 @@
     <script>
         document.write('<script src="/js/print.js"><\/script>');
     </script>
+    {% include 'content/viewer.jinja2' %}
     {% include 'content/cart.jinja2' %}
 </body>
 </html>

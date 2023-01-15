@@ -1,0 +1,13 @@
+{
+    "targets": "defaults and ie 11",
+    "overrides": [
+        {
+            "exclude": "**/vendor/*.js",
+            "presets": [
+                ["@babel/preset-env", {  }],
+                ["minify"]
+            ],
+            "sourceMaps":true
+        }
+    ]
+}

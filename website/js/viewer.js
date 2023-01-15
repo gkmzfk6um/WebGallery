@@ -125,8 +125,6 @@ $('#viewer-back').click( function() {
 
 function open_grid_element($a)
 {
-
-
 	var f = function($a)
 	{
 		if ($a.length == 0)
@@ -137,7 +135,7 @@ function open_grid_element($a)
 		var offset  = $a.offset();
 		offset.top  = (offset.top - $(window).scrollTop()) + $a.height()/2;
 		offset.left = (offset.left - $(window).scrollLeft()) + $a.width()/2;
-		return  {
+		return {
 			'translation-origin': offset,
 			'src-elem-id': $a.attr('id'),
 			'src-set': $a.attr('data-srcset'),
@@ -147,9 +145,28 @@ function open_grid_element($a)
 			'prev': function() { return f($a.prev('a')); }
 		}
 	}
-	
 	open_viewer(f($a));
+}
 
+function open_print_element($div)
+{
+	if ($div.length == 0)
+	{
+		return null;
+	}
+	
+	var offset  = $div.offset();
+	offset.top  = (offset.top - $(window).scrollTop()) + $div.height()/2;
+	offset.left = (offset.left - $(window).scrollLeft()) + $div.width()/2;
+	open_viewer({
+		'translation-origin': offset,
+		'src-elem-id': $div.attr('id'),
+		'src-set': $div.children("img").attr('srcset'),
+		'src':  $div.children("img") .attr('src'),
+		'name': $('#title').text(),
+		'next': function() { return null },
+		'prev': function() { return null }
+	});
 }
 
 $(document).ready(() => {
@@ -157,6 +174,10 @@ $(document).ready(() => {
 	$('.gallery > a').click( function(event){
 		var $a = $(event.delegateTarget)
 		open_grid_element($a);
-	}
-	);
+	});
+	
+	$('#image').click( function(event){
+		var $div = $(event.delegateTarget)
+		open_print_element($div);
+	});
 });

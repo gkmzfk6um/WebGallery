@@ -1,7 +1,6 @@
 use content_managment_datamodel::print::{PrintDefinition,PrintCompiled};
 use content_managment_datamodel::datamodel::{Resources,GeneratedDataDesc,ImageMetadata};
 use reqwest::{StatusCode,Client};
-use serde::{Serialize, Deserialize};
 use std::fmt;
 use log::info;
 use std::collections::HashMap;
@@ -52,7 +51,7 @@ impl State
 
         self.lookup_cache = self.prints.prints
         .iter()
-        .map(|(k,v)| v)
+        .map(|(_k,v)| v)
         .flatten()
         .map(|print|  {
             let res = self.resources().resources.get(&print.id).unwrap();

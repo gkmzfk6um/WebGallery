@@ -1,5 +1,5 @@
 const cartTemplate = {
-    version: 1,
+    version: 2,
     items: {
 
     }
@@ -38,6 +38,11 @@ function findVariantInfo(cartItem)
     return foundVariant;
 }
 
+function ajaxError(xhr,e)
+{
+    console.log("Failed to communicate with sales server",xhr.status,xhr.responseText);
+    alert("Failed to communicate with sales server, please try again later. If the issue persist please contact me and I\'ll assist you");
+}
 
 function updateCartInfo(cb)  {
 
@@ -90,10 +95,10 @@ function updateCartInfo(cb)  {
     {
         $.ajax({
         type: 'POST',
-        url: '/api/store/info',
+        url: '/api/print/info',
         data: JSON.stringify (id2req),
         success: response,
-        error: () => alert('Failed to communicate with sales server, please try again later. If the issue persist please contact me and I\'ll assist you'),
+        error: ajaxError,
         contentType: "application/json",
         dataType: 'json'});
     }
@@ -118,7 +123,7 @@ function checkout()
         url: '/api/store/checkout',
         data: JSON.stringify (cart),
         success: checkoutResponse,
-        error: () => alert('Failed to communicate with sales server, please try again later. If the issue persist please contact me and I\'ll assist you'),
+        error: ajaxError,
         contentType: "application/json",
         dataType: 'text'});
     }

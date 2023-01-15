@@ -3,7 +3,7 @@ use xmp_toolkit;
 use xmp_toolkit::{XmpError};
 use xmp_toolkit::xmp_ns::{DC,EXIF};
 use chrono::{DateTime};
-use image::{ImageError,GenericImageView};
+use image::{ImageError};
 use image::io::Reader as ImageReader;
 
 #[derive(Debug)]

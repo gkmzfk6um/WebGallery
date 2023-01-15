@@ -44,9 +44,9 @@ function build(data)
 
 function loadimage(data)
 {
-	const srcset=   "/" + data['thumbnails']['Huge']['path']   + " " + data['thumbnails']['Huge']  ['resource_data']['Thumbnail']['width'] + "w\n" 
-	              + "/" + data['thumbnails']['Large']['path']  + " " + data['thumbnails']['Large'] ['resource_data']['Thumbnail']['width'] + "w\n" 
-	              + "/" + data['thumbnails']['Medium']['path'] + " " + data['thumbnails']['Medium']['resource_data']['Thumbnail']['width'] + "w";
+	const srcset=   "\n/" + encodeURIComponent(data['thumbnails']['Huge']['path'])   + " " + data['thumbnails']['Huge']  ['resource_data']['Thumbnail']['width'] + "w,\n" 
+	              + "/" + encodeURIComponent(data['thumbnails']['Large']['path'])  + " " + data['thumbnails']['Large'] ['resource_data']['Thumbnail']['width'] + "w,\n" 
+	              + "/" + encodeURIComponent(data['thumbnails']['Medium']['path']) + " " + data['thumbnails']['Medium']['resource_data']['Thumbnail']['width'] + "w\n";
     const src ="/" + data['thumbnails']['Medium']['path'];
 	let img = $('<img>')
 	img.one('load',function() {

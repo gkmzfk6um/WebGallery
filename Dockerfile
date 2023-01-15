@@ -4,11 +4,12 @@ ARG SOURCE_COMMIT
 ENV SOURCE_COMMIT $SOURCE_COMMIT 
 WORKDIR /build 
 RUN     apt update && apt install -y rename \
-     && npm install --save-dev @babel/cli @babel/core @babel/preset-env babel-preset-minify sass
-ENV BROWSERSLIST "> 0.5%, last 2 versions, Firefox ESR, not dead" 
+     && npm install --save-dev @babel/cli @babel/core @babel/preset-env babel-preset-minify sass core-js@3
+ENV BROWSERSLIST "defaults and ie 11" 
 COPY website website
+COPY babel.config.json .
 RUN mv  website/js website/jssrc  \
-    && ./node_modules/.bin/babel website/jssrc --out-dir website/js --source-maps --presets=@babel/preset-env,minify \
+    && ./node_modules/.bin/babel website/jssrc --out-dir website/js    \
     && ./node_modules/.bin/sass  website/sass:website/css --style=compressed --color \
     &&  rename -v "s/(.*)\.css/\1-${SOURCE_COMMIT}.css/" website/css/*.css
 
@@ -45,7 +46,8 @@ FROM node:current-buster-slim as website-backend
 ARG SOURCE_COMMIT                  
 ENV SOURCE_COMMIT $SOURCE_COMMIT 
 RUN useradd  gallery-owner \
-   && apt update && apt install -y openssl
+   && apt update && apt install -y openssl ca-certificates \
+   && update-ca-certificates
 COPY --from=rust-website-build --chown=gallery-owner:gallery-owner /build/content-managment/target/release/api /opt/
 USER gallery-owner
 CMD ["/opt/api"]
