@@ -6,16 +6,14 @@ $menu-box-shadow: 1rem 0 5rem rgba(0,0 ,0 ,0.2 )
 
 #site-logo 
     cursor: pointer
-    font-family: 'Trade Winds', serif
-    a 
-        font-size: 1.5rem
 
 .menu 
     color: defines.$menu-text-color
-    font-family: 'Trade Winds', serif
+    font-family: "Special Elite"
     ul
         list-style-type: none
     b
+        position: relative
         color: defines.$header-color
 .slideout-menu
     background-color: defines.$menu-background-color
@@ -35,8 +33,11 @@ $menu-box-shadow: 1rem 0 5rem rgba(0,0 ,0 ,0.2 )
     > ul 
         padding-left: 4rem
         padding-right: 2rem
+        border-left: defines.$header-color 1rem solid
         > li 
-            margin-bottom: 2rem
+            border-bottom: defines.$menu-text-color 0.1rem solid
+            margin-bottom: 0.7rem
+            padding-bottom: 0.7rem
     ul
         text-align: left
     a
