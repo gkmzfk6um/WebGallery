@@ -16,5 +16,7 @@ content-managment/main/target/
 content-managment/datamodel/target/
 content-managment/api/target
 content-managment/api/Cargo.lock
+content-managment/urlencode/target
+content-managment/urlencode/Cargo.lock
 .vscode
 Cargo.lock

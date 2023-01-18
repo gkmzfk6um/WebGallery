@@ -3,5 +3,6 @@
 members = [
     "main",
     "datamodel",
-    "api"
+    "api",
+    "urlencode"
 ]

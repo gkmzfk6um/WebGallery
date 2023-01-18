@@ -98,7 +98,7 @@ pub fn validate_cart(state : &State,cart : CheckoutCart) -> Option<StripeCart>
                             {
                                 name: image.name.clone(),
                                 description: format!("{}cm x {}cm - {}",variant.width, variant.height, sign_option),
-                                images: vec![ format!("{}/{}",*GALLERY_URL,large_thumbnail.path().display() ) ]
+                                images: vec![ format!("{}/{}",*GALLERY_URL,large_thumbnail.path().display().to_string().replace(" ","%20") ) ]
                             },
                             unit_amount: (variant.price.value * 100) as i32
                         },
@@ -182,20 +182,18 @@ pub async fn checkout_cart(cart: &StripeCart) -> actix_web::HttpResponse
         "success_url": format!("{}/store/success",GALLERY_URL.to_string()),
         "cancel_url":  format!("{}/store/cancel",GALLERY_URL.to_string())
     });
+    let payload = serde_urlencode_deep::ser::to_string(&payload).unwrap();
 
 
     
     info!("Initate stripe checkout {:#?}",cart);
-    match serde_urlencoded::to_string(&payload)
-    {
-        Err(e) => { warn!("{:#?}",e)}
-        Ok(_) => {}
-    };
+    info!("{}", payload);
     
     let client = reqwest::Client::new();
     let resp = client.post("https://api.stripe.com/v1/checkout/sessions")
         .header(reqwest::header::AUTHORIZATION, format!("Bearer {}",*API_KEY))
-        .form(&payload)
+        .header(reqwest::header::CONTENT_TYPE,reqwest::header::HeaderValue::from_static("application/x-www-form-urlencoded"))
+        .body(payload)
         .send()
         .await;
     
