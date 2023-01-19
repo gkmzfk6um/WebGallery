@@ -19,7 +19,7 @@ pub fn cleanup(resources : &mut Resources )
     resources.resources
     .values()
     .map( |x| {
-       x.get_path().canonicalize().unwrap() 
+       x.file_path().canonicalize().unwrap() 
     })
     .for_each(|x| {path_buffer.insert(x); });
     cleanup_folder(&ARGS.root.join(&Path::new("resources/data")),       &path_buffer );
@@ -31,7 +31,7 @@ pub fn cleanup(resources : &mut Resources )
 pub fn clean_broken_resources(resources : &mut Resources )
 {
     resources.resources.retain( |_, v| {
-        if Path::new(&v.get_path()).exists() {true} else {println!("Purging resource without valid path {:#?}",v); false }
+        if Path::new(&v.file_path()).exists() {true} else {println!("Purging resource without valid path {:#?}",v); false }
     });
 }
 

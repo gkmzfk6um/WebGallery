@@ -124,13 +124,13 @@ fn create_context(resources: &Resources)-> Context
         })
         .collect();
     context.insert("images",&images);
-    context.insert("websiteName","WEBSITE_NAME");
+    context.insert("websiteName",&*crate::WEBSITE_NAME);
     context.insert("gitSha",GIT_SHA.as_str());
     context.insert("year", &chrono::offset::Utc::now().year() );
     context.insert("sortedbyyears",&sort_by_years(resources));
     if let Some(categories) = resources.find_data(|x : &GeneratedDataDesc| x.name == "categories" )
     {
-        let f = File::open(categories.get_path()).expect(&format!("Could not open {:#?}",categories));
+        let f = File::open(categories.file_path()).expect(&format!("Could not open {:#?}",categories));
         match serde_json::from_reader(f)
         {
             Ok::<HashMap<String,Vec<String>>, _>(val) => {
@@ -148,7 +148,7 @@ fn create_context(resources: &Resources)-> Context
     }
     if let Some(prints) =  resources.find_data( |x : &GeneratedDataDesc| x.name == "prints" )
     {
-        let f = File::open(prints.get_path()).expect(&format!("Could not open {:#?}",prints));
+        let f = File::open(prints.file_path()).expect(&format!("Could not open {:#?}",prints));
         match serde_json::from_reader(f)
         {
             Ok::<serde_json::Value, _>(val) => {

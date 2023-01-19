@@ -22,7 +22,7 @@ pub fn find_print_config_res(resources: &mut Resources) -> Option<std::path::Pat
             ResourceData::Sitedata(data) => {
                 if data.filename == "print.json"
                 {
-                    Some(x.get_path().to_path_buf())
+                    Some(x.file_path().to_path_buf())
                 }
                 else {
                     None

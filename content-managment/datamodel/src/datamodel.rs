@@ -245,7 +245,10 @@ impl Resource
     {
         self.path.file_name().unwrap().to_str().unwrap()
     }
-
+    pub fn url_path(&self) -> String
+    {
+        self.path.display().to_string().replace(" ","%20")
+    }
     pub fn path(&self) -> &Path 
     {
         self.path.as_path()

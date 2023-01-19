@@ -29,7 +29,7 @@ pub fn generate_thumbnail(image : &Resource, size: &ThumbnailSize, image_data: i
 
     let mut deps = Dependencies::new_default();
     let id = format!("{}-thumbnail-{}",image.id(),size);
-    let filename = format!("{}-thumbnail-{}.jpg", image.get_path().file_stem().unwrap().to_str().unwrap() ,size);
+    let filename = format!("{}-thumbnail-{}.jpg", image.file_path().file_stem().unwrap().to_str().unwrap() ,size);
     let path =ARGS.root.join(Path::new("resources/thumbnails")).join(Path::new(&filename));
     deps.add_dependency(&image);
 
@@ -89,7 +89,7 @@ pub fn generate(resources: &mut Resources)
         .map( |image| 
         {
             let mut image_thumbnails : Vec<Resource> = Vec::with_capacity(NUMBER_OF_THUMBNAILS);
-            match ImageReader::open(&image.get_path())
+            match ImageReader::open(&image.file_path())
             {
                 Ok(reader) => {
                         match reader.decode()

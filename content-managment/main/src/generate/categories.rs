@@ -47,7 +47,7 @@ impl CategoryFilter {
         {
 
             let mut xmp_file = xmp_toolkit::XmpFile::new().unwrap();
-            match xmp_file.open_file(&image.get_path(),xmp_toolkit::OpenFileOptions::default().for_read())
+            match xmp_file.open_file(&image.file_path(),xmp_toolkit::OpenFileOptions::default().for_read())
             {
                 Ok(()) => { 
                     match xmp_file.xmp()
@@ -91,7 +91,7 @@ impl CategoryFilter {
                         },
                         None => {
                             if self.trace {
-                                println!("No metadata in {}", image.get_path().display() );
+                                println!("No metadata in {}", image.file_path().display() );
                             }
                         }
                         
@@ -150,7 +150,7 @@ pub fn find_categories_config_res(resources: &mut Resources) -> Option<std::path
             ResourceData::Sitedata(data) => {
                 if data.filename == "categories.json"
                 {
-                    Some(x.get_path().to_path_buf())
+                    Some(x.file_path().to_path_buf())
                 }
                 else {
                     None

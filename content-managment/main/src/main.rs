@@ -3,6 +3,7 @@ mod dropbox;
 mod config;
 mod generate;
 mod cleanup;
+mod clone;
 #[macro_use]
 extern crate lazy_static;
 
@@ -14,11 +15,6 @@ use std::fs;
 use std::path::Path;
 use regex::Regex;
 
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum,Debug)]
-pub enum Source 
-{
-    Dropbox
-}
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum,Debug)]
 pub enum CleanTargets 
@@ -43,12 +39,14 @@ pub struct Cli {
    #[clap(arg_enum,short, long, value_parser )]
    clean: Option<CleanTargets>,
 
-   // Fetch remote resources using provided method
-   #[clap(arg_enum,short, long, value_parser)]
-   source: Option<Source>,
+   
+   #[clap(short, long, value_parser)]
+   clone_url: Option<String>,
+
    
    #[clap(short, long, value_parser)]
    print_id: Option<String>,
+   
    
    #[clap(long, value_parser)]
    print_name: Option<String>,
@@ -82,6 +80,10 @@ lazy_static! {
         args.root =fs::canonicalize(args.root).expect("Root folder must exist!");
         args
     };
+
+    pub static ref WEBSITE_NAME : String = {
+        std::env::var("GALLERY_URL").expect("Environment variable GALLERY_URL must be set to indicate the url of the website")
+    };
 }
 
 fn create_resource_folder()
@@ -107,7 +109,20 @@ async fn main() {
     let mut res = {
         let mut stored_resources = Resources::read_resources();
         cleanup::cleanup(&mut stored_resources);
-        if ARGS.sync_dropbox {
+        if let Some(url) = &ARGS.clone_url 
+        {
+            match clone::clone_node(&url, stored_resources).await
+            {
+                Err(e) => {
+                    println!("{}",e);
+                    std::process::exit(10)
+                }
+                Ok(resources) => {
+                    resources
+                }
+            }
+        }
+        else if ARGS.sync_dropbox {
             populate_using_dropbox(stored_resources).await
         }
         else {

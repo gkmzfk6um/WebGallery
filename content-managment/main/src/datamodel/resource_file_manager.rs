@@ -22,7 +22,7 @@ pub trait ResourcesFileManager
 pub trait ResourceFileManager : Sized {
     fn get_metadata_path(&self) -> PathBuf;
     fn delete_resource(&self);
-    fn get_path(&self) -> std::path::PathBuf;
+    fn file_path(&self) -> std::path::PathBuf;
     fn get_path_relative_root(&self) -> Result<std::path::PathBuf,String>;
     fn write_resource(&self);
     fn read_resource<T: std::convert::AsRef<std::path::Path> + std::convert::AsRef<std::ffi::OsStr>  + Debug>(path: &T) -> Option<Self>;
@@ -102,11 +102,11 @@ impl ResourceFileManager for Resource
 
     fn delete_resource(&self)
     {
-        delete_file(&self.get_path());
+        delete_file(&self.file_path());
         delete_file(self.get_metadata_path());
     }
 
-    fn get_path(&self) -> std::path::PathBuf
+    fn file_path(&self) -> std::path::PathBuf
     {
         if self.path().is_absolute()
         {
@@ -120,7 +120,7 @@ impl ResourceFileManager for Resource
 
     fn get_path_relative_root(&self) -> Result<std::path::PathBuf,String>
     {
-        std::fs::canonicalize(self.get_path())
+        std::fs::canonicalize(self.file_path())
         .map_err( | _ | format!("Failed to canoicalize {}", self.path().display() ) )
         .and_then( | absolute_path | { 
             assert!(absolute_path.starts_with(&ARGS.root)); 
