@@ -52,7 +52,7 @@ pub struct Cli {
    print_name: Option<String>,
    
    // Generate derived resources
-   #[clap(short, long, value_parser,default_value="true")]
+   #[clap(short, long, value_parser,default_value="false")]
    generate: bool,
    
    // Create resource directory tree if it doesn't exist
@@ -91,11 +91,10 @@ fn create_resource_folder()
     if ARGS.create_dir
     {
         let resource_dir = ARGS.root.join(&Path::new("resources"));
-        fs::create_dir(&resource_dir).expect(format!("Could not create resources dir under {}",ARGS.root.display()).as_str());
-        fs::create_dir(&resource_dir.join(&Path::new("data")      )).expect("Could not create data folder");
-        fs::create_dir(&resource_dir.join(&Path::new("images")    )).expect("Could not create images folder");
-        fs::create_dir(&resource_dir.join(&Path::new("meta")      )).expect("Could not create meta folder");
-        fs::create_dir(&resource_dir.join(&Path::new("thumbnails"))).expect("Could not create thumbnails folder");
+        fs::create_dir_all(&resource_dir.join(&Path::new("data")      )).expect("Could not create data folder");
+        fs::create_dir_all(&resource_dir.join(&Path::new("images")    )).expect("Could not create images folder");
+        fs::create_dir_all(&resource_dir.join(&Path::new("meta")      )).expect("Could not create meta folder");
+        fs::create_dir_all(&resource_dir.join(&Path::new("thumbnails"))).expect("Could not create thumbnails folder");
     }
 }
 

@@ -243,7 +243,8 @@ async fn main() -> std::io::Result<()> {
     env_logger::init();
 
     HttpServer::new(move || {
-        let logger = Logger::default();
+        let logger = Logger::default().exclude("/ok");
+
         App::new()
             .wrap(logger)
             .app_data(state.clone())
@@ -254,7 +255,7 @@ async fn main() -> std::io::Result<()> {
             .service(print_info)
             .service(checkout)
     })
-    .bind(("0.0.0.0", 80))?
+    .bind(("0.0.0.0", 8080))?
     .run()
     .await
 }

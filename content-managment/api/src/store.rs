@@ -187,7 +187,6 @@ pub async fn checkout_cart(cart: &StripeCart) -> actix_web::HttpResponse
 
     
     info!("Initate stripe checkout {:#?}",cart);
-    info!("{}", payload);
     
     let client = reqwest::Client::new();
     let resp = client.post("https://api.stripe.com/v1/checkout/sessions")
