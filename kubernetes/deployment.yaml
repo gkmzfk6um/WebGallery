@@ -17,6 +17,16 @@ spec:
       volumes:
             - name: resources
               emptyDir: {}
+      initContainers:
+      - name: clone-existing-service
+        image: virtualraven/webgallery-nginx:version-3.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        command: ["/opt/content-managment","--create-dir","--root", "/var/www/gallery","--clone-url", "http://webgallery-service"]
+        volumeMounts:
+          - name: resources
+            mountPath: /var/www/gallery/resources
       containers:
       - name: gallery-nginx
         image: virtualraven/webgallery-nginx:version-3.0
@@ -26,8 +36,6 @@ spec:
         env:
           - name: 'ENABLE_GALLERY_STORE'
             value: 'yay'
-          - name: 'MASTER_NODE_URL'
-            value: 'webgallery-master-service'
           - name: 'CONTENT_MANAGMENT_DROPBOX_API_KEY'
             valueFrom:
                secretKeyRef:
@@ -85,3 +93,16 @@ spec:
           periodSeconds: 10
 
 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webgallery-service
+spec:
+  ports:
+   - name: http
+     protocol: TCP
+     port: 80
+     targetPort: 80
+  selector:
+    app: web-gallery

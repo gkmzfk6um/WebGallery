@@ -46,7 +46,7 @@ fn sort_by_years(resources: &Resources) -> Vec<(i32,Vec<&Resource>)>
         {
             if y1 == y2
             {
-                r1.as_data::<ImageMetadata>().date.cmp(&r2.as_data::<ImageMetadata>().date)
+                r2.as_data::<ImageMetadata>().date.cmp(&r1.as_data::<ImageMetadata>().date)
             }
             else 
             {
@@ -101,6 +101,7 @@ fn sort_by_categories<'a>(resources: &'a Resources, categories :  &HashMap<Strin
         }
         if res.len() > 0 
         {
+            res.sort_by( |r1,r2| ->Ordering {  r2.as_data::<ImageMetadata>().date.cmp(&r1.as_data::<ImageMetadata>().date ) } );
             map.insert(category.clone(),res);
         }
     }
