@@ -6,6 +6,8 @@ use crate::ARGS;
 use std::path::Path;
 
 use indicatif::ProgressBar;
+use std::process::Command;
+
 
 
 
@@ -40,8 +42,29 @@ pub fn generate_thumbnail(image : &Resource, size: &ThumbnailSize, image_data: i
         height: image_data.height()
     });
 
-    let mut buff_writer = std::io::BufWriter::new(std::fs::File::create(&path).unwrap());
-    image_data.write_to(&mut buff_writer, image::ImageOutputFormat::Jpeg(80)).unwrap();
+    {
+        let mut buff_writer = std::io::BufWriter::new(std::fs::File::create(&path).unwrap());
+        image_data.write_to(&mut buff_writer, image::ImageOutputFormat::Jpeg(80)).unwrap();
+    }
+
+    let thumbnail_file = &path.display().to_string();
+
+    let exif_tool = Command::new("exiftool")
+        .args([
+            "-overwrite_original",
+            "-tagsFromFile",
+            &image.file_path().display().to_string(),
+            thumbnail_file,
+            "-Icc_profile"
+        ]).output().expect("Could not start exiftool! Is it installed?");
+    if !exif_tool.status.success()
+    {
+        use std::io::Write;
+        std::io::stdout().write_all(&exif_tool.stdout).unwrap();
+        std::io::stderr().write_all(&exif_tool.stderr).unwrap();
+        panic!("exiftool failed for {}!",thumbnail_file);
+    }
+    
 
 
 

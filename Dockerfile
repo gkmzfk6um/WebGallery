@@ -62,7 +62,7 @@ FROM nginx:mainline
 ARG SOURCE_COMMIT                  
 ENV SOURCE_COMMIT $SOURCE_COMMIT 
 
-RUN apt update && apt install -y  libcap2-bin && \
+RUN apt update && apt install -y  libcap2-bin libimage-exiftool-perl && \
     mkdir -p /var/www/gallery && \ 
     cd /var/www/gallery && \
     mkdir tmp && \
