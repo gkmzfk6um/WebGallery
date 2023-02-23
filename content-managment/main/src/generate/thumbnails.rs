@@ -6,8 +6,8 @@ use crate::ARGS;
 use std::path::Path;
 
 use indicatif::ProgressBar;
-use std::process::Command;
-
+use img_parts::{ImageICC};
+use img_parts::jpeg::Jpeg;
 
 
 
@@ -26,7 +26,7 @@ const NUMBER_OF_THUMBNAILS : usize =  4;
 
 
 
-pub fn generate_thumbnail(image : &Resource, size: &ThumbnailSize, image_data: image::DynamicImage) -> Resource
+pub fn generate_thumbnail(image : &Resource, size: &ThumbnailSize, image_data: image::DynamicImage, icc_profile: Option<img_parts::Bytes>) -> Resource
 {
 
     let mut deps = Dependencies::new_default();
@@ -43,31 +43,18 @@ pub fn generate_thumbnail(image : &Resource, size: &ThumbnailSize, image_data: i
     });
 
     {
-        let mut buff_writer = std::io::BufWriter::new(std::fs::File::create(&path).unwrap());
-        image_data.write_to(&mut buff_writer, image::ImageOutputFormat::Jpeg(80)).unwrap();
+
+        let mut buffer = std::io::Cursor::new(Vec::new()); 
+        image_data.write_to(&mut buffer, image::ImageOutputFormat::Jpeg(80)).unwrap();
+        let mut jpeg = Jpeg::from_bytes(buffer.into_inner().into()).unwrap();
+
+        jpeg.set_icc_profile(icc_profile);
+
+        let output_file = std::fs::File::create(&path).unwrap();
+        jpeg.encoder().write_to(output_file).unwrap();
     }
 
-    let thumbnail_file = &path.display().to_string();
-
-    let exif_tool = Command::new("exiftool")
-        .args([
-            "-overwrite_original",
-            "-tagsFromFile",
-            &image.file_path().display().to_string(),
-            thumbnail_file,
-            "-Icc_profile"
-        ]).output().expect("Could not start exiftool! Is it installed?");
-    if !exif_tool.status.success()
-    {
-        use std::io::Write;
-        std::io::stdout().write_all(&exif_tool.stdout).unwrap();
-        std::io::stderr().write_all(&exif_tool.stderr).unwrap();
-        panic!("exiftool failed for {}!",thumbnail_file);
-    }
     
-
-
-
     let resource = Resource::new(path, data,&id, &image.content_hash, ResourceProvider::Generated(deps)  );
     resource.write_resource();
     resource
@@ -112,6 +99,17 @@ pub fn generate(resources: &mut Resources)
         .map( |image| 
         {
             let mut image_thumbnails : Vec<Resource> = Vec::with_capacity(NUMBER_OF_THUMBNAILS);
+            let icc_profile = {
+                let input = std::fs::read(&image.file_path()).unwrap();
+                let jpeg = Jpeg::from_bytes(input.into()).unwrap();
+                jpeg.icc_profile()
+            };
+
+            if let None = icc_profile
+            {
+                println!("Image {} missing ICC profile!", image.file_path().display() );
+            }
+
             match ImageReader::open(&image.file_path())
             {
                 Ok(reader) => {
@@ -125,7 +123,7 @@ pub fn generate(resources: &mut Resources)
                                         let image_size = get_image_size(&size);
                                         let resized_image = read_image.resize(image_size,image_size, image::imageops::FilterType::Lanczos3);
                                         
-                                        let thumbnail = generate_thumbnail(&image,&size,resized_image);
+                                        let thumbnail = generate_thumbnail(&image,&size,resized_image, icc_profile.clone());
                                         match &mut image.resource_data
                                         {
                                             Image(i) => i.variants.insert(size.clone(),String::from(thumbnail.id())),
