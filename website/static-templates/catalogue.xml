@@ -18,8 +18,8 @@
             <g:id>{{print.id}}{{variant.width}}{{variant.height}}</g:id>
             <g:item_group_id>{{print.id}}</g:item_group_id>
 
-            <g:title>{{print_image.name}}</g:title>            
-            <g:description>{{print.brief}} </g:description>
+            <g:title>{{ escape_xml(text=print_image.name) }}</g:title>            
+            <g:description>{{ escape_xml(text=print.brief) }} </g:description>
             <g:link>{{website}}{{resource_to_print_url(resource=print_resource)}}}}</g:link>
             <g:image_link>{{website}}{{resource_to_url(resource= resources[print_image.variants['Large']])}}</g:image_link>  
 

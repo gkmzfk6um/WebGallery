@@ -192,6 +192,25 @@ fn register_function(tera : &mut Tera)
         })
     );
     
+    tera.register_function("escape_xml", 
+        Box::new(move |args : &HashMap<String,tera::Value> | -> Result<tera::Value, tera::Error> {
+            match args.get("text")
+            {
+                Some(tera::Value::String(val)) => {
+                    let s0 = val;
+                    let s1 = s0.replace("&","&amp;");
+                    let s2 = s1.replace("<","&lt;");
+                    let s3 = s2.replace(">","&gt;");
+                    let s4 = s3.replace("\"","&quot;");
+                    let s5 = s4.replace("'","&apos;");
+                    Ok(tera::Value::String(s5))
+                },
+                _ => { Err("Expected argument text of type String".into()) }
+            }
+        })
+    );
+
+    
     tera.register_function("resource_to_url", 
         Box::new(move |args : &HashMap<String,tera::Value> | -> Result<tera::Value, tera::Error> {
             let resource : Resource = serde_json::from_value(args.get("resource").unwrap().clone()).unwrap();
