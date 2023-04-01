@@ -92,6 +92,7 @@ fn create_resource_folder()
     {
         let resource_dir = ARGS.root.join(&Path::new("resources"));
         fs::create_dir_all(&resource_dir.join(&Path::new("data")      )).expect("Could not create data folder");
+        fs::create_dir_all(&resource_dir.join(&Path::new("resource-images"))).expect("Could not create resource-images folder");
         fs::create_dir_all(&resource_dir.join(&Path::new("images")    )).expect("Could not create images folder");
         fs::create_dir_all(&resource_dir.join(&Path::new("meta")      )).expect("Could not create meta folder");
         fs::create_dir_all(&resource_dir.join(&Path::new("thumbnails"))).expect("Could not create thumbnails folder");

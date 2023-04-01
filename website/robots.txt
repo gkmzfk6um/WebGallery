@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /view/
 
 Sitemap: https://gallery.rahmn.net/sitemap.xml

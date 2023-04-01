@@ -11,27 +11,31 @@
                 {% for tuple in sortedbyyears -%}
                 {% set pics = tuple[1] %}
                 {% set key_year = tuple[0] | int -%}
-                <li> <a href="/#
-                    {%- if key_year  == year -%}
-                        Latest creations
-                    {%- else -%}
-                        {{key_year}}
-                    {%- endif %}"> {{key_year}} </a></li>
+                {% if key_year == 2020 -%}
+                {% set key_year_name = "2020 & Earlier" -%}
+                {% else %}
+                {% set key_year_name = key_year -%}
+                {% endif -%}
+                {% if key_year > 2019 -%}
+                <li> <a href="/#{{key_year}}"> {{key_year_name}} </a></li>
+                {% endif -%}
                 {% endfor -%}
             </ul>
+        </li>
+        <li> 
+            <a href="/portraiture"> {{ macros::boldifselected(name='Portraiture',current=page,pagename= 'portraiture') }} </a>
         </li>
         <li>
             <a href="/categories"> {{ macros::boldifselected(name='Categories',current=page, pagename = 'categories') }} </a>
             <ul>
                 {% for key_category, pics in sortedbycategories -%}
                     {% if key_category != "Portraiture" -%}
+                    {% if key_category != "PortraitureHighlights" -%}
                     <li> <a href="/categories#{{key_category}}"> {{key_category}} </a> </li>
+                    {% endif -%}
                     {% endif -%}
                 {% endfor -%}
             </ul>
-        </li>
-        <li> 
-            <a href="/portraiture"> {{ macros::boldifselected(name='Portraiture',current=page,pagename= 'portraiture') }} </a>
         </li>
         {% if storeData -%}
             <li> 

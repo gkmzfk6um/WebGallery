@@ -13,14 +13,39 @@
     
     <div class="body">
         <h2>Portraiture</h2>
-        <p class="typed-paragraph">
-
-          <b>I am always looking for more opportunities to take portraits!</b>
-           Whether it's an impromptu shot in the park or a scheduled session in my apartment studio in Mölndal I enjoy every time.  
-           I work with both analog and digital cameras, but there is something magical about analog portraits. 
-           I'm available for hire and would love to help you with your next photo project. 
-           Please reach out to me with any questions you may have via email at gallery@rahmn.net or on Instagram at <a class="normal" href="https://www.instagram.com/rahmnphoto/" >@rahmnphoto</a>.
-        </p>
+        {%for catName, pics in sortedbycategories %}
+        {% if catName == "PortraitureHighlights" %}
+        <div class="gallery flex-gallery" >{% for pic in pics %} {%set image = pic.resource_data.Image %}
+            <a  id="highlight-{{image.name}}" class="image" style="background-color:#{{image.colour}};"   
+              {% set medium_thumbnail = resources[image.variants['Medium']] -%}
+              {% set large_thumbnail = resources[image.variants['Large']] -%}
+              {% set huge_thumbnail = resources[image.variants['Huge']] -%}
+                data-width ="{{medium_thumbnail.resource_data.Thumbnail.width }}" 
+                data-height="{{medium_thumbnail.resource_data.Thumbnail.height }}" 
+                  data-srcset="
+                    {{resource_to_url(resource=huge_thumbnail) }} {{huge_thumbnail.resource_data.Thumbnail.width}}w,
+                    {{resource_to_url(resource=large_thumbnail) }} {{large_thumbnail.resource_data.Thumbnail.width}}w,
+                    {{resource_to_url(resource=medium_thumbnail) }} {{medium_thumbnail.resource_data.Thumbnail.width}}w
+                  "
+                  data-src= "{{ resource_to_url(resource=medium_thumbnail) }}"
+            >
+                <span>{{image.name}} </span>
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endfor %}
+        <div class="portrait-about">
+          <p class="typed-paragraph">
+            <b>I am always looking for more opportunities to take portraits!</b>
+             Whether it's an impromptu shot in the park or a booked session in my apartment studio in Mölndal I enjoy every time.  
+             I work with both analog and digital cameras, but there is something magical about analog portraits. 
+             I'm available for booking and would love to have you for a photo session.
+             Please reach out to me for booking or if you have any questions via email at gallery@rahmn.net or on Instagram at <a class="normal" href="https://www.instagram.com/rahmnphoto/" >@rahmnphoto</a>.
+             You can read more about me <a class="normal" href="/about">here</a>
+          </p>
+          <span class="portrait-image"> <img src="/resources/resource-images/camera.jpg"></span>
+        </div>
         {%for catName, pics in sortedbycategories %}
         {% if catName == "Portraiture" %}
         <div class="gallery" >{% for pic in pics %} {%set image = pic.resource_data.Image %}
